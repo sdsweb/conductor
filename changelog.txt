@@ -1,0 +1,296 @@
+==========================================
+Plugin: Conductor
+Author: Slocum Themes/Slocum Design Studio
+Author URI: https://conductorplugin.com/
+Current Version: 1.4.0
+==========================================
+
+
+1.4.0 // January 27 2017
+------------------------
+- General
+-- Moved all class instance functions inside of class_exists() conditionals
+-- Removed parenthesis from all require, require_once, include, and include_once calls
+-- Added PHP visibility (public, private, protected) clauses to all class functions
+-- Replaced all HTML <section> elements with <div> elements
+-- Removed all WordPress backwards compatibility logic
+-- Added missing domain name to translation functions
+-- Fixed possible PHP warning in Conductor::get_conductor_content_layout_data() if content
+   layout value was empty
+- Add-Ons
+-- Introduce ability to install/activate add-ons from within WordPress dashboard
+- Customizer
+-- Added CSS to help ensure Conductor helper button styles were consistent across installs
+- Conductor Content Layouts
+-- Fixed a bug where the Conductor content layout control view spinner was displayed when the
+   current Previewer page was selected as the current content piece to add a Conductor content layout
+-- Fixed a bug where static front page could not have a Conductor content layout applied to it
+-- Fixed a bug in the Customizer where a "fresh" (first) Conductor content layout was added to a
+   site but the content layout was not honored/reflected in the Previewer
+- Conductor Widget
+-- Adjusted orderby parameters for category dropdown elements to ensure categories were displayed
+   in alphabetical order
+-- Added logic to sanitize CSS classes for output elements within widget settings
+-- Added logic to use Conductor Widget default values upon widget settings sanitization
+-- Replaced all logic for single posts/pages with logic for all public post types (adds custom post
+   type content layout support; depreciates https://conductorplugin.com/docs/custom-post-types/)
+-- Introduced CSS ID widget setting (read-only; dynamically populated based on sidebar parameters)
+-- Introduced Conductor_Widget::widget_settings_title_section() for displaying the title settings section
+   within the widget form
+-- Introduced Conductor_Widget::widget_settings_content_section() for displaying the content settings
+   section within the widget form
+-- Introduced Conductor_Widget::widget_settings_display_section() for displaying the display settings
+   section within the widget form
+-- Introduced Conductor_Widget::widget_settings_advanced_section() for displaying the advanced settings
+   section within the widget form
+-- Adjusted pagination logic to ensure trailing slash was added to the end of pretty permalink URLs
+-- Added notice to Conductor Widgets when no content was found in the current WordPress install
+-- Added logic to ensure at at least one single content type was displayed by default if content
+   existed (i.e. no posts exist but pages do exist); Thanks Lisa Snyder
+-- Fixed a bug with Conductor Widgets where the CSS classes could not be generated properly for
+   newly added instances (now checking for valid widget instance) which resulted in a PHP notice
+-- Fixed a bug where max_num_posts in Conductor Widgets could not be set to an empty value
+-- Added missing ID parameter to wp_dropdown_categories()
+- Conductor Flexbox
+-- Fixed broken selector in Conductor Flexbox CSS
+
+1.3.2 // May 02 2016
+--------------------
+- Customizer
+-- Fixed duplicate parameter declaration in Conductor_Customizer::conductor_query_paginate_links_args()
+- Conductor Widget Query
+-- Added default Conductor_Widget_Query::get_current_post() function which warns developers that the function should be
+   over-ridden in sub-classes
+- License
+-- Added logic to carry old license status over to updated options in Conductor_Admin_License_Options::sanitize_option()
+   if the status key did not exist in new settings
+- Conductor Flexbox
+-- Fixed display of Conductor Widgets inside of flexbox containers in IE10
+
+1.3.1 // December 12 2015
+-------------------------
+- WordPress 4.4 Fixes
+-- Customizer
+--- Fixed a bug where the Conductor_Customizer_Content_Layouts_Setting value was not setup in Conductor Options
+    correctly in the Previewer during a Customizer session
+--- Fixed a bug where Conductor content layout data was not saved properly due to sanitize functions running twice
+-- Conductor Widget
+--- Added new default image size (medium_large) logic to ensure name and dimensions appeared correctly in Featured Image
+    Size setting
+--- Added logic to initialize the accordion logic within a Conductor Widget after the Customizer control was expanded
+- General
+-- Fixed a bug where the second parameter (now set to false by default) passed to the "after_switch_theme"
+   action did not exist due to the previous theme being removed
+
+1.3.0 // November 05 2015
+-------------------------
+- General
+-- Adjusted Conductor UI Button CSS
+-- Update Conductor_Sidebars::find_conductor_sidebar_ids() description
+-- Update Conductor_Sidebars::find_orphaned_widgets_sidebar_ids() description
+-- Fixed PHP notice in the Customizer when a CSS dependency was missing on content pieces
+   that did not have a Conductor content layout applied
+- Note Sidebars
+-- Introduce "Add Conductor Widget" button to Note Sidebar UI Buttons
+- Conductor Templates
+-- Introduce 'conductor_template_include' filter to allow for easier filtering of main Conductor template
+-- Introduce Conductor::get_conductor_content_layout_data() to fetch data associated with the current
+   (or a specific) content layout; allows for content layouts to be registered with data/logic that is automatically
+   applied when the content layout is selected
+- Conductor Sidebars
+-- Introduce 'conductor_register_sidebars' action to allow for registration of other Conductor sidebars
+   specific to content layouts
+-- Introduce conductor_register_default_sidebar_widget() function to allow default widgets to be registered
+   for specific content layouts (alpha)
+-- Introduce conductor_register_sidebar() function as a wrapper for register_sidebar() but to keep track of
+   all Conductor sidebars
+-- Introduce Conductor Sidebar ID prefix and suffix functions with filters ('conductor_content_layout_sidebar_id_prefix'
+   and 'conductor_content_layout_sidebar_id_suffix' filters)
+- Conductor Widgets
+-- Replaced Note Widget self::WP_Widget() call with parent::__construct() call (fixes PHP warnings in future versions
+   of WordPress)
+-- Added hooks (actions) before and after all widget settings/sections to allow for greater flexibility
+   for developers
+-- Added flexbox (Custom) display to Conductor Widget sizes which allows users to specify columns for output
+-- Fixed bug where Conductor Widget from an inactive sidebar was added to an active sidebar in the Widgets admin and
+   JavaScript was not initialized for that widget
+- Conductor Note Widget
+-- Depreciated
+- Customizer
+-- Major refactoring of the Conductor content layouts scripts including registering new content layouts
+   without the need for a Customizer reload
+-- Added a loading indicator next to the "Conduct this Content Type" button in the Customizer to provide user feedback
+-- Fixed PHP warning in Conductor Customizer Content Layouts Setting class where an associative
+   array_diff check was not passed an array of data
+- Conductor Flexbox
+-- Adjusted percentage of 3 column layouts to 33.333% instead of just 33%
+-- Added missing responsive CSS for 3 column displays
+
+1.2.2 // September 28 2015
+--------------------------
+- General
+-- Fixed user experience in Customizer on initial Previewer load (Conductor Section no longer automatically
+   has focus)
+
+1.2.1 // March 18 2015
+----------------------
+- General
+-- Use global $post during all Conductor loops
+-- Fixed reference to incorrect function in Conductor_Widget_Query class
+-- Fixed a bug where page count was referenced for single Posts in the Conductor content layout
+   controls dropdown; Thanks Lisa Snyder
+-- Fixed Conductor "Edit" helper button bug where widget section would not open in the Customizer
+-- Adjusted CSS for Conductor "Edit" helper buttons
+- Conductor Widget
+-- Introduce "conductor-widget-wrap" and "conductor-widget-single-wrap" CSS classes to Conductor
+   Widget wrapper elements
+-- Revamped Conductor_Widget::get_excerpt_by_id() to use WordPress logic for trimming excerpt; Thanks Deyan Petrov
+- Conductor Widget Query
+-- Introduced Conductor_Widget_Query:reset_global_post(); used primarily on "single" Conductor Widgets
+-- Introduced Conductor_Widget_Query:the_post(); used primarily on "many" Conductor Widgets
+-- Allow functions outside of PHP classs to be used as callback functions for output elements
+- Conductor Note Widget
+-- Added do_shortcode() wrapper around Conductor Note Widget template content; Thanks Lisa Snyder
+-- Added 'conductor_note_tinymce_plugins', 'conductor_note_tinymce_toolbar', and 'conductor_note_tinymce_placeholder' filters
+-- Fixed CSS bug where Conductor Note Widget columns would inherit Conductor styles on conducted posts
+- Conductor Templates
+-- Fixed reference of primary sidebar in data-sidebar-id attribute on content-before.php Conductor template
+
+1.2.0 // March 12 2015
+----------------------
+- General
+-- Added wp_version_compare() helper function to compare against current WordPress version
+-- Use get_class() in is_conductor() function instead of 'Conductor' for array_filter()
+-- Improved conductor_get_template_part() function to allow data to be passed to the template,
+   including WordPress globals; also allow templates to be required only once if necessary
+-- Updated default Conductor template verbiage
+-- Minor code formatting & comment adjustments
+- Conductor Widget
+-- Set widget defaults as property on PHP class and moved to constructor
+- Conductor Note Widget
+-- Introduced ability to specify templates within Note Widgets (requires Note v1.1.2 and above)
+
+1.1.3 // December 16 2014
+-------------------------
+- WordPress 4.1 Support
+-- Fixed a bug where a previously conducted content layout did not display correctly in the
+   Customizer Previewer on initial load (WP_Customize_Setting::post_value() was empty)
+-- Adjusted Conductor helper buttons to use new Customizer API functions to interact with panels,
+   sections, and controls
+- General
+-- Fixed conflict with Note CSS in Previewer
+-- Adjusted some source code formatting
+
+1.1.2 // November 04 2014
+-------------------------
+- General
+-- Fixed a bug where the Conduct_Widget() function may not be defined and the Conductor_Scripts_Styles
+   class would throw a fatal PHP error; Thanks Jason Resnick
+--- This bug indirectly caused conflict with WordPress SEO by Yoast on the sitemap pages (when a sitemap didn't exist)
+--- @see https://github.com/Yoast/wordpress-seo/blob/09488fd5662d25a843d9715a12133e22e4aaf38d/inc/class-sitemaps.php#L106-L117
+-- Fixed a bug with content layout preview displays in "quirks" mode; Thanks Jeff Chandler
+-- Adjusted CSS for Conductor Widget display previews to ensure better display in "quirks" mode
+-- Adjusted CSS for Conductor Widget UI Buttons displayed in Customizer
+-- Fixed a bug where front page could not be conducted properly if "Your latest posts" was selected
+-- Fixed "Conduct" link on blog layout in Conductor Options
+-- Adjusted priority on template_include filter to attempt to prevent conflicts with other plugins
+- Conductor Widget
+-- Fixed a bug where single Conductor Widget instances were 1 revision behind due to hidden input element
+   "change" event not triggering; debounced event handler functionality
+-- Fixed a few PHP warnings on output elements
+-- Fixed a bug where accordion sections were not controlled properly on newly added widgets
+- Customizer
+-- Fixed a bug where Conductor UI buttons altered layout of single Conductor Widgets
+
+1.1.1 // October 10 2014
+------------------------
+- Fixed a bug where the Conductor helper buttons within the Customizer were overlapped by a float clearing element
+- Fixed a bug where Conductor "Edit" helper button was added to default Conductor templates
+
+1.1.0 // October 09 2014
+------------------------
+- General
+-- Tidied up various in-line documentation/comment verbiage
+-- Added clearing element before closing elements on all Conductor sidebars/content areas (templates)
+-- Small JavaScript optimizations
+-- Created script that is loaded on each Conductor admin page for general bits of functionality
+- Content Layouts
+-- Removed trailing slash from permalink on built-in "blog" page
+- Customizer General
+-- Fixed bug when conducting content layouts without a permalink structure (Previewer always re-directed
+   to home_url())
+- Customizer Controller
+-- Adjusted [removed: customize-base, customize-controls] dependencies on Customizer content layout control script enqueue
+-- Fixed variable name in JavaScript closure (was 'exports' now 'wp')
+- Conductor Widget
+-- Ensured admin script was enqueued after Customizer Widgets when in Customizer
+-- Extended 'formSyncHandlers' to add callback for Conductor Widgets in Customizer
+-- Fixed bug where content type was incorrect sometimes due to loss of focus on select box after
+   a widget was saved in the Customizer
+-- Fixed a bug where "post_id" setting was not reset after switching content type during a session
+   in the Customizer
+-- Fixed a display conflict with some plugins by tightening up CSS on Conductor Dashicons in the Customizer
+   and Appearance > Widgets
+-- Fixed bug where CSS was not loaded when a Conductor widget was placed in any sidebar that was
+   not registered by Conductor; Thanks Martin Avery
+-- Fixed jQuery Sortable data that was generated after sorting output elements to ensure correct
+   data and data types were stored on the widget (added data-value HTML5 attribute to output elements
+   that were associated with a value)
+-- Fixed a bug where max_num_posts setting could be 0 and pagination would not function correctly
+   on default Conductor Widget Query class
+-- Fixed a bug where pagination did not function properly without a permalink structure
+--- Fixed bug on single posts where pagination did not function properly with any permalink structure
+- Add-ons
+-- Created working add-ons panel
+- Updates
+-- Switched to HTTPS for updates
+-- Modified Conductor Updates class to allow add-ons to extend/create instances of updater
+-- Introduce get_version(), get_conductor_version(), get_author(), get_plugin_file(), and
+   get_conductor_plugin_file() functions
+-- Fixed issue where update_plugins transient was constantly emptied which resulted in update
+   checks on every page load
+
+1.0.4 // September 19 2014
+--------------------------
+- WordPress 4.0 Improvements:
+-- Fixed case where jQuery "beforeunload" event was triggered on Customizer refresh but Conductor
+   needed to refresh to load sidebars for a newly registered content layout
+-- Triggered "change" event when removing a content layout
+-- Fixed Conductor "helper" buttons in Customizer to ensure they functioned properly with new Panels
+- WordPress 3.9.2 and below Improvements
+-- Added beforeunload AYS message that exists in 4.0 to ensure data is not lost when conducting a new content layout
+- Updates:
+-- Transitioned over to http://conductorplugin.com for updates
+- Removed some debug information from JavaScript
+
+1.0.3 // August 20 2014
+-----------------------
+- Added new hooks
+- Fixed bug on Conductor Widget where all posts were not output if posts_per_page was blank
+- Fixed bug with pagination on blog, category, post type archives, and single posts
+- Fixed bug where excerpt length was 0 and password protected posts still displayed the password form
+- Fixed deprecated call to mysql_get_server_info() on Help page, now using $wpdb->db_version()
+- Ensured Conductor Toolbar (Admin Bar) menu items appeared only for Administrators
+- Fixed potential bug with "Conduct this Page" URL (now matches admin Customizer URL function)
+- Fixed a bug where first-time Conductor users could not conduct layouts in the Customizer
+- Added "entry-title" CSS class to post title
+- Added better support for Twenty Fourteen
+- Fixed multiple scenarios where the "last" page in a pagination set would display the wrong posts
+- Added ability to adjust the order of sections output on Conductor Widget front-end
+- Fixed Conductor Widget accordion functionality when first Conductor Widget was added to a sidebar
+- Fixed bug where default number of posts to be displayed was blank after saving a "one" query
+- Added ability to pass an array to callback functions for better front-end display control
+
+1.0.2 // June 30 2014
+---------------------
+- Fixed bug where Conductor could not be disabled
+- Adjusted widget CSS
+- Fixed functionality that checks/"keeps" Conductor widgets in Conductor sidebars on theme switch
+
+1.0.1 // June 27 2014
+---------------------
+- Fixed Customizer bug where widget areas could not be expanded
+
+1.0.0 // June 26 2014
+---------------------
+- Initial Release

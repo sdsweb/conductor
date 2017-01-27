@@ -1,0 +1,1 @@
+<p><?php _e( 'Would you like Conductor to remove data on uninstall?', 'conductor' ); ?></p>

@@ -1,0 +1,63 @@
+/**
+ * Conductor Customizer Stylesheet
+ */
+
+/* General */
+.wp-full-overlay.expanded {
+	margin-left: 380px;
+}
+
+.wp-full-overlay-sidebar {
+	width: 380px;
+}
+
+.wp-full-overlay.collapsed .wp-full-overlay-sidebar {
+	margin-left: -380px;
+}
+
+/* Conductor Content Layouts */
+.accordion-section[id*="widgets-conductor"] > h3,
+.accordion-section[id$="conductor_content_layouts"] > h3 {
+	padding-right: 25px;
+}
+
+.conductor-content-layouts-container img {
+	max-width: 100%;
+	height: auto;
+}
+
+.conductor-content-layout-wrap, .conductor-content-layouts-help {
+	display: none;
+}
+
+/* Edit Link */
+.conductor-edit-content-layout-link {
+	display: none;
+}
+
+/* Help */
+.conductor-help-instructions {
+	width: 100%;
+	margin-bottom: 0;
+}
+
+/* Widget */
+.customize-control .conductor-section select {
+	min-width: 0;
+}
+
+.customize-control .conductor-widget-title input[type="text"] {
+	width: 100%;
+}
+
+.conductor-section label {
+	font-size: 13px;
+}
+
+.conductor-input, .conductor-select {
+	font-size: 13px;
+}
+
+.customize-control input[type="text"].conductor-widget-custom-fields {
+	width: 100%;
+}

@@ -1,0 +1,122 @@
+/**
+ * Conductor Content Layouts Customizer Control Stylesheet
+ */
+
+.conductor-container, .conductor-container > *, .conductor-inner {
+	position: relative;
+}
+
+/* Conductor UI */
+.conductor-ui {
+	width: 100%;
+}
+
+.conductor-ui .conductor-ui-inner {
+	margin: 1em;
+	padding: 0.5em;
+	border: 1px dashed #91cde9;
+}
+
+.conductor-ui .conductor-ui-title {
+	margin: 0 0 0.5em;
+	line-height: 1em;
+}
+
+.wp-core-ui .button-primary.conductor-ui-button {
+	margin: 2px;
+	color: #fff;
+	position: relative;
+	z-index: 10000;
+	line-height: 26px;
+}
+
+.wp-core-ui .button-primary.conductor-ui-button > span {
+	color: #fff;
+	line-height: 26px;
+}
+
+
+/* Conductor Widget Controls */
+.conductor-widget-has-ui,
+.conductor-widget.conductor-widget-has-ui,
+.widget.conductor-widget.conductor-widget-has-ui {
+	position: relative;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	border-width: 1px;
+	border-style: dashed;
+	border-color: transparent;
+}
+
+.conductor-widget-has-ui.conductor-edit-border,
+.conductor-widget.conductor-widget-has-ui.conductor-edit-border,
+.widget.conductor-widget.conductor-widget-has-ui.conductor-edit-border {
+	border-color: #aaa;
+}
+
+.conductor-ui-widget {
+	width: 30px;
+	height: 30px;
+	float: none;
+	position: absolute;
+	top: -16px;
+	right: -16px;
+
+	background: rgba(245, 245, 245, 0.85);
+	z-index: 9998;
+	padding: 2px;
+	color: #000;
+	margin-bottom: 8px;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+	border: 1px solid #dedede;
+	border-radius: 15px;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-webkit-transition: all 0s ease 0.4s;
+	transition: all 0s ease 0.4s;
+}
+
+.conductor-widget-has-ui:hover .conductor-ui-widget {
+	opacity: 1;
+	visibility: visible;
+	-webkit-transition: all 0s ease 0s;
+	transition: all 0s ease 0s;
+}
+
+.conductor-ui-widget .dashicons {
+	width: 24px;
+	height: 24px;
+	padding: 2px 0;
+	color: #777;
+	border-radius: 12px;
+	line-height: 18px;
+	border: 1px solid rgba(0, 0, 0, 0);
+	cursor: pointer;
+	display: inline-block;
+	vertical-align: top;
+	text-align: center;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.conductor-ui-widget .dashicons:hover {
+	color: #222;
+	background-color: #fafafa;
+	border-color: #999;
+	-webkit-box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(0, 0, 0, 0.08);
+	box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(0, 0, 0, 0.08);
+}
+
+.conductor-ui-widget .dashicons:active {
+	background-color: #ebebeb;
+	border-color: #999;
+	-webkit-box-shadow: inset 0 2px 5px -3px rgba(0, 0, 0, 0.3);
+	box-shadow: inset 0 2px 5px -3px rgba(0, 0, 0, 0.3);
+}

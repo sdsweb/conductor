@@ -1,0 +1,727 @@
+/**
+ * Conductor Widget Admin Stylesheet
+ */
+
+.conductor-widget-setting {
+	margin: 1em 0;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.conductor-select {
+	width: 100%;
+	max-width: 100%;
+}
+
+.customize-control select.conductor-select {
+	max-width: 100%;
+}
+
+.conductor-hidden {
+	display: none;
+}
+
+.conductor-input {
+	width: 100%;
+	max-width: 100%;
+	padding: 5px;
+}
+
+.conductor-description {
+	padding: 0 0 15px !important;
+}
+
+.conductor-inline-input,
+.customize-control input.conductor-inline-input,
+.customize-control input[type=text].conductor-inline-input {
+	width: 50px;
+	display: inline;
+	font-weight: normal;
+}
+
+.conductor-inline-select {
+	width: auto;
+	margin-top: -2px;
+	display: inline-block;
+	font-weight: normal;
+}
+
+.customize-control select.conductor-inline-select {
+	width: auto;
+}
+
+.conductor-column {
+	width: 48%;
+	float: left;
+	padding: 0 1%;
+}
+
+.conductor-section {
+	margin-bottom: 4%;
+	background: #f6f6f6;
+	border: 1px solid #e6e6e6;
+	border-bottom-color: #e6e6e6;
+}
+
+.conductor-section .dashicons {
+	margin: 0;
+	padding: 0;
+	float: none;
+}
+
+
+/**
+ * Widget Title
+ */
+.conductor-widget-title, .conductor-widget-title-container {
+	position: relative;
+}
+
+.conductor-widget-title .conductor-input {
+	padding-right: 30px;
+}
+
+.conductor-widget-title .conductor-hide-widget-title {
+	position: absolute;
+	top: 6px;
+	right: 5px;
+}
+
+.conductor-widget-title .conductor-hide-widget-title input {
+	display: none;
+}
+
+.conductor-widget-title .conductor-hide-widget-title label {
+	color: #222;
+}
+
+.conductor-widget-title .conductor-hide-widget-title input:checked + label {
+	color: #ccc;
+}
+
+
+/**
+ * Widget Sections/Accordion
+ */
+.conductor-section .conductor-section-title {
+	padding: 12px 8px;
+	background: #eee;
+	/*cursor: pointer;*/
+	border: none;
+}
+
+.conductor-section .conductor-accordion-section-title {
+	cursor: pointer;
+}
+
+.conductor-section.open .conductor-section-title {
+	border-bottom: 1px solid #ccc;
+}
+
+.conductor-section .conductor-section-title h3 {
+	margin: 0;
+	padding: 0;
+	font-size: 1.1em;
+}
+
+.conductor-section .conductor-accordion-section-title {
+	width: auto;
+	height: auto;
+	position: relative;
+}
+
+.js .conductor-section .conductor-accordion-section-title:after {
+	content: '\f140';
+	border: 0;
+	background: 0 0;
+	font: 400 20px/1 dashicons;
+	display: block;
+	padding: 0;
+	text-indent: 0;
+	text-align: center;
+	position: absolute;
+	top: 10px;
+	right: 6px;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-decoration: none!important;
+}
+
+.conductor-section .conductor-accordion-section-content {
+	padding: 2px 10px;
+	background: transparent;
+}
+
+
+/**
+ *Widget Size
+ */
+.conductor-select-widget-size {
+	margin: 0 0 1em;
+	padding: 0 0 1em;
+	font-size: 13px;
+	border-bottom: 1px dashed #ccc;
+}
+
+#content-layout-tab-content .form-table th {
+	width: 160px;
+}
+
+.conductor-widget-size-wrap {
+	position: relative;
+	text-align: center;
+}
+
+.conductor-widget-size-wrap input[type=radio] {
+	display: none;
+}
+
+.conductor-widget-size {
+	margin-bottom: 1em;
+	font-size: 14px;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.conductor-widget-size label {
+	display: inline-block;
+}
+
+.conductor-widget-size .conductor-widget-size-preview {
+	width: 60px;
+	height: 60px;
+	margin: 0 4px 2px 0;
+	padding: 4px;
+	color: #ccc;
+	border: 1px solid #ccc;
+	text-align: center;
+	font-size: 14px;
+	font-weight: bold;
+	text-transform: uppercase;
+	position: relative;
+	overflow: hidden;
+
+	-webkit-transition: all .1s ease-in 0s;
+	transition: all .1s ease-in 0s;
+
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	border-radius: 5px;
+}
+
+.conductor-widget-size-preview .posts {
+	width: 60px;
+	height: 60px;
+	display: table;
+	text-align: center;
+	font-size: 0;
+}
+
+.conductor-widget-size-preview .post {
+	width: 60px;
+	height: 60px;
+	margin-bottom: 2%;
+	position: relative;
+	display: table;
+}
+
+.conductor-widget-size-preview .post .post-featured-image {
+	width: 60px;
+	height: 32px;
+	display: inline-block;
+	background: #ccc;
+
+	-webkit-transition: all .1s ease-in 0s;
+	transition: all .1s ease-in 0s;
+
+	-webkit-border-radius: 3px 3px 0 0;
+	-moz-border-radius: 3px 3px 0 0;
+	-ms-border-radius: 3px 3px 0 0;
+	border-radius: 3px 3px 0 0;
+}
+
+.conductor-widget-size-preview .post .post-title {
+	width: 60px;
+	height: 18px;
+	margin-top: -4%;
+	margin-bottom: 2%;
+	font-size: 40px;
+	line-height: 0;
+	-ms-transform: scale(2.5, 1);
+	-webkit-transform: scale(2.5, 1);
+	-moz-transform: scale(2.5, 1);
+	transform: scale(2.5, 1);
+}
+
+.conductor-widget-size-preview .post .post-content {
+	width: 60px;
+	height: 0;
+	margin-top: -6%;
+	font-size: 25px;
+	line-height: 0;
+	-ms-transform: scale(3, 1);
+	-webkit-transform: scale(3, 1);
+	-moz-transform: scale(3, 1);
+	transform: scale(3, 1);
+}
+
+.conductor-widget-size-preview .label {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.conductor-widget-size .conductor-widget-size-label {
+	width: 100%;
+	margin-bottom: 2px;
+	font-size: 12px;
+	text-align: center;
+	display: block;
+}
+
+.conductor-widget-size:hover .conductor-widget-size-preview .post .post-featured-image {
+	background: #c9c9c9;
+}
+
+/* Colors used as a fallback if admin color scheme does not exist */
+.conductor-widget-size:hover .conductor-widget-size-preview,
+.conductor-widget-size input[type=radio]:checked + .conductor-widget-size-preview {
+	border: 1px solid #0074a2;
+}
+
+.conductor-widget-size:hover .conductor-widget-size-preview .post .post-featured-image,
+.conductor-widget-size input[type=radio]:checked + .conductor-widget-size-preview .post .post-featured-image {
+	background: #1e8cbe;
+}
+
+.conductor-widget-size:hover .conductor-widget-size-preview .post .post-title,
+.conductor-widget-size input[type=radio]:checked + .conductor-widget-size-preview .post .post-title,
+.conductor-widget-size:hover .conductor-widget-size-preview .post .post-content,
+.conductor-widget-size input[type=radio]:checked + .conductor-widget-size-preview .post .post-content,
+.conductor-widget-size:hover .conductor-widget-size-preview .post-flexbox .flexbox,
+.conductor-widget-size input[type=radio]:checked + .conductor-widget-size-preview .post-flexbox .flexbox {
+	color: #1e8cbe;
+}
+
+/* Medium */
+.conductor-widget-size-preview .post-medium {
+	width: 28px;
+	height: 60px;
+	margin-bottom: 0;
+	display: inline-block;
+	overflow: hidden;
+}
+
+.conductor-widget-size-preview .post-medium:first-child {
+	margin-right: 2%;
+}
+
+.conductor-widget-size-preview .post-medium:first-child .post-featured-image {
+	-webkit-border-radius: 3px 0 0 0;
+	-moz-border-radius: 3px 0 0 0;
+	-ms-border-radius: 3px 0 0 0;
+	border-radius: 3px 0 0 0;
+}
+
+.conductor-widget-size-preview .post-medium:last-child {
+	margin-left: 2%;
+}
+
+.conductor-widget-size-preview .post-medium:last-child,
+.conductor-widget-size-preview .post-medium:last-child .post-featured-image {
+	-webkit-border-radius: 0 3px 0 0;
+	-moz-border-radius: 0 3px 0 0;
+	-ms-border-radius: 0 3px 0 0;
+	border-radius: 0 3px 0 0;
+}
+
+.conductor-widget-size-preview .post-medium .post-title {
+	margin-top: -8%;
+}
+
+.conductor-widget-size-preview .post-medium .post-content {
+	margin-top: -18%;
+
+	-ms-transform: scale(3, 1);
+	-webkit-transform: scale(3, 1);
+	-moz-transform: scale(3, 1);
+	transform: scale(3, 1);
+}
+
+/* Small */
+.conductor-widget-size-preview .post-small {
+	width: 13px;
+	height: 60px;
+	margin-left: 2%;
+	margin-right: 2%;
+	margin-bottom: 0;
+	display: inline-block;
+	overflow: hidden;
+}
+
+.conductor-widget-size-preview .post-small .post-featured-image {
+	-webkit-border-radius: 0;
+	-moz-border-radius: 0;
+	-ms-border-radius: 0;
+	border-radius: 0;
+}
+
+.conductor-widget-size-preview .post-small:first-child {
+	/*width: 14px;*/
+	margin-left: 1%;
+}
+
+.conductor-widget-size-preview .post-small:first-child .post-featured-image {
+	-webkit-border-radius: 3px 0 0 0;
+	-moz-border-radius: 3px 0 0 0;
+	-ms-border-radius: 3px 0 0 0;
+	border-radius: 3px 0 0 0;
+}
+
+.conductor-widget-size-preview .post-small:last-child {
+	/*width: 14px;*/
+	margin-right: 0;
+}
+.conductor-widget-size-preview .post-small:last-child,
+.conductor-widget-size-preview .post-small:last-child .post-featured-image {
+	-webkit-border-radius: 0 3px 0 0;
+	-moz-border-radius: 0 3px 0 0;
+	-ms-border-radius: 0 3px 0 0;
+	border-radius: 0 3px 0 0;
+}
+
+.conductor-widget-size-preview .post-small .post-title {
+	margin-top: -16%;
+
+	-webkit-transform-origin: 100%;
+	transform-origin: 100%;
+
+	-ms-transform: scale(3, 1); /* IE9 needs a larger scale */
+	-webkit-transform: scale(2, 1);
+	-moz-transform: scale(2, 1);
+	transform: scale(2, 1);
+}
+
+.conductor-widget-size-preview .post-small .post-content {
+	margin-top: -34%;
+
+	-webkit-transform-origin: 70%;
+	transform-origin: 70%;
+
+	-ms-transform: scale(3, 1); /* IE9 needs a larger scale */
+	-webkit-transform: scale(2, 1);
+	-moz-transform: scale(2, 1);
+	transform: scale(2, 1);
+}
+
+/* Flexbox (Custom) */
+.conductor-widget-size-preview .post-flexbox .flexbox {
+	width: 100%;
+	height: 100%;
+	font-size: 60px;
+	text-align: center;
+}
+
+/**
+ * Flexbox Columns
+ */
+.conductor-flexbox-columns .conductor-flexbox-columns-range {
+	width: 78%;
+	margin: 1em 0;
+	background: transparent;
+	outline: none;
+	-webkit-appearance: none;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.conductor-flexbox-columns .conductor-flexbox-columns-range::-webkit-slider-runnable-track {
+	height: 10px;
+	background: #ddd;
+}
+
+.conductor-flexbox-columns-range::-moz-range-track {
+	width: 100%;
+	height: 10px;
+	background: #ddd;
+	border: 0;
+}
+
+.conductor-flexbox-columns .conductor-flexbox-columns-range::-ms-track {
+	width: 100%;
+	height: 10px;
+	outline: none;
+	color: transparent;
+	background: transparent;
+	border-color: transparent;
+	border-width: 8px 0;
+	-webkit-appearance: none;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.conductor-flexbox-columns .conductor-flexbox-columns-range::-ms-fill-lower {
+	background: #1e8cbe;
+}
+
+.conductor-flexbox-columns .conductor-flexbox-columns-range::-ms-fill-upper {
+	background: #ddd;
+}
+
+.conductor-flexbox-columns .conductor-flexbox-columns-range::-webkit-slider-thumb {
+	width: 10px;
+	height: 20px;
+	margin-top: -4px;
+	background: #fff;
+	cursor: pointer;
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+	-webkit-appearance: none;
+}
+
+.conductor-flexbox-columns .conductor-flexbox-columns-range::-moz-range-thumb {
+	width: 10px;
+	height: 20px;
+	background: #fff;
+	cursor: pointer;
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);
+	border: none;
+	border-radius: 0;
+}
+
+.conductor-flexbox-columns .conductor-flexbox-columns-range::-ms-thumb {
+	width: 10px;
+	height: 20px;
+	background: #fff;
+	cursor: pointer;
+	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.5);;
+	border: none;
+	border-radius: 0;
+}
+
+.conductor-flexbox-columns .conductor-flexbox-columns-value {
+	width: 17%;
+	margin-left: 5px;
+	padding: 3px 0;
+	color: #fff;
+	background: #1e8cbe;
+	text-align: center;
+	position: relative;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.conductor-flexbox-columns-range::-moz-focus-inner {
+	border: 0;
+}
+
+
+/**
+ * Output/Custom Fields
+ */
+.conductor-output {
+	margin: 1em 0;
+}
+
+.conductor-widget-output-list {
+	margin: 4px 1px;
+	padding: 0;
+	border: 1px solid #ddd;
+}
+
+.conductor-widget-output-list li.ui-state-default {
+	margin: 0;
+	padding: 15px 8px;
+	color: #222;
+	background: #fff;
+	border-top: 1px solid rgba(255, 255, 255, 0.5);
+	border-bottom: 1px solid #ddd;
+	font-size: 1em;
+	font-weight: bold;
+	position: relative;
+	outline: 0;
+
+	-webkit-transition: color .1s ease-in 0s;
+	transition: color .1s ease-in 0s;
+}
+
+.conductor-widget-output-list li.ui-state-default:first-child {
+	border-top: 0;
+}
+
+.conductor-widget-output-list li.ui-state-default:last-child {
+	border-bottom: 0;
+}
+
+.conductor-widget-output-list li.ui-state-default .dashicons-sort {
+	color: #ddd;
+	cursor: move;
+}
+.conductor-widget-output-list li.ui-state-default .dashicons-sort:before {
+	margin-left: -4px;
+	padding-right: 2px;
+	border-right: 1px solid #ccc;
+}
+
+.conductor-widget-output-list li.ui-state-default:hover .dashicons-sort {
+	color: #222;
+}
+
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label {
+	padding-left: 2px;
+	color: #ccc;
+	display: inline-block;
+	vertical-align: middle;
+
+	-webkit-transition: color .1s ease-in 0s;
+	transition: color .1s ease-in 0s;
+}
+
+.conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-label {
+	color: #222;
+}
+
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label-editable {
+	cursor: pointer;
+}
+
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label-editable .dashicons-edit {
+	margin-top: -2px;
+	color: #fff;
+}
+
+.conductor-widget-output-list li.ui-state-default:hover .conductor-widget-output-element-label-editable .dashicons-edit {
+	color: #ccc;
+}
+
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label.editing .label,
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label.editing .dashicons-edit,
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label-input {
+	display: none;
+}
+
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label.editing {
+	width: 64%;
+}
+
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label-editable {
+	max-width: 64%;
+}
+
+.conductor-widget-output-list li.ui-state-default .editing .conductor-widget-output-element-label-input {
+	width: 100%;
+	max-width: 100%;
+	display: inline-block;
+	vertical-align: top;
+	position: relative;
+}
+
+.conductor-widget-output-list li.ui-state-default .editing .conductor-widget-output-element-label-input input {
+	width: 100%;
+	max-width: 100%;
+	margin: -3px 0;
+	padding-left: 2px;
+	padding-right: 42px;
+	font-size: 1em;
+	border: 1px dashed #ccc;
+	display: inline-block;
+	outline: none;
+	position: absolute;
+	left: 0;
+	right: 0;
+}
+
+.conductor-widget-output-list li.ui-state-default .editing .conductor-widget-output-element-label-input .conductor-widget-save,
+.conductor-widget-output-list li.ui-state-default .editing .conductor-widget-output-element-label-input .conductor-widget-discard {
+	position: absolute;
+	right: 0;
+}
+
+.conductor-widget-output-list li.ui-state-default .editing .conductor-widget-output-element-label-input .conductor-widget-discard {
+	right: 20px;
+	border-left: 1px dashed #ccc;
+}
+
+/* Option (select) */
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label.editable-select.editing {
+	width: auto;
+}
+
+.conductor-widget-output-list li.ui-state-default .editing .conductor-widget-output-element-label-select {
+	margin: -2px 0 -4px;
+	border: 1px dashed #ccc;
+}
+
+.conductor-widget-output-list li.ui-state-default .editing .conductor-widget-output-element-label-select select {
+	height: 22px;
+	padding: 0;
+	font-size: 13px;
+	line-height: 13px;
+	vertical-align: top;
+}
+
+.conductor-widget-output-list li.ui-state-default .editing .conductor-widget-output-element-label-select .conductor-widget-save,
+.conductor-widget-output-list li.ui-state-default .editing .conductor-widget-output-element-label-select .conductor-widget-discard {
+	height: 22px;
+	position: static;
+	right: auto;
+	vertical-align: bottom;
+}
+
+
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-controls	{
+	width: 20%;
+	text-align: right;
+	float: right;
+}
+
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-controls .dashicons {
+	color: #ccc;
+	cursor: pointer;
+}
+
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-controls .dashicons:hover {
+	color: #222;
+}
+
+/* Link */
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-controls .conductor-widget-link {
+	margin-top: 3px;
+	color: #ccc;
+	font-size: 15px;
+	cursor: pointer;
+}
+
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-controls .conductor-widget-link:hover {
+	color: #ccc;
+}
+
+.conductor-widget-output-list li.ui-state-default.visible.link .conductor-widget-output-element-controls .conductor-widget-link,
+.conductor-widget-output-list li.ui-state-default.visible.link .conductor-widget-output-element-controls .conductor-widget-link:hover {
+	color: #222;
+}
+
+
+/* Visibility */
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-controls .dashicons.conductor-widget-visibility:hover {
+	color: #ccc;
+}
+
+.conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-controls .conductor-widget-visibility,
+.conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-controls .dashicons.conductor-widget-visibility:hover {
+	color: #222;
+}
+
+.conductor-widget-output-list .ui-state-placeholder {
+	margin: 0;
+	padding: 23px;
+	outline: 0;
+	background: rgba(0, 0, 0, 0.10);
+}
+
+
+/**
+ * We need to adjust the z-index on jQuery AutoComplete lists due to Customizer CSS
+ */
+.wp-customizer .ui-autocomplete {
+	z-index: 500001;
+}

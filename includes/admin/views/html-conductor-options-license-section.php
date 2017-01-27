@@ -1,0 +1,1 @@
+<p><?php _e( 'Enter your Conductor license key(s) below.', 'conductor' ); ?></p>

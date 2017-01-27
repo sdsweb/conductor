@@ -1,0 +1,1 @@
+<p><?php _e( 'You may want to customize your WordPress theme to display a unique homepage and have your news category page look different from your sports category or the traditional layout. You can mix and match or conduct your content layouts as many times as you wish. There are no limits.', 'conductor' ); ?></p>

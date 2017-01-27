@@ -1,0 +1,340 @@
+/**
+ * Conductor Stylesheet
+ */
+
+/**
+ * Conductor CSS Reset
+ */
+
+.conductor-container, .conductor-container > * {
+	margin: 0;
+	padding: 0;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+
+	-webkit-font-smoothing: antialiased;
+	-ms-word-wrap: break-word;
+	word-wrap: break-word;
+}
+
+.conductor-container h1, .conductor-container h2,
+.conductor-container h3, .conductor-container h4,
+.conductor-container h5, .conductor-container h6 {
+
+}
+
+.conductor-container img {
+	max-width: 100%;
+	height: auto;
+}
+
+.conductor-container a img {
+	text-decoration: none;
+}
+
+
+
+/* Clearing Elements */
+.conductor-clear {
+	clear: both;
+}
+
+.conductor-cf {
+	zoom: 1;
+}
+
+.conductor-cf:before,
+.conductor-cf:after {
+	content: " ";
+	display: table;
+}
+
+.conductor-cf:after {
+	clear: both;
+}
+
+
+/**
+ * General Styles
+ */
+
+.conductor-content, .conductor-primary-sidebar, .conductor-secondary-sidebar {
+	float: left;
+}
+
+.conductor-inner {
+	padding: 0.75em;
+}
+
+/*.conductor-primary-sidebar .conductor-inner > *, .conductor-secondary-sidebar .conductor-inner > * {
+	width: auto;
+	float: none;
+}*/
+
+
+/**
+ * General Layout Styles (columns)
+ */
+
+/* 1 Column (Content) */
+.conductor-cols-1 .conductor-content {
+	width: 100%;
+	float: none;
+}
+
+/* 2 Columns (Content, Sidebar) */
+.conductor-cols-2 .conductor-content {
+	width: 66.67%;
+}
+
+.conductor-cols-2 .conductor-primary-sidebar {
+	width: 33.33%;
+}
+
+/* 2 Columns Right (Sidebar, Content) */
+.conductor-cols-2-r .conductor-content {
+	width: 66.67%;
+	float: right;
+}
+
+.conductor-cols-2-r .conductor-primary-sidebar {
+	width: 33.33%;
+	float: left;
+}
+
+/* 3 Columns (Content, Sidebar, Sidebar) */
+.conductor-cols-3 .conductor-content {
+	width: 50%;
+}
+
+.conductor-cols-3 .conductor-primary-sidebar, .conductor-cols-3 .conductor-secondary-sidebar {
+	width: 25%;
+}
+
+.conductor-cols-3 .conductor-secondary-sidebar {
+}
+
+/* 3 Columns Middle (Sidebar, Content, Sidebar) */
+.conductor-cols-3-m .conductor-container {
+	padding: 0 25%;
+}
+
+.conductor-cols-3-m .conductor-content {
+	width: 100%;
+	float: right;
+}
+
+.conductor-cols-3-m .conductor-primary-sidebar, .conductor-cols-3-m .conductor-secondary-sidebar {
+	width: 50%;
+}
+
+.conductor-cols-3-m .conductor-primary-sidebar {
+	margin: 0 0 0 -50%;
+	float: left;
+}
+
+.conductor-cols-3-m .conductor-secondary-sidebar {
+	margin: 0 -150% 0 0;
+	float: right;
+}
+
+/* 3 Columns Right (Sidebar, Sidebar, Content) */
+.conductor-cols-3-r .conductor-content {
+	width: 50%;
+	float: right;
+}
+
+.conductor-cols-3-r .conductor-primary-sidebar, .conductor-cols-3-r .conductor-secondary-sidebar {
+	width: 25%;
+}
+
+.conductor-cols-3-r .conductor-secondary-sidebar {
+}
+
+
+/**
+ * Responsive Structure
+ */
+@media only screen and (max-width : 1024px) {
+}
+
+@media only screen and (max-width: 960px) {
+	/* 3 Columns (Content, Sidebar, Sidebar) */
+	.conductor-cols-3 .conductor-content {
+		width: 66.67%;
+	}
+
+	.conductor-cols-3 .conductor-primary-sidebar, .conductor-cols-3 .conductor-secondary-sidebar {
+		width: 33.33%;
+	}
+
+	.conductor-cols-3 .conductor-primary-sidebar {
+		float: right;
+	}
+
+	/* 3 Columns Middle (Sidebar, Content, Sidebar) */
+	.conductor-cols-3-m .conductor-container {
+		padding: 0 3%;
+	}
+
+	.conductor-cols-3-m .conductor-content {
+		width: 100%;
+		float: none;
+	}
+
+	.conductor-cols-3-m .post-image img {
+		margin: 0 auto;
+		display: block;
+	}
+
+	.conductor-cols-3-m .conductor-primary-sidebar, .conductor-cols-3-m .conductor-secondary-sidebar {
+		width: 50%;
+	}
+
+	.conductor-cols-3-m .conductor-primary-sidebar {
+	}
+
+	.conductor-cols-3-m .conductor-secondary-sidebar {
+	}
+
+	/* 3 Columns Right (Sidebar, Sidebar, Content) */
+	.conductor-cols-3-r .conductor-content {
+		width: 66.67%;
+		float: right;
+	}
+
+	.conductor-cols-3-r .conductor-primary-sidebar, .conductor-cols-3-r .conductor-secondary-sidebar {
+		width: 33%;
+		float: left;
+	}
+
+	.conductor-cols-3-r .conductor-secondary-sidebar {
+		clear: left;
+	}
+}
+
+@media only screen and (max-width : 768px) {
+	/* 2 Columns (Content, Sidebar) & 2 Columns Right (Sidebar, Content) */
+	.conductor-cols-2 .conductor-content, .conductor-cols-2-r .conductor-content {
+		width: 100%;
+		float: none;
+	}
+
+	.conductor-cols-2 .conductor-primary-sidebar, .conductor-cols-2-r .conductor-primary-sidebar {
+		width: 100%;
+		float: none;
+	}
+
+	/* 3 Columns (Content, Sidebar, Sidebar) */
+	.conductor-cols-3 .conductor-content{
+		width: 100%;
+	}
+
+	.conductor-cols-3 .conductor-primary-sidebar, .conductor-cols-3 .conductor-secondary-sidebar {
+		width: 100%;
+		float: none;
+	}
+
+	/* 3 Columns Middle (Sidebar, Content, Sidebar) */
+	.conductor-cols-3-m .conductor-container {
+		padding: 0;
+	}
+
+	.conductor-cols-3-m .conductor-content{
+		width: 100%;
+		float: none;
+	}
+
+	.conductor-cols-3-m .conductor-primary-sidebar, .conductor-cols-3-m .conductor-secondary-sidebar {
+		width: 100%;
+		margin: 0;
+		float: none;
+	}
+
+	/* 3 Columns Right (Sidebar, Sidebar, Content) */
+	.conductor-cols-3-r .conductor-content{
+		width: 100%;
+		float: none;
+	}
+
+	.conductor-cols-3-r .conductor-primary-sidebar, .conductor-cols-3-r .conductor-secondary-sidebar {
+		width: 100%;
+		float: none;
+	}
+}
+
+/* Phones */
+@media only screen and (max-width : 568px) {
+}
+
+
+
+/**
+ * Core WordPress Theme Support
+ */
+/* TODO: Break these support styles into individual files, only enqueue if necessary */
+/* TwentyFourteen (2014) */
+.twentyfourteen .conductor-container .widget-title {
+	color: #2b2b2b;
+	font-size: 16px;
+	font-weight: 900;
+	line-height: 1.5;
+}
+
+.twentyfourteen .conductor-container .widget a {
+	color: #2b2b2b;
+}
+
+.twentyfourteen .conductor-container .widget a:hover {
+	color: #41a62a;
+}
+
+.twentyfourteen .conductor-container .entry-title,
+.twentyfourteen .conductor-container .entry-title a {
+	font-size: 33px;
+	font-weight: 300;
+	line-height: 1.0909090909;
+	margin: 0 0 12px 0;
+	text-transform: uppercase;
+}
+
+.twentyfourteen .conductor-container .entry-title a:hover {
+	text-decoration: none;
+}
+
+.twentyfourteen.conductor-cols-3 .conductor-content {
+	/*width: 30%;*/
+}
+
+.twentyfourteen.conductor-cols-3-m .conductor-container {
+	padding: 0 20%;
+}
+
+@media screen and (min-width: 1008px) {
+	.twentyfourteen .conductor-container {
+		margin-left: 200px
+	}
+}
+
+@media screen and (max-width: 1008px) {
+	.twentyfourteen.conductor-cols-3-m .conductor-container {
+		padding: 0 25%;
+	}
+}
+
+@media screen and (min-width: 1080px) {
+	.twentyfourteen .conductor-container {
+		 margin-left: 240px;
+	 }
+}
+
+@media only screen and (max-width : 768px) {
+	.twentyfourteen.conductor-cols-3 .conductor-content {
+		/*width: 100%;*/
+	}
+
+	.twentyfourteen.conductor-cols-3-m .conductor-container {
+		padding: 0 5%;
+	}
+}

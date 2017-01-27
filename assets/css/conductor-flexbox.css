@@ -1,0 +1,216 @@
+/**
+ * Conductor Flexbox Stylesheet
+ */
+
+/**
+ * Conductor Flexbox Row & Conductor Widget Rows
+ */
+.conductor-flex,
+.conductor-widget.conductor-flex,
+.widget.conductor-widget.conductor-flex {
+	width: 100%;
+	margin: auto;
+
+	display: -webkit-box;
+	display: -moz-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-moz-flex-flow: row wrap;
+	-ms-flex-flow: row wrap;
+	-webkit-flex-flow: row wrap;
+	flex-flow: row wrap;
+	-moz-justify-content: space-around;
+	-ms-justify-content: space-around;
+	-webkit-justify-content: space-around;
+	justify-content: space-around;
+	-moz-align-content: flex-start;
+	-ms-align-content: flex-start;
+	-webkit-align-content: flex-start;
+	align-content: flex-start;
+	-ms-flex-pack: end;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.conductor-widget.conductor-flex,
+.widget.conductor-widget.conductor-flex,
+.conductor-widget-single-flexbox-wrap.conductor-flex {
+	-moz-justify-content: flex-start;
+	-ms-justify-content: flex-start;
+	-webkit-justify-content: flex-start;
+	justify-content: flex-start;
+}
+
+.conductor-widget-single-flexbox-wrap.conductor-flex .conductor-widget {
+	display: block;
+}
+
+.conductor-flex .conductor-widget, .conductor-flex .conductor-widget.widget {
+	display: block;
+}
+
+/* Flexbox does not like different types of displays on pseudo elements so we'll hide :before and :after elements to attempt to add better support across themes */
+.conductor-flex:before, .conductor-flex:after {
+	display: none;
+}
+
+/**
+ * Conductor Flexbox Columns
+ */
+.conductor-flex .conductor-col {
+	width: 100%;
+	padding: 0 1em;
+	position: relative;
+
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+.conductor-widget.conductor-flex .conductor-col,
+.conductor-widget-single-flexbox-wrap.conductor-flex .conductor-col {
+	padding: 1em;
+}
+
+.conductor-flex-1-columns .conductor-col,
+.conductor-flex-1-columns .conductor-widget.conductor-col,
+.conductor-flex-1-columns .widget.conductor-widget.conductor-col {
+	width: 100%;
+}
+
+.conductor-flex-2-columns .conductor-col,
+.conductor-flex-2-columns .conductor-widget.conductor-col,
+.conductor-flex-2-columns .widget.conductor-widget.conductor-col {
+	width: 50%;
+}
+
+.conductor-flex-3-columns .conductor-col,
+.conductor-flex-3-columns .conductor-widget.conductor-col,
+.conductor-flex-3-columns .widget.conductor-widget.conductor-col {
+	width: 33.333%;
+}
+
+.conductor-flex-4-columns .conductor-col,
+.conductor-flex-4-columns .conductor-widget.conductor-col,
+.conductor-flex-4-columns .widget.conductor-widget.conductor-col {
+	width: 25%;
+}
+
+.conductor-flex-5-columns .conductor-col,
+.conductor-flex-5-columns .conductor-widget.conductor-col,
+.conductor-flex-5-columns .widget.conductor-widget.conductor-col {
+	width: 20%;
+}
+
+.conductor-flex-6-columns .conductor-col,
+.conductor-flex-6-columns .conductor-widget.conductor-col,
+.conductor-flex-6-columns .widget.conductor-widget.conductor-col {
+	width: 16.6665%;
+}
+
+
+/**
+ * Conductor Widget Flexbox
+ */
+
+/* General */
+.conductor-widget.conductor-flex .widget-title,
+.conductor-widget.conductor-flex .page-numbers {
+	width: 100%;
+}
+
+/* "Large" */
+.conductor-widget.conductor-flex-1-columns .post-title,
+.conductor-widget.conductor-flex-1-columns .post-title a,
+.conductor-flex-1-columns .conductor-widget .post-title,
+.conductor-flex-1-columns .widget.conductor-widget .post-title a {
+	font-size: 1.5em;
+}
+
+/* "Medium" */
+.conductor-widget.conductor-flex-2-columns .post-title,
+.conductor-widget.conductor-flex-2-columns .post-title a,
+.conductor-flex-2-columns .conductor-widget .post-title,
+.conductor-flex-2-columns .widget.conductor-widget .post-title a,
+.conductor-widget.conductor-flex-3-columns .post-title,
+.conductor-widget.conductor-flex-3-columns .post-title a,
+.conductor-flex-3-columns .conductor-widget .post-title,
+.conductor-flex-3-columns .widget.conductor-widget .post-title a {
+	font-size: 1.25em;
+}
+
+/* "Small" */
+.conductor-widget.conductor-flex-4-columns .post-title,
+.conductor-widget.conductor-flex-4-columns .post-title a,
+.conductor-flex-4-columns .conductor-widget .post-title,
+.conductor-flex-4-columns .widget.conductor-widget .post-title a,
+.conductor-widget.conductor-flex-5-columns .post-title,
+.conductor-widget.conductor-flex-5-columns .post-title a,
+.conductor-flex-5-columns .conductor-widget .post-title,
+.conductor-flex-5-columns .widget.conductor-widget .post-title a,
+.conductor-widget.conductor-flex-6-columns .post-title,
+.conductor-widget.conductor-flex-6-columns .post-title a,
+.conductor-flex-6-columns .conductor-widget .post-title,
+.conductor-flex-6-columns .widget.conductor-widget .post-title a {
+	font-size: 1em;
+}
+
+.conductor-widget.conductor-flex img,
+.conductor-widget-single-flexbox-wrap.conductor-flex img {
+	max-width: 100%;
+	height: auto;
+	vertical-align: top;
+}
+
+/* Responsive Structure */
+@media only screen and (max-width : 768px) {
+	.conductor-flex-2-columns .conductor-col,
+	.conductor-flex-2-columns .conductor-widget.conductor-col,
+	.conductor-flex-2-columns .widget.conductor-widget.conductor-col {
+		width: 100%;
+	}
+
+	.conductor-flex-4-columns .conductor-col,
+	.conductor-flex-4-columns .conductor-widget.conductor-col,
+	.conductor-flex-4-columns .widget.conductor-widget.conductor-col {
+		width: 50%;
+	}
+
+	.conductor-flex-5-columns .conductor-col,
+	.conductor-flex-5-columns .conductor-widget.conductor-col,
+	.conductor-flex-5-columns .widget.conductor-widget.conductor-col {
+		width: 33%;
+	}
+
+	.conductor-flex-6-columns .conductor-col,
+	.conductor-flex-6-columns .conductor-widget.conductor-col,
+	.conductor-flex-6-columns .widget.conductor-widget.conductor-col {
+		width: 33%;
+	}
+}
+
+@media only screen and (max-width : 568px) {
+	.conductor-flex-3-columns .conductor-col,
+	.conductor-flex-3-columns .conductor-widget.conductor-col,
+	.conductor-flex-3-columns .widget.conductor-widget.conductor-col {
+		width: 100%;
+	}
+
+	.conductor-flex-4-columns .conductor-col,
+	.conductor-flex-4-columns .conductor-widget.conductor-col,
+	.conductor-flex-4-columns .widget.conductor-widget.conductor-col {
+		width: 100%;
+	}
+
+	.conductor-flex-5-columns .conductor-col,
+	.conductor-flex-5-columns .conductor-widget.conductor-col,
+	.conductor-flex-5-columns .widget.conductor-widget.conductor-col {
+		width: 100%;
+	}
+
+	.conductor-flex-6-columns .conductor-col,
+	.conductor-flex-6-columns .conductor-widget.conductor-col,
+	.conductor-flex-6-columns .widget.conductor-widget.conductor-col {
+		width: 100%;
+	}
+}
