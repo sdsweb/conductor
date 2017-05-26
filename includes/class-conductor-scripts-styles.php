@@ -59,7 +59,7 @@ if ( ! class_exists( 'Conductor_Scripts_Styles' ) ) {
 				// Grab the Conductor Widget instance
 				$conductor_widget = Conduct_Widget();
 
-				if ( is_active_widget( false, false, $conductor_widget->id_base, true ) ) {
+				if ( is_active_widget( false, false, $conductor_widget->id_base ) ) {
 					// Conductor Flexbox
 					wp_enqueue_style( 'conductor-flexbox', Conductor::plugin_url() . '/assets/css/conductor-flexbox.css', false, Conductor::$version );
 

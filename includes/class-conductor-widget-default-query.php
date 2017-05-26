@@ -5,7 +5,7 @@
  *
  * @class Conductor_Widget_Default_Query
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.4.1
  * @since 1.0.0
  */
 
@@ -18,7 +18,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.4.1';
 
 		/**
 		 * @var WP_Widget, Conductor Widget
@@ -138,7 +138,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 				// If no posts_per_page value is set, or posts_per_page and max_num_posts values are even, use the max_num_posts
 				if ( empty( $this->widget_instance['query_args']['posts_per_page'] ) || ( ( int ) $this->widget_instance['query_args']['posts_per_page'] === ( int ) $this->widget_instance['query_args']['max_num_posts'] ) ) {
 					// If max_num_posts is empty, we need to show all of the posts
-					if( $this->widget_instance['query_args']['max_num_posts'] === '' ) {
+					if ( $this->widget_instance['query_args']['max_num_posts'] === '' ) {
 						$post_counts = wp_count_posts( $this->widget_instance['query_args']['post_type'] );
 						$query_args['posts_per_page'] = ( int ) $post_counts->publish;
 					}
@@ -397,8 +397,8 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 				'format' => ( $permalink_structure ) ? 'page/%#%/' : '&paged=%#%', // %#% will be replaced with page number
 				'current' => max( 1, ( ( $_conductor = $query->get( '_conductor' ) ) && isset( $_conductor['last_page'] ) && $_conductor['last_page'] ) ? $query->max_num_pages : $query->get( 'paged' ) ), // Get whichever is the max out of 1 and the current page count
 				'total' => $query->max_num_pages, // Get total number of pages in current query
-				'next_text' => 'Next &#8594;',
-				'prev_text' => '&#8592; Previous',
+				'next_text' => __(' Next &#8594;', 'conductor' ),
+				'prev_text' => __( '&#8592; Previous', 'conductor' ),
 				'type' => ( ! $echo ) ? 'array' : 'list'  // Output this as an array or unordered list
 			);
 

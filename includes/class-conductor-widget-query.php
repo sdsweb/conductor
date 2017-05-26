@@ -164,6 +164,9 @@ if ( ! class_exists( 'Conductor_Widget_Query' ) ) {
 					999 => array( get_class(), 'conductor_widget_content_wrapper_close' ), // Static callback
 					1000 => array( get_class(), 'conductor_widget_wrapper_close' ) // Static callback
 				);
+
+				// Sort the hooks by key
+				ksort( $this->hooks['conductor_widget_display_content_' . $this->widget->number] );
 			}
 		}
 

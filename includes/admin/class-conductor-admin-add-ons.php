@@ -388,6 +388,7 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 								// Grab the add-on instance
 								$add_on_instance = $add_on_data['instance']();
 
+								// TODO: add-ons may not always hook into plugins_loaded
 								// If this add-on has a plugins_loaded and admin_notices callback
 								if ( method_exists( $add_on_instance, 'plugins_loaded' ) && method_exists( $add_on_instance, 'admin_notices' ) ) {
 									// Call the plugins_loaded() function

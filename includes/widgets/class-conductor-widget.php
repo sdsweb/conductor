@@ -4,7 +4,7 @@
  *
  * @class Conductor_Widget
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.4.1
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.4.1';
 
 		/**
 		 * @var array, Conductor Widget defaults
@@ -93,7 +93,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 				'medium' => __( 'Medium', 'conductor' ),
 				'large' => __( 'Large', 'conductor' ),
 				'flexbox' => array(
-					'label' => __( 'Custom', 'conductor' ),
+					'label' => __( 'Columns', 'conductor' ),
 					'customize' => array(
 						'columns' => true // Columns
 					)
@@ -415,7 +415,6 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 			}
 
 			$new_instance['css_id'] = ( ! empty( $new_instance['css_id'] ) ) ? sanitize_text_field( $new_instance['css_id'] ) : $this->defaults['css_id'];
-
 
 			return apply_filters( 'conductor_widget_update', $new_instance, $old_instance, $this );
 		}
@@ -1457,7 +1456,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php
 								// If we have public post types
 								if ( ! empty( $public_post_types ) ) :
-									// Post counts TODO: May no longer be necessary since the logic to display one content type has changed (test)
+									// Post counts
 									$post_counts = array();
 
 									// First public post type with content
@@ -1465,7 +1464,13 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 
 									// Post Count
 									if ( ! $current_content_type_post_count = wp_cache_get( $instance['content_type'] . '_post_type_count', 'conductor-widget' ) ) {
-										$current_content_type_post_count = ( int ) wp_count_posts( $instance['content_type'] )->publish;
+										// Grab the post counts for the current content type
+										$current_content_type_post_counts = wp_count_posts( $instance['content_type'] );
+
+										// Grab the current content type publish post count
+										$current_content_type_post_count = ( $current_content_type_post_counts && property_exists( $current_content_type_post_counts, 'publish' ) ) ? ( int ) $current_content_type_post_counts->publish : 0;
+
+										// Add the current content type publish post count to cache
 										wp_cache_add( $instance['content_type'] . '_post_type_count', $current_content_type_post_count, 'conductor-widget' ); // Store cache
 									}
 
@@ -1563,7 +1568,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 								<option value=""><?php _e( '&mdash; Select &mdash;', 'conductor' ); ?></option>
 								<option value="author" <?php selected( $instance['query_args']['orderby'], 'author' ); ?> data-type="built-in"><?php _e( 'Author', 'conductor' ); ?></option>
 								<option value="comment_count" <?php selected( $instance['query_args']['orderby'], 'comment_count' ); ?> data-type="built-in"><?php _e( 'Comment Count', 'conductor' ); ?></option>
-								<option value="date" <?php selected( $instance['query_args']['orderby'], 'date' ); ?> data-type="built-in"><?php _e( 'Date', 'conductor' ); ?></option>
+								<option value="date" <?php selected( $instance['query_args']['orderby'], 'date' ); ?> data-type="built-in" data-default="true"><?php _e( 'Date', 'conductor' ); ?></option>
 								<option value="ID" <?php selected( $instance['query_args']['orderby'], 'ID' ); ?> data-type="built-in"><?php _e( 'ID', 'conductor' ); ?></option>
 								<option value="parent" <?php selected( $instance['query_args']['orderby'], 'parent' ); ?> data-type="built-in"><?php _e( 'Parent', 'conductor' ); ?></option>
 								<option value="name" <?php selected( $instance['query_args']['orderby'], 'name' ); ?> data-type="built-in"><?php _e( 'Post Slug', 'conductor' ); ?></option>

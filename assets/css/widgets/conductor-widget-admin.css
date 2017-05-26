@@ -210,7 +210,8 @@
 	border-radius: 5px;
 }
 
-.conductor-widget-size-preview .posts {
+.conductor-widget-size-preview .posts,
+.conductor-widget-size-preview .posts * {
 	width: 60px;
 	height: 60px;
 	display: table;
@@ -566,7 +567,8 @@
 	color: #222;
 }
 
-.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label {
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label,
+.conductor-widget-output-list li.ui-state-default .conductor-widget-output-element-label * {
 	padding-left: 2px;
 	color: #ccc;
 	display: inline-block;
@@ -576,7 +578,8 @@
 	transition: color .1s ease-in 0s;
 }
 
-.conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-label {
+.conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-label,
+.conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-label * {
 	color: #222;
 }
 
@@ -696,7 +699,9 @@
 }
 
 .conductor-widget-output-list li.ui-state-default.visible.link .conductor-widget-output-element-controls .conductor-widget-link,
-.conductor-widget-output-list li.ui-state-default.visible.link .conductor-widget-output-element-controls .conductor-widget-link:hover {
+.conductor-widget-output-list li.ui-state-default.visible.link .conductor-widget-output-element-controls .conductor-widget-link:hover,
+.conductor-widget-output-list li.ui-state-default.visible.link .conductor-widget-output-element-controls .conductor-widget-link *,
+.conductor-widget-output-list li.ui-state-default.visible.link .conductor-widget-output-element-controls .conductor-widget-link:hover * {
 	color: #222;
 }
 
@@ -707,7 +712,9 @@
 }
 
 .conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-controls .conductor-widget-visibility,
-.conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-controls .dashicons.conductor-widget-visibility:hover {
+.conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-controls .dashicons.conductor-widget-visibility:hover,
+.conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-controls .conductor-widget-visibility *,
+.conductor-widget-output-list li.ui-state-default.visible .conductor-widget-output-element-controls .dashicons.conductor-widget-visibility:hover * {
 	color: #222;
 }
 
