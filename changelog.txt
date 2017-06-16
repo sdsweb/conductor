@@ -2,9 +2,13 @@
 Plugin: Conductor
 Author: Slocum Themes/Slocum Design Studio
 Author URI: https://conductorplugin.com/
-Current Version: 1.4.1
+Current Version: 1.4.2
 ==========================================
 
+
+1.4.2 // June 16 2017
+---------------------
+- Adjusted logic to hide "feature one" dropdown elements based on selected content type
 
 1.4.1 // May 22 2017
 --------------------

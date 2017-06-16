@@ -4,7 +4,7 @@
  *
  * @class Conductor_Widget
  * @author Slocum Studio
- * @version 1.4.1
+ * @version 1.4.2
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.1';
+		public $version = '1.4.2';
 
 		/**
 		 * @var array, Conductor Widget defaults
@@ -1503,7 +1503,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 												wp_cache_add( 'public_post_type_' . $public_post_type . '_object', $public_post_type_object, 'conductor-widget' ); // Store cache
 											}
 										?>
-											<div class="conductor-feature-one conductor-content-type-field conductor-content-type-<?php echo esc_attr( $public_post_type ); ?> <?php echo ( $instance['feature_many'] || ( $instance['content_type'] !== $public_post_type && ( $current_content_type_post_count !== 0 || ! $is_first_public_post_type_with_content ) ) ) ? 'conductor-hidden' : false; ?>">
+											<div class="conductor-feature-one conductor-content-type-field conductor-content-type-<?php echo esc_attr( $public_post_type ); ?> <?php echo ( $instance['feature_many'] || ! in_array( $instance['content_type'], $public_post_types ) || ( $instance['content_type'] !== $public_post_type && ( $current_content_type_post_count !== 0 || ! $is_first_public_post_type_with_content ) ) ) ? 'conductor-hidden' : false; ?>">
 												<label for="<?php echo $this->get_field_id( 'post_id_' . $public_post_type ); ?>">
 													<strong>
 														<?php printf( __( 'Select a %1$s', 'conductor' ), ( $public_post_type_object->labels->singular_name !== $public_post_type_object->labels->name ) ? $public_post_type_object->labels->singular_name : $public_post_type_object->labels->name ); ?>

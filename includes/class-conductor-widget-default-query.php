@@ -128,7 +128,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 					'cat' => $this->widget_instance['query_args']['cat'],
 					'orderby' => $this->widget_instance['query_args']['orderby'],
 					'order' => $this->widget_instance['query_args']['order'],
-					'_conductor' => array() // We need this for the found_posts filter
+					'_conductor' => array()
 				);
 
 				/*
