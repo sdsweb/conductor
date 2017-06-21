@@ -1,0 +1,1206 @@
+# Copyright (C) 2017 Conductor
+# This file is distributed under the same license as the Conductor package.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Conductor 1.4.3\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/conductor\n"
+"POT-Creation-Date: 2017-06-21 09:44-0400\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: Poedit 2.0.1\n"
+
+#: includes/admin/class-conductor-admin-add-ons.php:154
+#: includes/class-conductor-toolbar.php:99
+msgid "Add-Ons"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:177
+msgid "Success!"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:179
+msgid "An error occurred. Please try again."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:194
+msgid "There was an error installing this add-on. Please try again later."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:219
+msgid "You do not have sufficient permissions to install plugins on this site."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:259
+msgid ""
+"There was an error retrieving add-on information. Please try again later."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:281
+msgid "Additionally the installer returned the following message:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:290
+msgid "%1$s installed successfully. Please activate it now."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:307
+msgid "Install"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:308
+#: includes/admin/class-conductor-admin-add-ons.php:529
+msgid "Activating..."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:311
+#: includes/admin/class-conductor-admin-add-ons.php:444
+#: includes/admin/class-conductor-admin-add-ons.php:532
+msgid "Deactivate"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:319
+#: includes/admin/class-conductor-admin-add-ons.php:540
+msgid "Inactive"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:331
+msgid ""
+"There was an error activating this add-on. This is likely due to a missing "
+"required component. Please try again later."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:353
+msgid ""
+"You do not have sufficient permissions to activate plugins on this site."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:378
+msgid "%1$s activated."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:426
+msgctxt ""
+"adjusted success message blurb for Conductor add-ons when add-ons data could "
+"not be fetched"
+msgid ""
+" Note: Conductor could not fetch add-ons data. If this add-on requires other "
+"components that aren't found, it may be deactivated upon navigating away "
+"from this page."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:445
+msgid "Deactivating..."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:448
+#: includes/admin/class-conductor-admin-add-ons.php:528
+msgid "Activate"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:456
+msgid "Active"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:468
+msgid "There was an error deactivating this add-on. Please try again later."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:490
+msgid ""
+"You do not have sufficient permissions to deactivate plugins on this site."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:502
+msgid "Additionally the following message was returned:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:511
+msgid "%1$s deactivated."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-add-ons.php:594
+msgid "There was an error retrieving the add-ons list. Please try again later."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:76
+#: includes/class-conductor-toolbar.php:123
+msgid "Help"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:128
+msgid "Browser Info:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:144
+msgid "User Agent:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:149
+msgid "Theme:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:154
+msgid "Front Page:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:155
+#: includes/admin/class-conductor-admin-help.php:159
+#: includes/admin/class-conductor-admin-help.php:167
+msgid "n/a"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:158
+msgid "Page for Posts:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:162
+msgid "Display Errors:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:163
+#: includes/admin/class-conductor-admin-help.php:175
+#: includes/admin/class-conductor-admin-help.php:179
+#: includes/admin/views/html-conductor-options-enable-field.php:3
+msgid "On"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:163
+#: includes/admin/class-conductor-admin-help.php:175
+#: includes/admin/class-conductor-admin-help.php:179
+#: includes/admin/views/html-conductor-options-enable-field.php:3
+msgid "Off"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:166
+msgid "jQuery Version:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:170
+msgid "PHP Session:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:171
+#: includes/admin/class-conductor-admin-help.php:296
+msgid "Enabled"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:171
+#: includes/admin/class-conductor-admin-help.php:296
+msgid "Disabled"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:174
+msgid "Use Cookies:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:178
+msgid "Use Cookies Only:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:182
+msgid "fsockopen() Support:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:183
+msgid "Your server supports fsockopen."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:183
+msgid "Your server does not support fsockopen."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:186
+msgid "cURL Support:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:187
+msgid "Your server supports cURL."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:187
+msgid "Your server does not support cURL."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:190
+msgid "SOAP Client Support:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:191
+msgid "Your server has the SOAP Client enabled."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:191
+msgid "Your server does not have the SOAP Client enabled."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:194
+msgid "SUHOSIN Support:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:195
+msgid "Your server has SUHOSIN installed."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:195
+msgid "Your server does not have SUHOSIN installed."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:198
+msgid "OpenSSL Support:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:199
+msgid "Your server has OpenSSL installed."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:199
+msgid "Your server does not have OpenSSL installed."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:202
+msgid "PHP Version:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:206
+msgid "MySQL Version:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:210
+msgid "Server Software:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:214
+msgid "PHP Memory Limit:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:218
+msgid "PHP Maximum Upload Size:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:222
+msgid "PHP Maximum Post Size:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:226
+msgid "PHP Maximum Execution Time:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:230
+msgid "PHP Maximum Input Variables:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:234
+msgid "PHP Session Name:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:238
+msgid "PHP Cookie Path:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:242
+msgid "PHP Save Path:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:247
+msgid "Site URL:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:251
+msgid "Home URL:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:255
+msgid "WordPress Version:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:259
+msgid "Permalink Structure:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:263
+msgid "Post Types:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:267
+msgid "Post Stati:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:271
+msgid "User Count:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:275
+msgid "Memory Limit:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:279
+msgid "Database Prefix:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:283
+msgid "Prefix Length:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:284
+msgid "Acceptable"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:284
+msgid "Too Long"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:287
+msgid "Multisite:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:288
+#: includes/admin/class-conductor-admin-help.php:292
+#: includes/admin/views/html-conductor-options-uninstall-data-field.php:3
+msgid "Yes"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:288
+#: includes/admin/class-conductor-admin-help.php:292
+#: includes/admin/views/html-conductor-options-uninstall-data-field.php:3
+msgid "No"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:291
+msgid "Safe Mode:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:295
+msgid "WP DEBUG:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:296
+msgid "Not Set"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:302
+msgid "Total Sites:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:307
+msgid "Base Site:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:312
+msgid "All Sites:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:319
+msgid "Site %1$s:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:326
+msgid "Total Plugins:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:333
+msgid "Must-Use Plugins:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:347
+msgid "Network Active Plugins (%1$s):"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:367
+msgid "Active Plugins (%1$s):"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-help.php:385
+msgid "Inactive Plugins (%1$s):"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-license-options.php:77
+msgid "License"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-license-options.php:105
+#: includes/admin/views/html-conductor-options-license.php:4
+msgid "Conductor License"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-license-options.php:106
+msgid "Conductor License Key"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+#: includes/admin/class-conductor-admin-options.php:76
+msgid "Conductor"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:87
+#: includes/class-conductor-toolbar.php:88
+msgid "Options"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:111
+#: includes/widgets/class-conductor-widget.php:531
+msgid ""
+"A content layout for that content type already exists. Please try again."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:112
+#: includes/widgets/class-conductor-widget.php:532
+msgid "New content layout was created successfully."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:113
+#: includes/customizer/class-conductor-customizer-content-layouts-control.php:59
+#: includes/widgets/class-conductor-widget.php:533
+msgid "Please select a content type."
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:114
+#: includes/widgets/class-conductor-widget.php:534
+msgid "Category -"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:115
+#: includes/admin/class-conductor-admin-options.php:279
+#: includes/widgets/class-conductor-widget.php:535
+msgid "Post Type - "
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:116
+#: includes/widgets/class-conductor-widget.php:536
+msgid "Customizing &#9656;"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:117
+#: includes/widgets/class-conductor-widget.php:537
+msgid "Customizing"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:141
+#: includes/admin/class-conductor-admin-options.php:142
+msgid "Enable Conductor"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:145
+#: includes/class-conductor-customizer.php:265
+msgid "Conductor Layouts"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:146
+msgid "Select a Layout For:"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:149
+msgid "Uninstall"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:150
+msgid "Uninstall Data"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:241
+#: includes/admin/views/html-conductor-content-layouts-controls.php:17
+#: includes/class-conductor-customizer.php:674
+msgid "Front Page"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:242
+#: includes/admin/views/html-conductor-content-layouts-controls.php:18
+#: includes/class-conductor-customizer.php:683
+msgid "Blog"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:261
+msgid "Category - "
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:262
+msgid " - Category"
+msgstr ""
+
+#: includes/admin/class-conductor-admin-options.php:280
+msgid " - Post Type"
+msgstr ""
+
+#: includes/admin/views/html-conductor-add-ons.php:2
+msgid "Conductor Add-Ons"
+msgstr ""
+
+#: includes/admin/views/html-conductor-content-layouts-controls.php:12
+msgid "Select a Content Type"
+msgstr ""
+
+#: includes/admin/views/html-conductor-content-layouts-controls.php:16
+msgid "Built-In"
+msgstr ""
+
+#: includes/admin/views/html-conductor-content-layouts-controls.php:22
+msgid "Category Archive"
+msgstr ""
+
+#: includes/admin/views/html-conductor-content-layouts-controls.php:48
+msgid "Post Type Archive"
+msgstr ""
+
+#: includes/admin/views/html-conductor-content-layouts-controls.php:91
+msgid "Single %1$s"
+msgstr ""
+
+#: includes/admin/views/html-conductor-content-layouts-controls.php:112
+#: includes/widgets/class-conductor-widget.php:1516
+msgid "#%d (no title)"
+msgstr ""
+
+#: includes/admin/views/html-conductor-content-layouts-controls.php:127
+msgid "Conduct this Content Type"
+msgstr ""
+
+#: includes/admin/views/html-conductor-content-layouts-controls.php:128
+msgid "Loading..."
+msgstr ""
+
+#: includes/admin/views/html-conductor-content-layouts-help.php:3
+msgid ""
+"There aren't currently any Conductor content layouts applied. Follow the "
+"steps below to get started."
+msgstr ""
+
+#: includes/admin/views/html-conductor-help.php:2
+msgid "Conductor Help"
+msgstr ""
+
+#: includes/admin/views/html-conductor-help.php:11
+msgid "Documentation"
+msgstr ""
+
+#: includes/admin/views/html-conductor-help.php:12
+msgid ""
+"<a href=\"%1$s\" target=\"_blank\">Click here to download the User Guide</a>"
+msgstr ""
+
+#: includes/admin/views/html-conductor-help.php:14
+msgid "Contact Us"
+msgstr ""
+
+#: includes/admin/views/html-conductor-help.php:15
+msgid "<a href=\"%1$s\" target=\"_blank\">Click here to contact us</a>"
+msgstr ""
+
+#: includes/admin/views/html-conductor-help.php:17
+msgid "WordPress Snapshot"
+msgstr ""
+
+#: includes/admin/views/html-conductor-help.php:18
+msgid ""
+"The following information can be helpful to us when an issue with Conductor "
+"may arise. If a support tech requests a \"snapshot\", please send us this "
+"information by copying and pasting it into the support ticket."
+msgstr ""
+
+#: includes/admin/views/html-conductor-options-content-layouts-section.php:1
+msgid ""
+"You may want to customize your WordPress theme to display a unique homepage "
+"and have your news category page look different from your sports category or "
+"the traditional layout. You can mix and match or conduct your content "
+"layouts as many times as you wish. There are no limits."
+msgstr ""
+
+#: includes/admin/views/html-conductor-options-enable-section.php:1
+msgid "Use this option to enable or disable Conductor."
+msgstr ""
+
+#: includes/admin/views/html-conductor-options-license-section.php:1
+msgid "Enter your Conductor license key(s) below."
+msgstr ""
+
+#: includes/admin/views/html-conductor-options-license.php:33
+msgid "Update License(s)"
+msgstr ""
+
+#: includes/admin/views/html-conductor-options-license.php:36
+msgid "Activate License(s)"
+msgstr ""
+
+#: includes/admin/views/html-conductor-options-license.php:38
+msgid "Deactivate License(s)"
+msgstr ""
+
+#: includes/admin/views/html-conductor-options-sidebar.php:16
+msgid "Brought to you by <a href=\"%1$s\" target=\"_blank\">Slocum Studio</a>"
+msgstr ""
+
+#: includes/admin/views/html-conductor-options-uninstall-section.php:1
+msgid "Would you like Conductor to remove data on uninstall?"
+msgstr ""
+
+#: includes/admin/views/html-conductor-options.php:36
+msgid "Conductor Options"
+msgstr ""
+
+#: includes/admin/views/html-conductor-options.php:50
+msgid "General"
+msgstr ""
+
+#: includes/admin/views/html-conductor-options.php:51
+msgid "Advanced"
+msgstr ""
+
+#: includes/admin/views/html-conductor-options.php:80
+msgid "Save Options"
+msgstr ""
+
+#: includes/admin/views/html-conductor-options.php:81
+msgid "Restore Defaults"
+msgstr ""
+
+#: includes/admin/views/html-conductor-template-content-layouts.php:88
+msgid "Conduct"
+msgstr ""
+
+#: includes/admin/views/html-conductor-template-content-layouts.php:90
+msgid "Remove"
+msgstr ""
+
+#: includes/class-conductor-customizer.php:276
+msgid "Select a Page to Conduct"
+msgstr ""
+
+#: includes/class-conductor-customizer.php:448
+msgid "Add Conductor Widget"
+msgstr ""
+
+#: includes/class-conductor-customizer.php:697
+msgid "Category - %1$s"
+msgstr ""
+
+#: includes/class-conductor-customizer.php:698
+msgid "%1$s - Category"
+msgstr ""
+
+#: includes/class-conductor-customizer.php:709
+msgid "Post Type - %1$s"
+msgstr ""
+
+#: includes/class-conductor-customizer.php:710
+msgid "%1$s - Post Type"
+msgstr ""
+
+#: includes/class-conductor-customizer.php:723
+#: includes/class-conductor-customizer.php:724
+msgid "%1$s - %2$s"
+msgstr ""
+
+#: includes/class-conductor-options.php:105
+msgid "Default"
+msgstr ""
+
+#: includes/class-conductor-options.php:107
+msgid "Disable"
+msgstr ""
+
+#: includes/class-conductor-options.php:111
+msgid "Full Width"
+msgstr ""
+
+#: includes/class-conductor-options.php:115
+msgid "Content Left"
+msgstr ""
+
+#: includes/class-conductor-options.php:119
+msgid "Content Right"
+msgstr ""
+
+#: includes/class-conductor-options.php:123
+msgid "Content, Sidebar, Sidebar"
+msgstr ""
+
+#: includes/class-conductor-options.php:127
+msgid "Sidebar, Content, Sidebar"
+msgstr ""
+
+#: includes/class-conductor-options.php:131
+msgid "Sidebar, Sidebar, Content"
+msgstr ""
+
+#: includes/class-conductor-sidebars.php:270
+msgid "%1$s - Content"
+msgstr ""
+
+#: includes/class-conductor-sidebars.php:272
+msgid "This widget area is the content widget area for %1$s."
+msgstr ""
+
+#: includes/class-conductor-sidebars.php:287
+msgid "%1$s - Primary"
+msgstr ""
+
+#: includes/class-conductor-sidebars.php:289
+msgid "This widget area is the primary widget area for %1$s."
+msgstr ""
+
+#: includes/class-conductor-sidebars.php:305
+msgid "%1$s - Secondary"
+msgstr ""
+
+#: includes/class-conductor-sidebars.php:307
+msgid "This widget area is the secondary widget area for %1$s."
+msgstr ""
+
+#: includes/class-conductor-toolbar.php:66
+msgid ""
+"<span class=\"ab-icon dashicons dashicons-admin-generic conductor-icon\"></"
+"span> Conductor"
+msgstr ""
+
+#: includes/class-conductor-toolbar.php:77
+msgid "Conduct Your Content"
+msgstr ""
+
+#: includes/class-conductor-toolbar.php:77
+msgid "Conduct This Page"
+msgstr ""
+
+#: includes/class-conductor-updates.php:82
+msgctxt "Plugin author"
+msgid "%1$s"
+msgstr ""
+
+#: includes/class-conductor-widget-default-query.php:400
+msgid " Next &#8594;"
+msgstr ""
+
+#: includes/class-conductor-widget-default-query.php:401
+msgid "&#8592; Previous"
+msgstr ""
+
+#: includes/class-conductor-widget-default-query.php:658
+msgid "Posted by <a href=\"%1$s\">%2$s</a> on %3$s"
+msgstr ""
+
+#: includes/customizer/class-conductor-customizer-content-layouts-control.php:57
+msgid "An error has occurred. Please reload the page and try again."
+msgstr ""
+
+#: includes/customizer/class-conductor-customizer-content-layouts-control.php:58
+msgid "New content layout was created successfully. Loading..."
+msgstr ""
+
+#: includes/customizer/class-conductor-customizer-content-layouts-control.php:131
+msgid "The changes you made will be lost if you navigate away from this page."
+msgstr ""
+
+#: includes/customizer/views/html-conductor-customizer-content-layouts-help.php:3
+msgid ""
+"There aren't currently any Conductor content layouts applied on this page. "
+"Follow the steps below to get started."
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:148
+msgid "2 Columns"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:163
+msgid "2 Columns - Media Left/Content Right"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:184
+msgid "2 Columns - Content Left/Media Right"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:205
+msgid "3 Columns"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:222
+msgid "4 Columns"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:241
+msgid "5 Columns"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:262
+msgid "6 Columns"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:369
+msgid "Display Layout"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:372
+#: includes/widgets/class-conductor-note-widget.php:406
+#: includes/widgets/class-conductor-widget.php:1514
+#: includes/widgets/class-conductor-widget.php:1568
+#: includes/widgets/class-conductor-widget.php:1590
+#: includes/widgets/class-conductor-widget.php:1973
+msgid "&mdash; Select &mdash;"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:373
+msgid "Standard"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:392
+msgid "Select a layout for the Note widget to display."
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:403
+msgid "Number of Rows"
+msgstr ""
+
+#: includes/widgets/class-conductor-note-widget.php:417
+msgid "Select the number of rows to display."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:92
+msgid "Small"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:93
+msgid "Medium"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:94
+msgid "Large"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:96
+msgid "Columns"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:144
+msgid "Featured Image"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:152
+#: includes/widgets/class-conductor-widget.php:1324
+#: includes/widgets/class-conductor-widget.php:1575
+msgid "Title"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:160
+msgid "Author Byline"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:167
+#: includes/widgets/class-conductor-widget.php:1891
+msgid "Content"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:175
+#: includes/widgets/class-conductor-widget.php:203
+msgid "Read More"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:219
+msgid "Display one or many content pieces."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:226
+msgid "Conductor Widget"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:275
+msgid ""
+"Content management brought to you by <a href=\"%1$s\" target=\"_blank"
+"\">Conductor</a>"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1356
+msgid "Content Settings"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1399
+msgctxt "beginning of feature many label; before <select> elements"
+msgid "Select"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1401
+msgid "one"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1402
+msgid "many"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1429
+msgctxt "Possible plural value of post type singular name."
+msgid "%1$s(s)"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1436
+msgctxt "end of feature many label; after <select> elements"
+msgid "to display."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1443
+msgid ""
+"Conductor wasn't able to find any content. Please create some content before "
+"using the Conductor Widget."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1509
+msgid "Select a %1$s"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1541
+msgid "Category"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1551
+msgid "All Categories"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1565
+msgid "Order By"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1569
+msgid "Author"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1570
+msgid "Comment Count"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1571
+msgid "Date"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1572
+msgid "ID"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1573
+msgid "Parent"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1574
+msgid "Post Slug"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1576
+msgid "Random"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1587
+msgid "Order"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1591
+msgid "Ascending (1, 2, 3)"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1592
+msgid "Descending (3, 2, 1)"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1603
+msgctxt ""
+"Beginning of maximum number of posts to display label; before <input> element"
+msgid "Show"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1604
+#: includes/widgets/class-conductor-widget.php:1611
+#: includes/widgets/class-conductor-widget.php:2031
+msgctxt "placeholder for number input elements"
+msgid "#"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1605
+msgctxt ""
+"End of number of maximum posts to display label; after <input> element"
+msgid "posts"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1610
+msgctxt ""
+"Beginning of number of posts per page to display label; before <input> "
+"element"
+msgid "with"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1612
+msgctxt ""
+"End of number of posts per page to display label; after <input> element"
+msgid "per page."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1616
+msgid ""
+"Leave blank to show all. <a href=\"%1$s\" target=\"_blank\">Learn more about "
+"pagination</a>."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1627
+msgctxt "Beginning of post offset label; before <input> element"
+msgid "Start at post #"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1629
+msgctxt "End of post offset label; after <input> element"
+msgid "."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1650
+msgid "Display Settings"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1662
+msgid "Select a Widget Display"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1664
+msgid "Change the display of the content displayed on the front end."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1791
+msgid "Number of Columns"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1796
+msgid "Specify the number of columns used when outputting widget content."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1807
+msgid "Adjust Output Elements"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1875
+msgid "Enter custom label..."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1892
+msgid "Excerpt"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1938
+msgid "Adjust the order of elements output on the front-end display."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1959
+msgid "Advanced Settings"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:1970
+msgid "Featured Image Size"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2019
+msgid ""
+"Featured Images are displayed based on the Widget Size in the Display "
+"Settings. <a href=\"%1$s\" target=\"_blank\">Learn more about Featured "
+"Images</a>."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2030
+msgctxt "Beginning of content limit label; before <input> element"
+msgid "Limit excerpt to"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2032
+msgctxt "End of content limit label; after <input> element"
+msgid "words."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2043
+msgid "CSS Class(es)"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2047
+msgid ""
+"Enter a value here to target this widget on the front-end when adding CSS "
+"rules to your stylesheet (e.g. my-custom-conductor-widget content-bold). "
+"Custom CSS classes are useful for targeting more than one Conductor Widget. "
+"<a href=\"%1$s\" target=\"_blank\">Learn more about CSS</a>."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2075
+msgid "CSS ID"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2080
+msgid ""
+"Use this value when adding CSS rules to your stylesheet to target this "
+"widget specifically on the front-end."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2088
+msgid ""
+"Note: If Conductor was unable to determine a CSS ID value for this widget, "
+"it might be because the sidebar was registered incorrectly. If you're a "
+"developer, see <a href=\"%1$s\" target=\"_blank\">register_sidebar()</a> for "
+"more information."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2095
+msgid "Note: This value may be empty for newly added widgets."
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2108
+msgid "Include Only These Posts"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2112
+msgid ""
+"Comma separated list of post IDs. Only these posts will be displayed. Some "
+"settings above will be ignored. <a href=\"%1$s\" target=\"_blank\">How do I "
+"find an ID?</a>"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2121
+msgid "Exclude These Posts"
+msgstr ""
+
+#: includes/widgets/class-conductor-widget.php:2125
+msgid ""
+"Comma separated list of post IDs. Will display all posts based on settings "
+"above, except those in this list. <a href=\"%1$s\" target=\"_blank\">How do "
+"I find an ID?</a>"
+msgstr ""
+
+#: templates/content-default.php:18
+msgid "Welcome to Conductor"
+msgstr ""
+
+#: templates/content-default.php:19
+msgid ""
+"First things first, <strong>your content is safe and sound</strong>. "
+"Conductor is enabled on this page, but there aren't currently any active "
+"widgets.  Add your widgets here to get started with conducting your content. "
+"Conductor can easily be disabled on this page via the Customizer or "
+"Conductor Options in the Dashboard."
+msgstr ""
+
+#: templates/sidebar-primary-default.php:18
+msgid "Conductor Primary Sidebar"
+msgstr ""
+
+#: templates/sidebar-primary-default.php:19
+#: templates/sidebar-secondary-default.php:19
+msgid "Conduct your content. Add your widgets here to get started."
+msgstr ""
+
+#: templates/sidebar-secondary-default.php:18
+msgid "Conductor Secondary Sidebar"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://www.conductorplugin.com/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Build content-rich layouts in minutes without code."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Slocum Studio"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.slocumstudio.com/"
+msgstr ""
