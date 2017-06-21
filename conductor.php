@@ -3,7 +3,7 @@
  * Plugin Name: Conductor
  * Plugin URI: https://www.conductorplugin.com/
  * Description: Build content-rich layouts in minutes without code.
- * Version: 1.4.2
+ * Version: 1.4.3
  * Author: Slocum Studio
  * Author URI: http://www.slocumstudio.com/
  * Requires at least: 4.4
@@ -23,7 +23,7 @@ if ( ! class_exists( 'Conductor' ) ) {
 		/**
 		 * @var string
 		 */
-		public static $version = '1.4.2';
+		public static $version = '1.4.3';
 
 		/**
 		 * @var Boolean, null by default so that we can cache the Boolean value
@@ -75,7 +75,8 @@ if ( ! class_exists( 'Conductor' ) ) {
 			$this->includes();
 
 			// Hooks
-			add_action( 'widgets_init', array( $this, 'widgets_init' ) ); // Init Widgets
+			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
+			add_action( 'widgets_init', array( $this, 'widgets_init' ) ); // Widgets Initialization
 			add_action( 'widgets_init', array( $this, 'conductor_note_widgets_init' ), 9999 ); // Init Widgets (late)
 		}
 
@@ -106,6 +107,14 @@ if ( ! class_exists( 'Conductor' ) ) {
 			// Front-End Only
 			if ( ! is_admin() )
 				include_once 'includes/class-conductor-template-loader.php'; // Conductor Template Loader Class
+		}
+
+		/**
+		 * This function runs when plugins are loaded.
+		 */
+		public function plugins_loaded() {
+			// Load the Conductor text domain
+			load_plugin_textdomain( 'conductor', false, basename( Conductor::plugin_dir() ) . '/languages/' );
 		}
 
 		/**

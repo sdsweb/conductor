@@ -2,9 +2,14 @@
 Plugin: Conductor
 Author: Slocum Themes/Slocum Design Studio
 Author URI: https://conductorplugin.com/
-Current Version: 1.4.2
+Current Version: 1.4.3
 ==========================================
 
+
+1.4.3 // June 21 2017
+---------------------
+- Added logic to load plugin text domain via load_plugin_textdomain()
+- Introduced POT file
 
 1.4.2 // June 16 2017
 ---------------------
