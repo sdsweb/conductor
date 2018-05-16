@@ -4,7 +4,7 @@
  *
  * @class Conductor_Admin_Help
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.4.4
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Admin_Help' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.4.4';
 
 		/**
 		 * @var string
@@ -72,8 +72,10 @@ if ( ! class_exists( 'Conductor_Admin_Help' ) ) {
 			// Grab the Conductor Admin menu page slug
 			$conductor_admin_menu_page = Conductor_Admin_Options::get_menu_page();
 
-			// Conductor Admin Help Page
-			self::$sub_menu_page = add_submenu_page( $conductor_admin_menu_page, __( 'Help', 'conductor' ), __( 'Help', 'conductor' ), 'manage_options', self::get_sub_menu_page(), array( $this, 'render' ) );
+			// If the current user has the Conductor capability
+			if ( current_user_can( Conductor::$capability ) )
+				// Conductor Admin Help Page
+				self::$sub_menu_page = add_submenu_page( $conductor_admin_menu_page, __( 'Help', 'conductor' ), __( 'Help', 'conductor' ), Conductor::$capability, self::get_sub_menu_page(), array( $this, 'render' ) );
 
 			return self::$sub_menu_page;
 		}
@@ -106,7 +108,7 @@ if ( ! class_exists( 'Conductor_Admin_Help' ) ) {
 		 * This function returns helpful debug information.
 		 *
 		 * Some functionality below copyright 2013, Andrew Norcross, http://andrewnorcross.com/
-		 * - @see https://github.com/norcross/system-snapshop-report
+		 * - @see https://github.com/norcross/system-snapshot-report
 		 */
 		public static function get_snapshot_details() {
 			// call WP database

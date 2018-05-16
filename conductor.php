@@ -3,11 +3,11 @@
  * Plugin Name: Conductor
  * Plugin URI: https://www.conductorplugin.com/
  * Description: Build content-rich layouts in minutes without code.
- * Version: 1.4.3
+ * Version: 1.5.1
  * Author: Slocum Studio
  * Author URI: http://www.slocumstudio.com/
  * Requires at least: 4.4
- * Tested up to: 4.8
+ * Tested up to: 4.9.5
  * License: GPL2+
  *
  * Text Domain: conductor
@@ -23,7 +23,7 @@ if ( ! class_exists( 'Conductor' ) ) {
 		/**
 		 * @var string
 		 */
-		public static $version = '1.4.3';
+		public static $version = '1.5.1';
 
 		/**
 		 * @var Boolean, null by default so that we can cache the Boolean value
@@ -51,6 +51,11 @@ if ( ! class_exists( 'Conductor' ) ) {
 		public static $public_post_types_without_attachments = array();
 
 		/**
+		 * @var string
+		 */
+		public static $capability = 'manage_options';
+
+		/**
 		 * @var Conductor, Instance of the class
 		 */
 		protected static $_instance;
@@ -75,9 +80,8 @@ if ( ! class_exists( 'Conductor' ) ) {
 			$this->includes();
 
 			// Hooks
-			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) );
+			add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ) ); // Plugins Loaded
 			add_action( 'widgets_init', array( $this, 'widgets_init' ) ); // Widgets Initialization
-			add_action( 'widgets_init', array( $this, 'conductor_note_widgets_init' ), 9999 ); // Init Widgets (late)
 		}
 
 		/**
@@ -94,6 +98,7 @@ if ( ! class_exists( 'Conductor' ) ) {
 			include_once 'includes/class-conductor-scripts-styles.php'; // Conductor Scripts & Styles Class
 			include_once 'includes/conductor-template-hooks.php'; // Conductor Template Hooks
 			include_once 'includes/conductor-template-functions.php'; // Conductor Template Functions
+			include_once 'includes/class-conductor-rest-api.php'; // Conductor REST API
 			include_once 'includes/admin/class-conductor-admin.php'; // Core/Main Conductor Admin Class
 
 			// Admin Only
@@ -114,7 +119,7 @@ if ( ! class_exists( 'Conductor' ) ) {
 		 */
 		public function plugins_loaded() {
 			// Load the Conductor text domain
-			load_plugin_textdomain( 'conductor', false, basename( Conductor::plugin_dir() ) . '/languages/' );
+			load_plugin_textdomain( 'conductor', false, basename( self::plugin_dir() ) . '/languages/' );
 		}
 
 		/**
@@ -123,22 +128,6 @@ if ( ! class_exists( 'Conductor' ) ) {
 		public function widgets_init() {
 			// Conductor Widget
 			include_once 'includes/widgets/class-conductor-widget.php';
-		}
-
-		/**
-		 * This function includes and initializes Conductor Note Widgets.
-		 *
-		 * TODO: Remove in a future version
-		 */
-		public function conductor_note_widgets_init() {
-			// Conductor Widget
-			include_once 'includes/widgets/class-conductor-widget.php';
-
-			// Conductor Note Widget Enhancements Shim (requires Note) TODO: Remove in a future version
-			if ( Conductor::is_note_active() && ! Conductor::note_has_templates() ) {
-				include_once 'includes/widgets/class-conductor-note-widget.php'; // Conductor Note Widget Shim Class
-				include_once 'includes/class-conductor-note-widget-customizer.php'; // Conductor Note Widget Customizer Shim Class
-			}
 		}
 
 
@@ -217,7 +206,7 @@ if ( ! class_exists( 'Conductor' ) ) {
 		 */
 		public static function is_conductor( $ignore_default_layout = true ) {
 			// Return Conductor status based off of $ignore_default_layout (if we have a content layout)
-			if ( ! $ignore_default_layout && Conductor::get_conductor_content_layout() )
+			if ( ! $ignore_default_layout && self::get_conductor_content_layout() )
 				return true;
 
 			// Return Conductor status if it's already been checked and the current request is a Conductor request
@@ -326,7 +315,7 @@ if ( ! class_exists( 'Conductor' ) ) {
 		 * This function returns a Conductor content layout sidebar ID prefix.
 		 */
 		public static function get_conductor_content_layout_sidebar_id_prefix( $sidebar, $content_layout = false ) {
-			$content_layout = ( is_array( $content_layout ) ) ? $content_layout : Conductor::get_conductor_content_layout();
+			$content_layout = ( is_array( $content_layout ) ) ? $content_layout : self::get_conductor_content_layout();
 
 			return apply_filters( 'conductor_content_layout_sidebar_id_prefix', 'conductor-' . $content_layout['field_type'] . '-' . $content_layout['field_id'] . '-', $sidebar, $content_layout );
 		}
@@ -335,7 +324,7 @@ if ( ! class_exists( 'Conductor' ) ) {
 		 * This function returns the Conductor sidebar suffix.
 		 */
 		public static function get_conductor_content_layout_sidebar_id_suffix( $sidebar, $content_layout = false ) {
-			$content_layout = ( is_array( $content_layout ) ) ? $content_layout : Conductor::get_conductor_content_layout();
+			$content_layout = ( is_array( $content_layout ) ) ? $content_layout : self::get_conductor_content_layout();
 
 			return apply_filters( 'conductor_content_layout_sidebar_id_suffix', '-sidebar', $sidebar, $content_layout );
 		}
@@ -344,12 +333,20 @@ if ( ! class_exists( 'Conductor' ) ) {
 		 * This function returns a Conductor content layout sidebar ID.
 		 */
 		public static function get_conductor_content_layout_sidebar_id( $sidebar, $content_layout = false ) {
-			$content_layout = ( is_array( $content_layout ) ) ? $content_layout : Conductor::get_conductor_content_layout();
-			$prefix = Conductor::get_conductor_content_layout_sidebar_id_prefix( $sidebar, $content_layout ); // Sidebar Prefix
-			$suffix = Conductor::get_conductor_content_layout_sidebar_id_suffix( $sidebar, $content_layout ); // Sidebar Suffix
+			$content_layout = ( is_array( $content_layout ) ) ? $content_layout : self::get_conductor_content_layout();
+			$prefix = self::get_conductor_content_layout_sidebar_id_prefix( $sidebar, $content_layout ); // Sidebar Prefix
+			$suffix = self::get_conductor_content_layout_sidebar_id_suffix( $sidebar, $content_layout ); // Sidebar Suffix
 
 			return apply_filters( 'conductor_content_layout_sidebar_id', $prefix . $sidebar . $suffix, $sidebar, $content_layout, $prefix, $suffix );
 		}
+
+
+		// TODO: Create a is_rest_api_enabled() function with a filter and utilize this function in all add-on logic and throughout Conductor
+
+
+		/**********************
+		 * Internal Functions *
+		 **********************/
 
 		/**
 		 * This function is used as a callback for array_filter() to determine whether or not a front page
@@ -419,27 +416,6 @@ if ( ! class_exists( 'Conductor' ) ) {
 			$page = get_queried_object();
 
 			return ( $var['field_type'] === 'page' && ( int ) $var['field_id'] === $page->ID );
-		}
-
-
-		/**********************
-		 * Internal Functions *
-		 **********************/
-
-		/**
-		 * This function checks to see if Note Widgets have templates.
-		 */
-		// TODO: Remove in a future version as necessary
-		public static function note_has_templates( $note_widget = false ) {
-			// Bail if Note doesn't exist
-			if ( ! class_exists( 'Note' ) || ! function_exists( 'Note_Widget' ) )
-				return false;
-
-			// If we don't have a Note Widget reference, grab one now
-			$note_widget = ( ! $note_widget ) ? Note_Widget() : $note_widget;
-
-			// If Note is greater than 1.2.9 or Note Widget instance has the "templates" property
-			return ( version_compare( Note::$version, '1.2.9', '>' ) || property_exists( $note_widget, 'templates' ) );
 		}
 	}
 

@@ -3,6 +3,8 @@
  */
 var conductor = conductor || {};
 
+// TODO: Future: Minify
+
 ( function ( $ ) {
 	"use strict";
 

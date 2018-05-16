@@ -4,7 +4,7 @@
  *
  * @class Conductor_Options
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Scripts_Styles' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.5.0';
 
 		/**
 		 * @var Conductor, Instance of the class
@@ -54,17 +54,18 @@ if ( ! class_exists( 'Conductor_Scripts_Styles' ) ) {
 			if ( Conductor::is_conductor() )
 				wp_enqueue_style( 'conductor', Conductor::plugin_url() . '/assets/css/conductor.css', false, Conductor::$version );
 
-			// Conductor Widget Styles (only enqueue styles if this widget is active)
+			// Conductor Widget
 			if ( function_exists( 'Conduct_Widget' ) ) {
 				// Grab the Conductor Widget instance
 				$conductor_widget = Conduct_Widget();
 
+				// If at least one Conductor Widget is active
 				if ( is_active_widget( false, false, $conductor_widget->id_base ) ) {
 					// Conductor Flexbox
 					wp_enqueue_style( 'conductor-flexbox', Conductor::plugin_url() . '/assets/css/conductor-flexbox.css', false, Conductor::$version );
 
 					// Conductor Widget
-					wp_enqueue_style( 'conductor-widget', Conductor::plugin_url() . '/assets/css/widgets/conductor-widget.css', array( 'conductor-flexbox' ), Conductor::$version );
+					wp_enqueue_style( 'conductor-widget', Conductor::plugin_url() . '/assets/css/widgets/conductor-widget.css', array( 'conductor-flexbox', 'dashicons' ), Conductor::$version );
 				}
 			}
 		}

@@ -7,7 +7,8 @@
  */
 .conductor-flex,
 .conductor-widget.conductor-flex,
-.widget.conductor-widget.conductor-flex {
+.widget.conductor-widget.conductor-flex,
+.conductor-flex .conductor-widget.conductor-flex {
 	width: 100%;
 	margin: auto;
 
@@ -35,7 +36,8 @@
 
 .conductor-widget.conductor-flex,
 .widget.conductor-widget.conductor-flex,
-.conductor-widget-single-flexbox-wrap.conductor-flex {
+.conductor-widget-single-flexbox-wrap.conductor-flex,
+.conductor-flex .conductor-widget.conductor-flex {
 	-moz-justify-content: flex-start;
 	-ms-justify-content: flex-start;
 	-webkit-justify-content: flex-start;
@@ -46,7 +48,8 @@
 	display: block;
 }
 
-.conductor-flex .conductor-widget, .conductor-flex .conductor-widget.widget {
+.conductor-flex .conductor-widget,
+.conductor-flex .conductor-widget.widget:not(.conductor-widget-content-wrap) {
 	display: block;
 }
 
@@ -115,6 +118,7 @@
 
 /* General */
 .conductor-widget.conductor-flex .widget-title,
+.conductor-widget.conductor-flex .conductor-widget-wrap-element,
 .conductor-widget.conductor-flex .page-numbers {
 	width: 100%;
 }

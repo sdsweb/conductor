@@ -4,7 +4,7 @@
  *
  * @class Conductor_Toolbar
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.4.4
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Toolbar' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.4.4';
 
 		/**
 		 * @var Conductor, Instance of the class
@@ -51,7 +51,7 @@ if ( ! class_exists( 'Conductor_Toolbar' ) ) {
 		 */
 		public function admin_bar_menu( $wp_admin_bar ) {
 			// Bail if the current user is not an administrator
-			if ( ! current_user_can( 'manage_options' ) )
+			if ( ! current_user_can( Conductor::$capability ) )
 				return;
 
 			// Grab the Conductor Admin menu page slug
@@ -69,7 +69,6 @@ if ( ! class_exists( 'Conductor_Toolbar' ) ) {
 					'class' => 'conductor conductor-parent'
 				)
 			) );
-
 
 			$wp_admin_bar->add_menu( array(
 				'id' => 'conductor-conduct',
@@ -110,7 +109,7 @@ if ( ! class_exists( 'Conductor_Toolbar' ) ) {
 		 */
 		public function admin_bar_menu_help( $wp_admin_bar ) {
 			// Bail if the current user is not an administrator
-			if ( ! current_user_can( 'manage_options' ) )
+			if ( ! current_user_can( Conductor::$capability ) )
 				return;
 
 			// Grab the Conductor Admin menu page slug

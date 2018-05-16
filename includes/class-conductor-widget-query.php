@@ -7,7 +7,7 @@
  *
  * @class Conductor_Widget_Query
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  */
 
@@ -20,7 +20,7 @@ if ( ! class_exists( 'Conductor_Widget_Query' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.5.0';
 
 		/**
 		 * @var WP_Widget, Conductor widget instance
@@ -31,6 +31,11 @@ if ( ! class_exists( 'Conductor_Widget_Query' ) ) {
 		 * @var array, WP_Widget Instance (widget settings)
 		 */
 		public $widget_instance = false;
+
+		/**
+		 * @var array
+		 */
+		public $query_args = array();
 
 		/**
 		 * @var mixed, Content query
@@ -63,9 +68,14 @@ if ( ! class_exists( 'Conductor_Widget_Query' ) ) {
 		public $hooks = array();
 
 		/**
-		 * @var int, List of actions/filters this class has added/created
+		 * @var int
 		 */
 		public $display_content_args_count = 0;
+
+		/**
+		 * @var int
+		 */
+		public $skip_display_content_hooks = false;
 
 
 		/**
@@ -103,70 +113,73 @@ if ( ! class_exists( 'Conductor_Widget_Query' ) ) {
 			if ( ! empty ( $this->widget_instance ) ) {
 				$this->query( $this->query_type ); // Query content piece(s)
 
-				// Output Hooks
-				$this->hooks['conductor_widget_display_content_' . $this->widget->number] = array();
+				// If we're not skipping display content hooks
+				if ( ! property_exists( $this, 'skip_display_content_hooks' ) || ! $this->skip_display_content_hooks ) {
+					// Output Hooks
+					$this->hooks['conductor_widget_display_content_' . $this->widget->number] = array();
 
-				// Opening Wrapper Elements
-				add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $this, 'conductor_widget_wrapper' ), 1, $this->display_content_args_count );
-				add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $this, 'conductor_widget_content_wrapper' ), 2, $this->display_content_args_count );
+					// Opening Wrapper Elements
+					add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $this, 'conductor_widget_wrapper' ), 1, $this->display_content_args_count );
+					add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $this, 'conductor_widget_content_wrapper' ), 2, $this->display_content_args_count );
 
-				$this->hooks['conductor_widget_display_content_' . $this->widget->number] += array(
-					1 => array( get_class(), 'conductor_widget_wrapper' ), // Static callback
-					2 => array( get_class(), 'conductor_widget_content_wrapper' ) // Static callback
-				);
+					$this->hooks['conductor_widget_display_content_' . $this->widget->number] += array(
+						1 => array( get_class(), 'conductor_widget_wrapper' ), // Static callback
+						2 => array( get_class(), 'conductor_widget_content_wrapper' ) // Static callback
+					);
 
-				// Sortable Elements
-				if ( isset( $this->widget_instance['output'] ) && ! empty( $this->widget_instance['output'] ) )
-					// Loop through sortable elements
-					foreach ( $this->widget_instance['output'] as $priority => $element ) {
-						// Grab the output element callback
-						$callback = $element['callback'];
+					// Sortable Elements
+					if ( isset( $this->widget_instance['output'] ) && ! empty( $this->widget_instance['output'] ) )
+						// Loop through sortable elements
+						foreach ( $this->widget_instance['output'] as $priority => $element ) {
+							// Grab the output element callback
+							$callback = $element['callback'];
 
-						// Array callback
-						// Only add this action if the callback exists, it's callable, and the element is visible
-						if ( is_array( $callback ) && method_exists( $callback[0], $callback[1] ) && $element['visible'] ) {
-							add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $callback[0], $callback[1] ), $priority, $this->display_content_args_count );
+							// Array callback
+							// Only add this action if the callback exists, it's callable, and the element is visible
+							if ( is_array( $callback ) && method_exists( $callback[0], $callback[1] ) && $element['visible'] ) {
+								add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $callback[0], $callback[1] ), $priority, $this->display_content_args_count );
 
-							$this->hooks['conductor_widget_display_content_' . $this->widget->number] += array( $priority => array( $callback[0], $callback[1] ) );
+								$this->hooks['conductor_widget_display_content_' . $this->widget->number] += array( $priority => array( $callback[0], $callback[1] ) );
 
-							do_action( 'conductor_widget_query_add_display_content', $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
-							do_action( 'conductor_widget_query_add_display_content_' . $this->widget->number, $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
+								do_action( 'conductor_widget_query_add_display_content', $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
+								do_action( 'conductor_widget_query_add_display_content_' . $this->widget->number, $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
 
+							}
+							// String/other callbacks within this class
+							// Only add this action if the callback exists, it's callable, and the element is visible
+							else if ( ! is_array( $callback ) && method_exists( $this, $callback ) && is_callable( array( $this, $callback ) ) && $element['visible'] ) {
+								add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $this, $callback ), $priority, $this->display_content_args_count );
+
+								$this->hooks['conductor_widget_display_content_' . $this->widget->number] += array( $priority => array( get_class(), $callback ) );
+
+								do_action( 'conductor_widget_query_add_display_content', $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
+								do_action( 'conductor_widget_query_add_display_content_' . $this->widget->number, $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
+							}
+
+							// String/other callbacks outside of this class
+							// Only add this action if the callback exists, it's callable, and the element is visible
+							else if ( ! is_array( $callback ) && function_exists( $callback ) && is_callable( $callback ) && $element['visible'] ) {
+								add_action( 'conductor_widget_display_content_' . $this->widget->number, $callback, $priority, $this->display_content_args_count );
+
+								$this->hooks['conductor_widget_display_content_' . $this->widget->number] += array( $priority => $callback );
+
+								do_action( 'conductor_widget_query_add_display_content', $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
+								do_action( 'conductor_widget_query_add_display_content_' . $this->widget->number, $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
+							}
 						}
-						// String/other callbacks within this class
-						// Only add this action if the callback exists, it's callable, and the element is visible
-						else if ( ! is_array( $callback ) && method_exists( $this, $callback ) && is_callable( array( $this, $callback ) ) && $element['visible'] ) {
-							add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $this, $callback ), $priority, $this->display_content_args_count );
 
-							$this->hooks['conductor_widget_display_content_' . $this->widget->number] += array( $priority => array( get_class(), $callback ) );
+					// Closing Wrapper Elements
+					add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $this, 'conductor_widget_content_wrapper_close' ), 999, $this->display_content_args_count );
+					add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $this, 'conductor_widget_wrapper_close' ), 1000, $this->display_content_args_count );
 
-							do_action( 'conductor_widget_query_add_display_content', $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
-							do_action( 'conductor_widget_query_add_display_content_' . $this->widget->number, $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
-						}
+					$this->hooks['conductor_widget_display_content_' . $this->widget->number] += array(
+						999 => array( get_class(), 'conductor_widget_content_wrapper_close' ), // Static callback
+						1000 => array( get_class(), 'conductor_widget_wrapper_close' ) // Static callback
+					);
 
-						// String/other callbacks outside of this class
-						// Only add this action if the callback exists, it's callable, and the element is visible
-						else if ( ! is_array( $callback ) && function_exists( $callback ) && is_callable( $callback ) && $element['visible'] ) {
-							add_action( 'conductor_widget_display_content_' . $this->widget->number, $callback, $priority, $this->display_content_args_count );
-
-							$this->hooks['conductor_widget_display_content_' . $this->widget->number] += array( $priority => $callback );
-
-							do_action( 'conductor_widget_query_add_display_content', $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
-							do_action( 'conductor_widget_query_add_display_content_' . $this->widget->number, $element, $priority, $this->widget->number, $this->display_content_args_count, $this );
-						}
-					}
-
-				// Closing Wrapper Elements
-				add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $this, 'conductor_widget_content_wrapper_close' ), 999, $this->display_content_args_count );
-				add_action( 'conductor_widget_display_content_' . $this->widget->number, array( $this, 'conductor_widget_wrapper_close' ), 1000, $this->display_content_args_count );
-
-				$this->hooks['conductor_widget_display_content_' . $this->widget->number] += array(
-					999 => array( get_class(), 'conductor_widget_content_wrapper_close' ), // Static callback
-					1000 => array( get_class(), 'conductor_widget_wrapper_close' ) // Static callback
-				);
-
-				// Sort the hooks by key
-				ksort( $this->hooks['conductor_widget_display_content_' . $this->widget->number] );
+					// Sort the hooks by key
+					ksort( $this->hooks['conductor_widget_display_content_' . $this->widget->number] );
+				}
 			}
 		}
 
@@ -175,6 +188,13 @@ if ( ! class_exists( 'Conductor_Widget_Query' ) ) {
 		 */
 		public function query( $query_type ) {
 			die( 'function Conductor_Widget_Query::query() must be over-ridden in a sub-class.' );
+		}
+
+		/**
+		 * This function is used to retrieve the current query arguments.
+		 */
+		public function get_query_args() {
+			return $this->query_args;
 		}
 
 		/**

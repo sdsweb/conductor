@@ -4,7 +4,7 @@
  *
  * @class Conductor_Options
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Options' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.5.0';
 
 		/**
 		 * @var string
@@ -64,8 +64,9 @@ if ( ! class_exists( 'Conductor_Options' ) ) {
 		public static function get_option_defaults( $option_name = false ) {
 			$defaults = false;
 
-			// If an option name is passed, return that value otherwise default to Conductor options
+			// If we have an option name
 			if ( $option_name ) {
+				// Switch based on the option name
 				switch ( $option_name ) {
 					// Conductor License
 					case Conductor_Options::$option_name . '_license':
@@ -78,12 +79,18 @@ if ( ! class_exists( 'Conductor_Options' ) ) {
 
 				$defaults = apply_filters( 'conductor_options_defaults_' . $option_name, $defaults, $option_name );
 			}
+			// Otherwise we don't have an option name
 			else {
 				$defaults = array(
-					// General
-					'enabled' => true, // Conductor is "on"
+					// Enabled
+					'enabled' => true,
 					// Content Layouts
 					'content_layouts' => array(),
+					// REST API
+					'rest' => array(
+						// Enabled
+						'enabled' => true
+					),
 					// Uninstall
 					'uninstall' => array(
 						'data' => true // Should Conductor data be removed upon uninstall?

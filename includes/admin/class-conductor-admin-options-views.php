@@ -4,7 +4,7 @@
  *
  * @class Conductor_Admin_Options_Views
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if( ! class_exists( 'Conductor_Admin_Options_Views' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.5.0';
 
 		/**
 		 * @var array
@@ -61,6 +61,20 @@ if( ! class_exists( 'Conductor_Admin_Options_Views' ) ) {
 		 */
 		public static function conductor_enable_field() {
 			include_once 'views/html-conductor-options-enable-field.php';
+		}
+		
+		/**
+		 * This function renders the Conductor REST API Enable Settings Section.
+		 */
+		public static function conductor_rest_enable_section() {
+			include_once 'views/html-conductor-options-rest-api-enable-section.php';
+		}
+
+		/**
+		 * This function renders the Conductor REST API Enable Settings Field.
+		 */
+		public static function conductor_rest_enable_field() {
+			include_once 'views/html-conductor-options-rest-api-enable-field.php';
 		}
 
 		/**

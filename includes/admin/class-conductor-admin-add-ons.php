@@ -4,7 +4,7 @@
  *
  * @class Conductor_Admin_Add_Ons
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.5.0';
 
 		/**
 		 * @var string
@@ -150,8 +150,10 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 			// Grab the Conductor Admin menu page slug
 			$conductor_admin_menu_page = Conductor_Admin_Options::get_menu_page();
 
-			// Conductor Admin License Options Page
-			self::$sub_menu_page = add_submenu_page( $conductor_admin_menu_page, __( 'Add-Ons', 'conductor' ), __( 'Add-Ons', 'conductor' ), 'manage_options', self::get_sub_menu_page(), array( $this, 'render' ) );
+			// If the current user has the Conductor capability
+			if ( current_user_can( Conductor::$capability ) )
+				// Conductor Admin Add-Ons Options Page
+				self::$sub_menu_page = add_submenu_page( $conductor_admin_menu_page, __( 'Add-Ons', 'conductor' ), __( 'Add-Ons', 'conductor' ), Conductor::$capability, self::get_sub_menu_page(), array( $this, 'render' ) );
 
 			return self::$sub_menu_page;
 		}
@@ -365,10 +367,10 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 				}
 
 				/*
-				 * Some add-ons hook into plugins_loaded to determine if the necessary components (i.e. other
-				 * plugins, functionality, logic, correct versions, etc...) exist. If the necessary components do not exist,
-				 * the add-on is typically deactivated. We're looking to see if the add-on has plugins_loaded() and
-				 * admin_notices methods() and calling them accordingly to determine if this add-on and truly be activated.
+				 * Some add-ons have logic to determine if the necessary components (i.e. other plugins, functionality,
+				 * logic, correct versions, etc...) exist. If the necessary components do not exist, the add-on is typically
+				 * deactivated. We're looking to see if the add-on this logic and calling it accordingly to determine if this
+				 * add-on can truly be activated.
 				 */
 
 				// Get add-ons data
@@ -388,11 +390,13 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 								// Grab the add-on instance
 								$add_on_instance = $add_on_data['instance']();
 
-								// TODO: add-ons may not always hook into plugins_loaded
-								// If this add-on has a plugins_loaded and admin_notices callback
-								if ( method_exists( $add_on_instance, 'plugins_loaded' ) && method_exists( $add_on_instance, 'admin_notices' ) ) {
-									// Call the plugins_loaded() function
-									call_user_func_array( array( $add_on_instance, 'plugins_loaded' ), array() );
+								// Grab the check requirements function
+								$check_requirements_function = ( isset( $add_on_data['check_requirements_function'] ) && ! empty( $add_on_data['check_requirements_function'] ) ) ? $add_on_data['check_requirements_function'] : 'plugins_loaded';
+
+								// If this add-on has a check requirements function and admin_notices callback
+								if ( method_exists( $add_on_instance, $check_requirements_function ) && method_exists( $add_on_instance, 'admin_notices' ) ) {
+									// Call the check requirements function
+									call_user_func_array( array( $add_on_instance, $check_requirements_function ), array() );
 
 									// If this add-on is no longer active
 									if ( ! is_plugin_active( $plugin_basename ) ) {
@@ -400,9 +404,8 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 											// Call the admin_notices() function
 											call_user_func_array( array( $add_on_instance, 'admin_notices' ), array() );
 
-											// Grab the contents
-											$add_on_admin_notice = ob_get_contents();
-										ob_end_clean();
+										// Grab the add-on admin notice
+										$add_on_admin_notice = ob_get_clean();
 
 										// Strip HTML tags
 										$add_on_admin_notice = trim( strip_tags( $add_on_admin_notice ) );
