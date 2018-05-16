@@ -4,7 +4,7 @@
  *
  * @class Conductor_Widget
  * @author Slocum Studio
- * @version 1.4.2
+ * @version 1.5.0
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.2';
+		public $version = '1.5.0';
 
 		/**
 		 * @var array, Conductor Widget defaults
@@ -28,6 +28,17 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		 * @var array, Conductor Widget displays (formally widget sizes)
 		 */
 		public $displays = array();
+
+		/**
+		 * @var array, Conductor Widget legacy displays
+		 */
+		public $legacy_displays = array();
+
+		/**
+		 * @var Boolean, Flag to determine if legacy Conductor Widget displays are enabled
+		 */
+		// TODO: Depreciate in a future version
+		public $has_legacy_displays_enabled = array();
 
 		/**
 		 * @var Conductor_Widget_Query, Instance of the Conductor Query class
@@ -86,19 +97,36 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 			// Maximum number of columns
 			$this->max_columns = ( int ) apply_filters( 'conductor_widget_max_columns', $this->max_columns, $this );
 
-			// Widget displays
-			// TODO: Introduce a filter that is executed in the widget() function for specific widget displays (by widget number)
-			$this->displays = apply_filters( 'conductor_widget_displays', array(
-				'small' => __( 'Small', 'conductor' ),
-				'medium' => __( 'Medium', 'conductor' ),
-				'large' => __( 'Large', 'conductor' ),
+			// Widget Displays
+			$this->displays = array(
+				// Flexbox (Columns)
 				'flexbox' => array(
 					'label' => __( 'Columns', 'conductor' ),
 					'customize' => array(
 						'columns' => true // Columns
 					)
 				)
-			), array(), $this ); // TODO: Empty array is for the $instance (old reference) which will likely be removed in the future (some add-ons may reference this value in their callback functions, but do not actually use it in logic)
+			);
+
+			// Legacy Widget Displays
+			$this->legacy_displays = array(
+				'small' => __( 'Small', 'conductor' ),
+				'medium' => __( 'Medium', 'conductor' ),
+				'large' =>__( 'Large', 'conductor' )
+			);
+
+			// Flag to determine if Conductor Widget legacy displays should be enabled
+			// TODO: Depreciate in a future version
+			$this->has_legacy_displays_enabled = apply_filters( 'conductor_widget_enable_legacy_displays', false, $this );
+
+			// If the Conductor Widget legacy displays are enabled
+			if ( $this->has_legacy_displays_enabled )
+				// Merge the legacy widget displays with the widget displays
+				$this->displays = array_merge( $this->legacy_displays, $this->displays );
+
+			// Allow widget displays to be filtered
+			// TODO: Introduce a filter that is executed in the widget() function for specific widget displays (by widget number)
+			$this->displays = apply_filters( 'conductor_widget_displays', $this->displays, array(), $this ); // TODO: Empty array is for the $instance (old reference) which will likely be removed in the future (some add-ons may reference this value in their callback functions, but do not actually use it in logic)
 
 			// Set up the default widget settings
 			$this->defaults = apply_filters( 'conductor_widget_defaults', array(
@@ -114,11 +142,11 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 					'max_num_posts' => get_option( 'posts_per_page' ), // Conductor specific argument
 					'posts_per_page' => '',
 					'offset' => 1,
-					'cat' => false,
+					'cat' => 0, // All categories
 					'post__in' => false,
 					'post__not_in' => false
 				),
-				'widget_size' => 'large',
+				'widget_size' => ( $this->has_legacy_displays_enabled ) ? 'large' : 'flexbox',
 				'hide_title' => false,
 				'post_thumbnails_size' => false,
 				'excerpt_length' => apply_filters( 'excerpt_length', 55 ),
@@ -208,6 +236,16 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 					// Columns
 					'columns' => 1 // Default to 1 column
 				),
+				// AJAX
+				'ajax' => array(
+					// Enabled
+					'enabled' => false
+				),
+				// REST API
+				'rest' => array(
+					// Enabled
+					'enabled' => true
+				),
 				// CSS ID
 				'css_id' => ''
 			), $this );
@@ -232,7 +270,8 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 			add_filter( 'dynamic_sidebar_params', array( get_class(), 'dynamic_sidebar_params' ) ); // Dynamic sidebar parameters
 			add_action( 'dynamic_sidebar_after', array( get_class(), 'dynamic_sidebar_after' ), 10, 2 ); // Dynamic sidebar after
 			add_filter( 'conductor_widget_wrapper_css_classes', array( get_class(), 'conductor_widget_wrapper_css_classes' ), 10, 5 ); // Conductor Widget Wrapper CSS Classes
-			add_filter( 'conductor_widget_featured_image_size', array( get_class(), 'conductor_widget_featured_image_size' ), 10, 3 ); // Conductor Widget Featured Image Size
+			add_filter( 'conductor_widget_featured_image_size', array( get_class(), 'conductor_widget_featured_image_size' ), 10, 6 ); // Conductor Widget Featured Image Size
+			add_action( 'wp_enqueue_scripts', array( get_class(), 'wp_enqueue_scripts' ) ); // Enqueue Scripts & Styles (front-end)
 			//add_filter( 'template_include', array( $this, 'template_include' ), 20 ); // Template Include
 		}
 
@@ -259,13 +298,34 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		?>
 			<?php do_action( 'conductor_widget_settings_before', $instance, $this ); ?>
 
+
+			<?php do_action( 'conductor_widget_settings_title_section_wrap_after', $instance, $this ); ?>
+
 			<?php $this->widget_settings_title_section( $instance ); // Widget Title Section ?>
+
+			<?php do_action( 'conductor_widget_settings_title_section_wrap_after', $instance, $this ); ?>
+
+
+			<?php do_action( 'conductor_widget_settings_content_section_wrap_before', $instance, $this ); ?>
 
 			<?php $this->widget_settings_content_section( $instance ); // Content Settings Section ?>
 
+			<?php do_action( 'conductor_widget_settings_content_section_wrap_after', $instance, $this ); ?>
+
+
+			<?php do_action( 'conductor_widget_settings_display_section_wrap_before', $instance, $this ); ?>
+
 			<?php $this->widget_settings_display_section( $instance ); // Display Settings Section ?>
 
+			<?php do_action( 'conductor_widget_settings_display_section_wrap_after', $instance, $this ); ?>
+
+
+			<?php do_action( 'conductor_widget_settings_advanced_section_wrap_before', $instance, $this ); ?>
+
 			<?php $this->widget_settings_advanced_section( $instance, $raw_instance ); // Advanced Settings Section ?>
+
+			<?php do_action( 'conductor_widget_settings_advanced_section_wrap_after', $instance, $this ); ?>
+
 
 			<?php do_action( 'conductor_widget_settings_after', $instance, $this ); ?>
 
@@ -279,19 +339,28 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 
 		/**
 		 * This function handles updating (saving) widget options
-		 * TODO: Unset all settings that are not used in widget (i.e. max_num_posts)
+		 * TODO: Future: Unset all settings that are not used in widget (i.e. $new_instance['max_num_posts'])
 		 */
 		public function update( $new_instance, $old_instance ) {
 			global $wp_registered_sidebars;
 
-			// Sanitize all input data
+
+			/*
+			 * Title
+			 */
+			
+			// Title
 			$new_instance['title'] = ( ! empty( $new_instance['title'] ) ) ? sanitize_text_field( $new_instance['title'] ) : $this->defaults['title']; // Widget Title
-			$new_instance['widget_size'] = ( ! empty( $new_instance['widget_size'] ) ) ? sanitize_text_field( $new_instance['widget_size'] ) : $this->defaults['widget_size']; // Widget Size (default to large)
 
-			// Flexbox Columns
-			$new_instance['flexbox']['columns'] = ( isset( $new_instance['flexbox_columns'] ) ) ? ( int ) $new_instance['flexbox_columns'] : $this->defaults['flexbox']['columns'];
+			// Hide Title
+			$new_instance['hide_title'] = ( isset( $new_instance['hide_title'] ) ) ? true : $this->defaults['hide_title']; // Hide Widget Title
 
-			// General
+			
+			/*
+			 * Content
+			 */
+			
+			// Feature Many
 			$new_instance['feature_many'] = ( ! empty( $new_instance['feature_many'] ) ) ? true : $this->defaults['feature_many']; // Feature Many
 
 			// Content Type
@@ -300,7 +369,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 			// Feature One
 			$new_instance['post_id'] = ( ! $new_instance['feature_many'] && ! empty( $new_instance['post_id'] ) ) ? abs( ( int ) $new_instance['post_id'] ) : $this->defaults['post_id']; // Post ID (feature one)
 
-			// Feature Many
+			// Feature Many Query Arguments
 			$new_instance['query_args']['post_type'] = ( $new_instance['feature_many'] && ! empty( $new_instance['post_type'] ) ) ? sanitize_text_field( $new_instance['post_type'] ) : $this->defaults['query_args']['post_type']; // Post Type
 			$new_instance['query_args']['cat'] = ( $new_instance['feature_many'] && ! empty( $new_instance['cat'] ) ) ? abs( ( int ) $new_instance['cat'] ) : $this->defaults['query_args']['cat']; // Category ID
 			$new_instance['query_args']['orderby'] = ( $new_instance['orderby'] && ! empty( $new_instance['orderby'] ) ) ? sanitize_text_field( $new_instance['orderby'] ) : $this->defaults['query_args']['orderby']; // Order By
@@ -335,15 +404,26 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 			else
 				$new_instance['query_args']['post__not_in'] = $this->defaults['query_args']['post__not_in'];
 
-			// Display
-			$new_instance['hide_title'] = ( isset( $new_instance['hide_title'] ) ) ? true : $this->defaults['hide_title']; // Hide Widget Title
-			$new_instance['post_thumbnails_size'] = ( ! empty( $new_instance['post_thumbnails_size'] ) ) ? sanitize_text_field( $new_instance['post_thumbnails_size'] ) : $this->defaults['post_thumbnails_size']; // Post Thumbnails Size
-			$new_instance['excerpt_length'] = abs( ( int ) $new_instance['excerpt_length'] ); // Excerpt Length
+			
+			/*
+			 * Display
+			 */
+			
+			// Widget Size
+			// TODO: Future: Ensure the widget size exists in $this->displays
+			$new_instance['widget_size'] = ( ! empty( $new_instance['widget_size'] ) ) ? sanitize_text_field( $new_instance['widget_size'] ) : $this->defaults['widget_size']; // Widget Size (default to large)
+
+			// Flexbox Columns
+			$new_instance['flexbox']['columns'] = ( isset( $new_instance['flexbox_columns'] ) ) ? ( int ) $new_instance['flexbox_columns'] : $this->defaults['flexbox']['columns'];
+
+			// AJAX - Enabled
+			// TODO: Future: Check Conductor REST API here?
+			$new_instance['ajax']['enabled'] = ( isset( $new_instance['ajax_enabled'] ) ) ? true : $this->defaults['ajax']['enabled'];
 
 			/*
 			 * Display - Output
 			 *
-			 * The Conductor_Widget_Query class will check for method_exists() and/or is_callable() before calling
+			 * On the front-end, the Conductor_Widget_Query class will check for method_exists() and/or is_callable() before calling
 			 * add_action() to ensure there are no errors/warnings.
 			 */
 			$output_elements = ( ! empty( $new_instance['output'] ) ) ? json_decode( $new_instance['output'], true ) : false;
@@ -384,7 +464,18 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 				}
 			}
 
-			// Advanced
+			
+			/*
+			 * Advanced
+			 */
+
+			// Post Thumbnails Size
+			$new_instance['post_thumbnails_size'] = ( ! empty( $new_instance['post_thumbnails_size'] ) ) ? sanitize_text_field( $new_instance['post_thumbnails_size'] ) : $this->defaults['post_thumbnails_size'];
+
+			// Excerpt Length
+			$new_instance['excerpt_length'] = abs( ( int ) $new_instance['excerpt_length'] );
+
+			// CSS Class
 			if ( ! empty( $new_instance['css_class'] ) ) {
 				// Split classes
 				$new_instance['css_class'] = explode( ' ', $new_instance['css_class'] );
@@ -416,6 +507,10 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 
 			$new_instance['css_id'] = ( ! empty( $new_instance['css_id'] ) ) ? sanitize_text_field( $new_instance['css_id'] ) : $this->defaults['css_id'];
 
+			// REST API - Enabled
+			// TODO: Future: Check Conductor REST API here?
+			$new_instance['rest']['enabled'] = ( ! isset( $new_instance['rest_enabled'] ) ) ? false : $this->defaults['rest']['enabled'];
+
 			return apply_filters( 'conductor_widget_update', $new_instance, $old_instance, $this );
 		}
 
@@ -423,84 +518,732 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		 * This function controls the display of the widget on the website
 		 */
 		public function widget( $args, $instance ) {
+			// If we don't have legacy widget displays enabled and we have a legacy widget size
+			if ( ! $this->has_legacy_displays_enabled && array_key_exists( $instance['widget_size'], $this->legacy_displays ) ) {
+				// Switch based on widget_size
+				switch ( $instance['widget_size'] ) {
+					// Medium
+					case 'medium':
+						// Set the flexbox columns
+						$instance['flexbox']['columns'] = 2;
+					break;
+
+					// Small
+					case 'small':
+						// Set the flexbox columns
+						$instance['flexbox']['columns'] = 4;
+					break;
+				}
+
+				// Set the widget size
+				$instance['widget_size'] = 'flexbox';
+			}
+
 			// Instance filter
 			$instance = apply_filters( 'conductor_widget_instance', $instance, $args, $this );
 
 			extract( $args ); // $before_widget, $after_widget, $before_title, $after_title
 
+			// Flag to determine if this widget has AJAX enabled
+			$has_ajax = $this->has_ajax( $instance, $args );
+
 			// Start of widget output
 			echo $before_widget;
 
-			do_action( 'conductor_widget_before', $instance, $args, $this );
 
-			do_action( 'conductor_widget_title_before', $instance, $args, $this );
+			/*
+			 * Widget Before
+			 */
+
+			do_action( 'conductor_widget_widget_before_wrapper_before', $instance, $args, $this );
+
+			// Display the Conductor Widget before opening wrapper element
+			$this->display_widget_wrapper_el( 'widget_before', $instance, $args, 'open', array(
+				'conductor-widget-before-wrap'
+			) );
+
+				do_action( 'conductor_widget_before', $instance, $args, $this );
+
+			// Display the Conductor Widget before closing wrapper element
+			$this->display_widget_wrapper_el( 'widget_before', $instance, $args );
+
+			do_action( 'conductor_widget_widget_before_wrapper_after', $instance, $args, $this );
+
+
+			/*
+			 * Widget Title Before
+			 */
+
+			do_action( 'conductor_widget_widget_title_before_wrapper_before', $instance, $args, $this );
+
+			// Display the Conductor Widget title before opening wrapper element
+			$this->display_widget_wrapper_el( 'widget_title_before', $instance, $args, 'open', array(
+				'conductor-widget-title-before-wrap'
+			) );
+			
+				do_action( 'conductor_widget_title_before', $instance, $args, $this );
+
+			// Display the Conductor Widget title before closing wrapper element
+			$this->display_widget_wrapper_el( 'widget_title_before', $instance, $args );
+
+			do_action( 'conductor_widget_widget_title_before_wrapper_after', $instance, $args, $this );
+
+
+			// Display the widget title
 			$this->get_widget_title( $before_title, $after_title, $instance );
-			do_action( 'conductor_widget_title_after', $instance, $args, $this );
+
+
+			/*
+			 * Widget Title After
+			 */
+
+			do_action( 'conductor_widget_widget_title_after_wrapper_before', $instance, $args, $this );
+
+			// Display the Conductor Widget title after opening wrapper element
+			$this->display_widget_wrapper_el( 'widget_title_after', $instance, $args, 'open', array(
+				'conductor-widget-title-after-wrap',
+			) );
+
+				do_action( 'conductor_widget_title_after', $instance, $args, $this );
+
+			// Display the Conductor Widget title after closing wrapper element
+			$this->display_widget_wrapper_el( 'widget_title_after', $instance, $args );
+
+			do_action( 'conductor_widget_widget_title_after_wrapper_after', $instance, $args, $this );
+
+
+			// If this widget has AJAX enabled
+			// TODO: Future: Create display functions for these elements
+			if ( $has_ajax ) {
+				// AJAX Message
+				$ajax_message = '<div class="conductor-widget-message-wrap conductor-widget-ajax-message-wrap conductor-widget-wrap-element conductor-widget-wrapper-element">';
+					$ajax_message .= '<div class="conductor-widget-ajax-message">';
+						$ajax_message .= '<span class="conductor-widget-ajax-message-close-wrap">';
+							$ajax_message .= '<a href="#" class="conductor-widget-ajax-message-close" title="' . __( 'Close Message', 'conductor' ) . '">';
+								$ajax_message .= '<span class="dashicons dashicons-dismiss"></span>';
+							$ajax_message .= '</a>';
+						$ajax_message .= '</span>';
+						$ajax_message .= '<span class="conductor-widget-message conductor-widget-ajax-message-message"></span>';
+					$ajax_message .= '</div>';
+				$ajax_message .= '</div>';
+
+				echo $ajax_message;
+
+
+				// Spinner
+				$spinner = '<div class="conductor-spinner-wrap conductor-widget-spinner-wrap conductor-widget-wrap-element conductor-widget-wrapper-element">';
+					$spinner .= '<div class="conductor-spinner conductor-widget-spinner"></div>';
+				$spinner .= '</div>';
+
+				echo $spinner;
+
+
+				// Spinner overlay
+				$spinner_overlay = '<div class="conductor-spinner-overlay conductor-widget-spinner-overlay conductor-widget-wrap-element conductor-widget-wrapper-element"></div>';
+
+				echo $spinner_overlay;
+			}
 
 			// Create a new query only if we have an instance and this is not a newly added widget
 			if ( $this->is_valid_instance( $instance ) ) {
-				// Conductor Query
-				$conductor_widget_query_args = array(
-					'widget' => $this,
-					'widget_instance' => $instance,
-					'query_type' => ( isset( $instance['feature_many'] ) && ! $instance['feature_many'] ) ? 'single' : 'many',
-					'display_content_args_count' => 4 // Current number of arguments on the display_content() function, used in sortable output
-				);
-				$conductor_widget_query_args = apply_filters( 'conductor_widget_query_args', $conductor_widget_query_args, $instance, $args, $this );
+				// Grab the query (should contain results)
+				$conductor_widget_query_results = $this->get_query( $instance, $args );
 
-				// Default to Conductor Query
-				if ( ! ( $this->conductor_widget_query = apply_filters( 'conductor_widget_query', false, $conductor_widget_query_args, $instance, $args, $this ) ) )
-					$this->conductor_widget_query = new Conductor_Widget_Default_Query( $conductor_widget_query_args );
 
-				// Return the query (should contain results)
-				$conductor_widget_query_results = $this->conductor_widget_query->get_query();
+				/*
+				 * Content Before
+				 */
 
-				// Single Content Piece
-				// TODO: Template files for widget output
-				if ( $this->is_single_content_piece( $instance ) && ! empty( $conductor_widget_query_results ) ) {
-					// Fetch the post (global $post data is setup upon Conductor_Widget_Query::query() which is called in instantiation)
-					$post = $this->conductor_widget_query->get_current_post( true );
+				do_action( 'conductor_widget_content_before_wrapper_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
 
-					// Display the post
-					$this->display_content( $post, $instance );
+				// Display the Conductor Widget content before opening wrapper element
+				$this->display_widget_wrapper_el( 'widget_content_before', $instance, $args, 'open', array(
+					'conductor-widget-content-before-wrap',
+				) );
 
-					// Reset global $post data now that we've finished the loop
-					$this->conductor_widget_query->reset_global_post();
+					do_action( 'conductor_widget_content_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
 
-					// Reset post data
-					wp_reset_postdata();
-				}
-				// Many Content Pieces
-				else if ( ! $this->is_single_content_piece( $instance ) && $this->conductor_widget_query->have_posts() ) {
-					while ( $this->conductor_widget_query->have_posts() ) : $this->conductor_widget_query->the_post();
-						$this->display_content( $this->conductor_widget_query->get_current_post(), $instance );
-					endwhile;
+				// Display the Conductor Widget content content closing wrapper element
+				$this->display_widget_wrapper_el( 'widget_content_before', $instance, $args );
 
-					// Reset post data
-					wp_reset_postdata();
+				do_action( 'conductor_widget_content_before_wrapper_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
 
-					// Pagination
-					if ( apply_filters( 'conductor_widget_has_pagination', $this->conductor_widget_query->has_pagination(), $instance, $args, $conductor_widget_query_results, $this ) ) {
-						do_action( 'conductor_widget_pagination_before', $instance, $args, $conductor_widget_query_results, $this );
-						$this->conductor_widget_query->get_pagination_links();
-						do_action( 'conductor_widget_pagination_after', $instance, $args, $conductor_widget_query_results, $this );
+
+
+				// Before content wrapper
+				$before_content_wrapper = $before_widget;
+
+				// Grab the before content wrapper element matches
+				preg_match_all( '/<([^ >]+)/', $before_content_wrapper, $before_content_wrapper_els, PREG_SET_ORDER );
+
+				/*
+				 * If we have any attribute matches in the before widget element
+				 *
+				 * Matches:
+				 * [0] - full attribute match
+				 * [1] - attribute
+				 * [2] - value
+				 */
+				if ( preg_match_all( '/(\S+)=["\']?((?:.(?!["\']?\s+(?:\S+)=|[>"\']))+.)["\']?/', $before_widget, $before_widget_attrs, PREG_SET_ORDER ) !== false ) {
+					// Loop through the before widget element attributes
+					foreach ( $before_widget_attrs as $attr ) {
+						// Ensure the attribute is lowercase
+						$attribute = strtolower( $attr[1] );
+
+						// Switch based on attribute
+						switch ( $attribute ) {
+							// Class
+							case 'class':
+								// Explode the CSS classes
+								$before_content_wrapper_css_classes = explode( ' ', $attr[2] );
+
+								// If the "conductor-widget-wrap" CSS class exists
+								if ( ( $conductor_widget_wrap_index = array_search( 'conductor-widget-wrap', $before_content_wrapper_css_classes ) ) !== -1 ) {
+									// Adjust the "conductor-widget-wrap" CSS class
+									$before_content_wrapper_css_classes[$conductor_widget_wrap_index] = str_replace( '-wrap', '-content-wrap', $before_content_wrapper_css_classes[$conductor_widget_wrap_index] );
+
+									// Reset the array keys on the CSS classes
+									$before_content_wrapper_css_classes = array_values( $before_content_wrapper_css_classes );
+								}
+
+								$before_content_wrapper_css_classes = apply_filters( 'conductor_widget_before_content_wrapper_css_classes', $before_content_wrapper_css_classes, $instance, $args, $this->conductor_widget_query, $this );
+
+								// Sanitize CSS classes
+								$before_content_wrapper_css_classes = array_map( 'sanitize_html_class', $before_content_wrapper_css_classes );
+
+								// Ensure we have unique CSS classes (no empty values)
+								$before_content_wrapper_css_classes = array_unique( array_values( array_filter( $before_content_wrapper_css_classes ) ) );
+
+								// Implode the CSS classes
+								$before_content_wrapper_css_classes = implode( ' ', $before_content_wrapper_css_classes );
+
+								// Set the attribute value
+								$attr[2] = $before_content_wrapper_css_classes;
+
+								// Replace the value in the class attribute
+								$before_content_wrapper = str_replace( $attr[0], $attribute . '="' . $attr[2] . '"', $before_content_wrapper );
+							break;
+
+							// ID
+							case 'id':
+								// Replace the value in the ID attribute
+								$before_content_wrapper = str_replace( $attr[0], $attribute . '="' . $attr[2] . '-content-wrap"', $before_content_wrapper );
+							break;
+						}
 					}
 				}
-				// Other Content Pieces (or no results)
-				else
-					do_action( 'conductor_widget_content_pieces_other', $conductor_widget_query_results, $instance, $args, $this );
+
+				// TODO: Future: Store these in a "flags" variable for use throughout this function?
+				// Before content wrapper data attributes
+				$before_content_wrapper_data_attrs = array(
+					'data-is-rest-api-enabled' => $this->is_rest_api_enabled( $instance, $args ),
+					'data-has-ajax' => $has_ajax,
+					'data-has-pagination' => $this->has_pagination( $instance, $args, $conductor_widget_query_results ),
+					'data-has-permalink-structure' => ( get_option( 'permalink_structure' ) !== false ),
+					'data-is-front-page' => ( is_front_page() ),
+					'data-is-single' => ( is_single() )
+				);
+				$before_content_wrapper_data_attrs = apply_filters( 'conductor_widget_before_content_wrapper_data_attributes', $before_content_wrapper_data_attrs, $instance, $args, $this->conductor_widget_query, $this );
+
+				// Prepare the data attributes
+				$before_content_wrapper_data_attrs = $this->prepare_data_attributes( $before_content_wrapper_data_attrs );
+
+				// Add the data attributes to the before content wrapper element
+				$before_content_wrapper = str_replace( '>', ' ' . $before_content_wrapper_data_attrs . '>', $before_content_wrapper);
+
+
+				do_action( 'conductor_widget_display_content_wrapper_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+				// Before content wrapper
+				echo $before_content_wrapper;
+
+					do_action( 'conductor_widget_display_content_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+					// Display widget content
+					$this->display_widget_content( $instance, $args, $conductor_widget_query_results );
+
+					do_action( 'conductor_widget_display_content_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+				// After content wrapper
+				$after_content_wrapper = $after_widget;
+
+				// If we have before content wrapper elements
+				if ( ! empty( $before_content_wrapper_els ) ) {
+					// Reverse the before content wrapper elements
+					$before_content_wrapper_els = array_reverse( $before_content_wrapper_els );
+
+					// Reset the after content wrapper
+					$after_content_wrapper = '';
+
+					// Loop through the before content wrapper elements
+					foreach ( $before_content_wrapper_els as $before_content_wrapper_el ) {
+						// Add this before content wrapper element to the after content wrapper
+						$after_content_wrapper .= '</' . $before_content_wrapper_el[1] . '>';
+					}
+				}
+
+				// After content wrapper
+				echo $after_content_wrapper;
+
+				do_action( 'conductor_widget_display_content_wrapper_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+
+				/*
+				 * Content After
+				 */
+
+				do_action( 'conductor_widget_content_after_wrapper_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+				// Display the Conductor Widget content after opening wrapper element
+				$this->display_widget_wrapper_el( 'widget_content_after', $instance, $args, 'open', array(
+					'conductor-widget-content-after-wrap',
+				) );
+				
+					do_action( 'conductor_widget_content_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+				// Display the Conductor Widget content content closing wrapper element
+				$this->display_widget_wrapper_el( 'widget_content_after', $instance, $args );
+
+				do_action( 'conductor_widget_content_after_wrapper_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+
+				/*
+				 * Pagination
+				 */
+
+				do_action( 'conductor_widget_pagination_wrapper_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+				// Display the Conductor Widget pagination opening wrapper element
+				$this->display_widget_wrapper_el( 'widget_pagination', $instance, $args, 'open', array(
+					'conductor-widget-pagination-wrap',
+				) );
+
+					do_action( 'conductor_widget_display_widget_pagination_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+					// Display widget pagination
+					$this->display_widget_pagination( $instance, $args, $conductor_widget_query_results );
+
+					do_action( 'conductor_widget_display_widget_pagination_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+				
+				// Display the Conductor Widget pagination closing wrapper element
+				$this->display_widget_wrapper_el( 'widget_pagination', $instance, $args );
+
+				do_action( 'conductor_widget_pagination_wrapper_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
 			}
 
-			do_action( 'conductor_widget_after', $instance, $args, $this );
+
+			/*
+			 * Widget After
+			 */
+
+			do_action( 'conductor_widget_widget_after_wrapper_before', $instance, $args, $this );
+
+			// Display the Conductor Widget after opening wrapper element
+			$this->display_widget_wrapper_el( 'widget_after', $instance, $args, 'open', array(
+				'conductor-widget-after-wrap'
+			) );
+
+				do_action( 'conductor_widget_after', $instance, $args, $this );
+
+			// Display the Conductor Widget after closing wrapper element
+			$this->display_widget_wrapper_el( 'widget_after', $instance, $args );
+
+			do_action( 'conductor_widget_widget_after_wrapper_after', $instance, $args, $this );
 
 			// End of widget output
 			echo $after_widget;
 		}
 
 		/**
+		 * This function returns the Conductor Widget query.
+		 */
+		public function get_query( $instance, $args, $conductor_widget_query_args = array(), $set_widget_query = true ) {
+			// Grab the query arguments
+			$conductor_widget_query_args = ( ! empty( $conductor_widget_query_args ) ) ? $conductor_widget_query_args : $this->get_query_args( $instance, $args );
+
+			// Grab the Conductor Widget Query
+			$widget_query = $this->get_widget_query( $instance, $args, $conductor_widget_query_args, $set_widget_query );
+
+			return $widget_query->get_query();
+		}
+
+		/**
+		 * This function returns the Conductor Widget query.
+		 */
+		public function get_widget_query( $instance, $args, $conductor_widget_query_args = array(), $set_widget_query = true ) {
+			// Grab the query arguments
+			$conductor_widget_query_args = ( ! empty( $conductor_widget_query_args ) ) ? $conductor_widget_query_args : $this->get_query_args( $instance, $args );
+
+			// Default to Conductor Query
+			if ( ! ( $widget_query = apply_filters( 'conductor_widget_query', false, $conductor_widget_query_args, $instance, $args, $this ) ) )
+				$widget_query = new Conductor_Widget_Default_Query( $conductor_widget_query_args );
+
+			// If we should set the widget query
+			if ( $set_widget_query )
+				// Set the widget query
+				$this->conductor_widget_query = $widget_query;
+
+			return $widget_query;
+		}
+
+		/**
+		 * This function returns the Conductor Widget query.
+		 */
+		public function get_query_args( $instance, $args ) {
+			// Conductor Query
+			$conductor_widget_query_args = array(
+				'widget' => $this,
+				'widget_instance' => $instance,
+				'query_type' => ( isset( $instance['feature_many'] ) && ! $instance['feature_many'] ) ? 'single' : 'many',
+				'display_content_args_count' => 4 // Current number of arguments on the display_content() function, used in sortable output
+			);
+
+			return apply_filters( 'conductor_widget_query_args', $conductor_widget_query_args, $instance, $args, $this );
+		}
+
+		/**
+		 * This function displays the widget wrap elements.
+		 */
+		public function display_widget_wrapper_el( $id, $instance, $args, $type = 'close', $css_classes = array(), $el = 'div' ) {
+			// If this is an opening element
+			if ( $type === 'open' ) {
+				// Merge the CSS classes with the default CSS classes
+				$css_classes = array_merge( $css_classes, array(
+					'conductor-widget-wrap-element',
+					'conductor-widget-wrapper-element'
+				) );
+
+				// Filter CSS classes
+				$css_classes = apply_filters( 'conductor_widget_' . $id . '_wrapper_css_classes', $css_classes, $id, $type, $el, $instance, $args, $this->conductor_widget_query, $this );
+				$css_classes = apply_filters( 'conductor_widget_wrapper_el_css_classes', $css_classes, $id, $type, $el, $instance, $args, $this->conductor_widget_query, $this );
+
+				// Sanitize CSS classes
+				$css_classes = array_map( 'sanitize_html_class', $css_classes );
+
+				// Ensure we have unique CSS classes (no empty values)
+				$css_classes = array_unique( array_values( array_filter( $css_classes ) ) );
+			}
+
+			// Filter element
+			$el = apply_filters( 'conductor_widget_wrapper_el', $el, $id, $type, $css_classes, $instance, $args, $this->conductor_widget_query, $this );
+
+			// Wrapper element
+			$wrapper_el = ( $type === 'open' ) ? '<' . $el : '</' . $el;
+			$wrapper_el .= ( $type === 'open' ) ? ' class="' . esc_attr( implode( ' ', $css_classes ) ) . '"' : '';
+			$wrapper_el .= '>';
+
+			echo $wrapper_el;
+		}
+
+		/**
+		 * This function displays the widget content.
+		 */
+		public function display_widget_content( $instance, $args, $conductor_widget_query_results ) {
+			// Single Content Piece
+			// TODO: Future: Template files for widget output
+			if ( $this->is_single_content_piece( $instance ) && ! empty( $conductor_widget_query_results ) ) {
+				// Fetch the post (global $post data is setup upon Conductor_Widget_Query::query() which is called in instantiation)
+				$post = $this->conductor_widget_query->get_current_post( true );
+
+				// Display the post
+				$this->display_content( $post, $instance );
+			}
+			// Many Content Pieces
+			else if ( ! $this->is_single_content_piece( $instance ) && $this->conductor_widget_query->have_posts() ) {
+				while ( $this->conductor_widget_query->have_posts() ) : $this->conductor_widget_query->the_post();
+					$this->display_content( $this->conductor_widget_query->get_current_post(), $instance );
+				endwhile;
+			}
+			// Other Content Pieces (or no results)
+			else
+				do_action( 'conductor_widget_content_pieces_other', $conductor_widget_query_results, $instance, $args, $this );
+
+			// Reset global $post data now that we've finished the loop
+			$this->conductor_widget_query->reset_global_post();
+
+			// Reset post data
+			$this->wp_reset_postdata();
+		}
+
+		/**
+		 * This function resets global post data.
+		 */
+		public function wp_reset_postdata() {
+			global $wp_query, $post;
+
+			// If we have a global WordPress query and we have a WordPress query post
+			if ( isset( $wp_query ) && ! empty( $wp_query->post ) )
+				// Reset the global post data
+				wp_reset_postdata();
+			// Otherwise we don't have a global WordPress query
+			else
+				// Reset the global post
+				$post = null;
+		}
+
+		/**
+		 * This function determines if the widget has pagination.
+		 */
+		public function has_pagination( $instance, $args, $conductor_widget_query_results ) {
+			return apply_filters( 'conductor_widget_has_pagination', ( $this->conductor_widget_query ) ?  $this->conductor_widget_query->has_pagination() : null, $instance, $args, $conductor_widget_query_results, $this );
+		}
+
+		/**
+		 * This function displays the widget pagination.
+		 */
+		public function display_widget_pagination( $instance, $args, $conductor_widget_query_results ) {
+			// If we have pagination
+			if ( $this->has_pagination( $instance, $args, $conductor_widget_query_results ) ) {
+				do_action( 'conductor_widget_pagination_before', $instance, $args, $conductor_widget_query_results, $this );
+				$this->conductor_widget_query->get_pagination_links();
+				do_action( 'conductor_widget_pagination_after', $instance, $args, $conductor_widget_query_results, $this );
+			}
+		}
+
+		/**
+		 * This function renders a widget for the REST API.
+		 */
+		public function widget_rest( $args, $instance ) {
+			// Conductor Widget REST
+			do_action( 'conductor_widget_rest', $instance, $args, $this );
+
+			// If we don't have legacy widget displays enabled and we have a legacy widget size
+			if ( ! $this->has_legacy_displays_enabled && array_key_exists( $instance['widget_size'], $this->legacy_displays ) ) {
+				// Switch based on widget_size
+				switch ( $instance['widget_size'] ) {
+					// Medium
+					case 'medium':
+						// Set the flexbox columns
+						$instance['flexbox']['columns'] = 2;
+					break;
+
+					// Small
+					case 'small':
+						// Set the flexbox columns
+						$instance['flexbox']['columns'] = 4;
+					break;
+				}
+
+				// Set the widget size
+				$instance['widget_size'] = 'flexbox';
+			}
+
+			// Instance filter
+			$instance = apply_filters( 'conductor_widget_instance', $instance, $args, $this );
+			$instance = apply_filters( 'conductor_widget_rest_instance', $instance, $args, $this );
+
+			// Data
+			// TODO: Future: Add data such as query, instance, etc...
+			$data = array();
+
+
+			/*
+			 * Conductor Widget Before
+			 *
+			 * TODO: Add "wrap" element from widget() function?
+			 */
+
+			// Start output buffering
+			ob_start();
+
+				// Conductor Widget rest before
+				do_action( 'conductor_widget_rest_before', $instance, $args, $this );
+
+				// Conductor Widget before
+				do_action( 'conductor_widget_before', $instance, $args, $this );
+
+			// Grab the contents
+			$conductor_widget_before = ob_get_clean();
+
+			// Add the Conductor Widget before output to the data
+			$data['conductor_widget_before'] = $conductor_widget_before;
+
+
+			/*
+			 * Conductor Widget Title Before
+			 *
+			 * TODO: Add "wrap" element from widget() function?
+			 */
+
+			// Start output buffering
+			ob_start();
+
+				// Conductor Widget rest title before
+				do_action( 'conductor_widget_rest_title_before', $instance, $args, $this );
+
+				// Conductor Widget title before
+				do_action( 'conductor_widget_title_before', $instance, $args, $this );
+
+			// Grab the contents
+			$conductor_widget_title_before = ob_get_clean();
+
+			// Add the Conductor Widget title before output to the data
+			$data['conductor_widget_title_before'] = $conductor_widget_title_before;
+
+
+			/*
+			 * Conductor Widget Title After
+			 *
+			 * TODO: Add "wrap" element from widget() function?
+			 */
+
+			// Start output buffering
+			ob_start();
+
+				// Conductor Widget rest title after
+				do_action( 'conductor_widget_rest_title_after', $instance, $args, $this );
+
+				// Conductor Widget title after
+				do_action( 'conductor_widget_title_after', $instance, $args, $this );
+
+			// Grab the contents
+			$conductor_widget_title_after = ob_get_clean();
+
+			// Add the Conductor Widget title after output to the data
+			$data['conductor_widget_title_after'] = $conductor_widget_title_after;
+
+
+			// If we have a valid Conductor Widget instance
+			if ( $this->is_valid_instance( $instance ) ) {
+				// Grab the query (should contain results)
+				$conductor_widget_query_results = $this->get_query( $instance, $args );
+
+
+				/*
+				 * Conductor Widget Content Before
+				 *
+				 * TODO: Add "wrap" element from widget() function?
+				 */
+
+				// Start output buffering
+				ob_start();
+
+					// Conductor Widget rest content before
+					do_action( 'conductor_widget_rest_content_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+					// Conductor Widget content before
+					do_action( 'conductor_widget_content_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+				// Grab the contents
+				$conductor_widget_content_before = ob_get_clean();
+
+				// Add the Conductor Widget content before output to the data
+				$data['conductor_widget_content_before'] = $conductor_widget_content_before;
+
+
+				/*
+				 * Conductor Widget Content
+				 *
+				 * TODO: Add "wrap" element from widget() function?
+				 */
+
+				// Start output buffering
+				ob_start();
+
+					// Conductor Widget rest display widget content before
+					do_action( 'conductor_widget_rest_display_widget_content_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+					// Conductor Widget display widget content before
+					do_action( 'conductor_widget_display_content_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+					// Display widget content
+					$this->display_widget_content( $instance, $args, $conductor_widget_query_results );
+
+					// Conductor Widget display widget content after
+					do_action( 'conductor_widget_display_content_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+					// Conductor Widget rest display widget content after
+					do_action( 'conductor_widget_rest_display_widget_content_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+				// Grab the contents
+				$conductor_widget_content = ob_get_clean();
+
+				// Add the Conductor Widget content output to the data
+				$data['conductor_widget_content'] = $conductor_widget_content;
+
+
+				/*
+				 * Conductor Widget Content After
+				 *
+				 * TODO: Add "wrap" element from widget() function?
+				 */
+
+				// Start output buffering
+				ob_start();
+
+					// Conductor Widget content after
+					do_action( 'conductor_widget_content_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+					// Conductor Widget rest content after
+					do_action( 'conductor_widget_rest_content_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+				// Grab the contents
+				$conductor_widget_content_after = ob_get_clean();
+
+				// Add the Conductor Widget content after output to the data
+				$data['conductor_widget_content_after'] = $conductor_widget_content_after;
+
+
+				/*
+				 * Pagination
+				 *
+				 * TODO: Add "wrap" element from widget() function?
+				 */
+
+				// Start output buffering
+				ob_start();
+
+					// Conductor Widget rest display widget pagination before
+					do_action( 'conductor_widget_rest_display_widget_pagination_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+					// Conductor Widget display widget pagination before
+					do_action( 'conductor_widget_display_widget_pagination_before', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+					// Display widget pagination
+					$this->display_widget_pagination( $instance, $args, $conductor_widget_query_results );
+
+					// Conductor Widget display widget pagination after
+					do_action( 'conductor_widget_display_widget_pagination_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+					// Conductor Widget rest display widget pagination after
+					do_action( 'conductor_widget_rest_display_widget_pagination_after', $instance, $args, $this->conductor_widget_query, $conductor_widget_query_results, $this );
+
+				// Grab the contents
+				$pagination = ob_get_clean();
+
+				// Add the Conductor Widget pagination output to the data
+				$data['conductor_widget_pagination'] = $pagination;
+			}
+
+
+			/*
+			 * Conductor Widget After
+			 *
+			 * TODO: Add "wrap" element from widget() function?
+			 */
+
+			// Start output buffering
+			ob_start();
+
+				// Conductor Widget after
+				do_action( 'conductor_widget_after', $instance, $args, $this );
+
+				// Conductor Widget rest after
+				do_action( 'conductor_widget_rest_after', $instance, $args, $this );
+
+			// Grab the contents
+			$conductor_widget_after = ob_get_clean();
+
+			// Add the Conductor Widget after output to the data
+			$data['conductor_widget_after'] = $conductor_widget_after;
+
+			return apply_filters( 'conductor_widget_rest_data', $data, $instance, $args, $this );
+		}
+
+		/**
 		 * This function enqueues the necessary styles associated with this widget on admin.
 		 */
-		public static function admin_enqueue_scripts( $hook ) {
+		public static function admin_enqueue_scripts( $hook, $data = array() ) {
 			// Only on Widgets Admin Page
 			if ( $hook === 'widgets.php' ) {
 				global $wp_version, $wp_registered_sidebars;
@@ -540,7 +1283,9 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 
 				wp_enqueue_style( 'conductor-widget-admin', Conductor::plugin_url() . '/assets/css/widgets/conductor-widget-admin.css', array( 'dashicons' ) );
 
-				do_action( 'conductor_widget_admin_enqueue_scripts', $hook, $conductor_widget );
+				$data = apply_filters( 'conductor_widget_admin_enqueue_scripts_data', $data, $hook, $conductor_widget );
+
+				do_action( 'conductor_widget_admin_enqueue_scripts', $hook, $data, $conductor_widget );
 			}
 		}
 
@@ -702,10 +1447,17 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 					// Grab this widget's display configuration
 					$widget_display_config = $conductor_widget->get_widget_display_config( $instance );
 
+					// If we don't have legacy widget displays enabled and we have a legacy widget size
+					if ( ! $conductor_widget->has_legacy_displays_enabled && array_key_exists( $instance['widget_size'], $conductor_widget->legacy_displays ) )
+						// Set the widget's display configuration
+						$widget_display_config = $conductor_widget->get_widget_display_config( array(
+							'widget_size' => 'flexbox'
+						) );
+
 					// Verify that the widget size supports columns
 					if ( ! empty( $widget_display_config ) && $conductor_widget->widget_display_customize_property_supported_for_query_type( $widget_display_config, 'columns', $instance['feature_many'] ) ) {
 						// Number of columns for this widget
-						$columns = 1;
+						$columns = $conductor_widget->defaults['flexbox']['columns'];
 
 						// Base Flexbox CSS Classes
 						$css_classes = array_merge( $css_classes, array(
@@ -715,8 +1467,8 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							'conductor-widget-flex',
 						) );
 
-						// Legacy widgets (widget_size)
-						if ( ! isset( $instance['flexbox']['columns'] ) || empty( $instance['flexbox']['columns'] ) )
+						// If we don't have legacy widget displays enabled and we have a legacy widget size
+						if ( ! $conductor_widget->has_legacy_displays_enabled && array_key_exists( $instance['widget_size'], $conductor_widget->legacy_displays ) )
 							// Switch based on widget_size
 							switch ( $instance['widget_size'] ) {
 								// Medium
@@ -746,7 +1498,10 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 						$core_css_classes[] = 'conductor-' . sanitize_html_class( $instance['widget_size'] ) . '-wrap';
 
 					// Sanitize CSS classes (instance CSS classes are sanitized upon Conductor Widget update)
-					$css_classes = array_filter( $css_classes, 'sanitize_html_class' );
+					$css_classes = array_map( 'sanitize_html_class', $css_classes );
+
+					// Ensure we have unique CSS classes (no empty values)
+					$css_classes = array_unique( array_values( array_filter( $css_classes ) ) );
 
 					// Add the instance CSS class
 					if ( isset( $instance['css_class'] ) && ! empty( $instance['css_class'] ) ) {
@@ -816,7 +1571,6 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 								$conductor_widget->sidebar_conductor_widgets_index++;
 							}
 						}
-						// TODO: How does this work with the shortcode? Test with a single display with multiple columns
 						// Otherwise, just adjust the widget wrapper CSS classes
 						else {
 							// Merge core CSS classes
@@ -840,6 +1594,26 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 						// Adjust widget wrapper CSS classes (only replacing once to ensure only the outer most wrapper element gets the CSS class adjustment)
 						$params[0]['before_widget'] = preg_replace( '/class="/', 'class="' . esc_attr( implode( ' ', $css_classes ) ) . ' ', $params[0]['before_widget'], 1 );
 					}
+
+					/*
+					 * Data Attributes
+					 */
+
+					// Before widget data attributes
+					$before_widget_data_attrs = array(
+						'data-widget-id' => $params[0]['widget_id'],
+						'data-widget-number' => $params[1]['number'],
+						'data-pagenum-link' => get_pagenum_link()
+					);
+
+					// Filter before widget data attributes
+					$before_widget_data_attrs = apply_filters( 'conductor_widget_before_widget_data_attributes', $before_widget_data_attrs, $params, $instance, $conductor_widget_settings, $conductor_widget );
+
+					// Prepare the data attributes
+					$before_widget_data_attrs = $conductor_widget->prepare_data_attributes( $before_widget_data_attrs );
+
+					// Add the data attributes (only replacing once to ensure only the outer most wrapper element gets the CSS class adjustment)
+					$params[0]['before_widget'] = preg_replace( '/>/', ' ' . $before_widget_data_attrs . '>', $params[0]['before_widget'], 1 );
 				}
 			}
 
@@ -898,7 +1672,10 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 			$css_classes = array_merge( $css_classes, $new_css_classes );
 
 			// Sanitize CSS classes (instance CSS classes are sanitized upon Conductor Widget update)
-			$css_classes = array_filter( $css_classes, 'sanitize_html_class' );
+			$css_classes = array_map( 'sanitize_html_class', $css_classes );
+
+			// Ensure we have unique CSS classes (no empty values)
+			$css_classes = array_unique( array_values( array_filter( $css_classes ) ) );
 
 			// Implode the CSS classes
 			$css_classes = implode( ' ', $css_classes );
@@ -909,16 +1686,21 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		/**
 		 * This function adjusts Conductor Widget featured image size on Flexbox layouts.
 		 */
-		public static function conductor_widget_featured_image_size( $conductor_thumbnail_size, $instance, $post ) {
+		public static function conductor_widget_featured_image_size( $conductor_thumbnail_size, $instance, $post, $widget = false, $query = false, $conductor_widget_query = false ) {
 			// Bail if the featured image size is set or it's not flexbox
 			if ( isset( $instance['post_thumbnails_size'] ) && ! empty( $instance['post_thumbnails_size'] ) || $conductor_thumbnail_size !== 'flexbox' )
 				return $conductor_thumbnail_size;
 
-			// Flexbox Columns
-			$columns = 1;
+			// If we don't have a widget
+			if ( ! $widget )
+				// Set the widget to the Conductor Widget instance
+				$widget = Conduct_Widget();
 
-			// Legacy widgets (widget_size)
-			if ( ! isset( $instance['flexbox']['columns'] ) || empty( $instance['flexbox']['columns'] ) )
+			// Flexbox Columns
+			$columns = $widget->defaults['flexbox']['columns'];
+
+			// If we don't have legacy widget displays enabled and we have a legacy widget size
+			if ( ! $widget->has_legacy_displays_enabled && array_key_exists( $instance['widget_size'], $widget->legacy_displays ) )
 				// Switch based on widget_size
 				switch ( $instance['widget_size'] ) {
 					// Medium
@@ -941,11 +1723,13 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 				case 1:
 					$conductor_thumbnail_size = 'large';
 				break;
+
 				// "Medium"
 				case 2:
 				case 3:
 					$conductor_thumbnail_size = 'medium';
 				break;
+
 				// "Small"
 				case 4:
 				case 5:
@@ -955,6 +1739,120 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 			}
 
 			return $conductor_thumbnail_size;
+		}
+
+		/**
+		 * This function enqueues scripts and styles on the front-end.
+		 */
+		public static function wp_enqueue_scripts() {
+			// Grab the Conductor Widget instance
+			$conductor_widget = Conduct_Widget();
+
+			// If at least one Conductor Widget is active
+			if ( is_active_widget( false, false, $conductor_widget->id_base ) ) {
+				// Grab the Conductor options
+				$conductor_options = Conductor_Options::get_options();
+
+				// Conductor Widget
+				wp_enqueue_script( 'conductor-widget', Conductor::plugin_url() . '/assets/js/widgets/conductor-widget.js', array( 'wp-backbone' ), Conductor::$version, true );
+				wp_localize_script( 'conductor-widget', 'conductor_widget', apply_filters( 'conductor_widget_localize', array(
+					// Actions
+					'actions' => array(
+						// REST API
+						'rest' => array(
+							// Query
+							'query' => 'conductor_widget_rest_query'
+						)
+					),
+					// CSS Classes
+					'css_classes' => array(
+						// AJAX
+						'ajax' => array(
+							'processing' => 'processing ajax-processing',
+							// Message
+							'message' => array(
+								'active' => 'is-active',
+								'message' => 'conductor-widget-ajax-message-message',
+								'wrap' => 'conductor-widget-ajax-message-wrap'
+							)
+						),
+						// Current
+						'current' => 'conductor-widget-current',
+						// Hide
+						'hide' => 'conductor-widget-hide conductor-widget-hidden',
+						// Pagination
+						'pagination' => array(
+							'conductor_mock' => 'conductor-mock conductor-widget-mock',
+							'current' => 'current',
+							'dots' => 'dots',
+							'next' => 'next',
+							'page_numbers' => 'page-numbers',
+							'previous' => 'prev'
+						),
+						// Spinner
+						'spinner' => array(
+							'active' => 'is-active'
+						)
+					),
+					// CSS Selectors
+					'css_selectors' => array(
+						// AJAX
+						'ajax' => array(
+							// Message
+							'message' => array(
+								'message' => '.conductor-widget-ajax-message-message',
+								'wrap' => '.conductor-widget-ajax-message-wrap'
+							)
+						),
+						'after_wrap' => '.conductor-widget-after-wrap',
+						'before_wrap' => '.conductor-widget-before-wrap',
+						'content_after_wrap' => '.conductor-widget-content-after-wrap',
+						'content_before_wrap' => '.conductor-widget-content-before-wrap',
+						'content_wrap' => '.conductor-widget-content-wrap',
+						'current' => '.conductor-widget-current',
+						'hide' => '.conductor-widget-hide',
+						'pagination_wrap' => '.conductor-widget-pagination-wrap',
+						// Pagination
+						'pagination' => array(
+							'conductor_mock' => '.conductor-widget-mock',
+							'current' => '.current',
+							'dots' => '.dots',
+							'next' => '.next',
+							'page_numbers' => '.page-numbers',
+							'previous' => '.prev'
+						),
+						'spinner' => '.conductor-widget-spinner-wrap, .conductor-widget-spinner',
+						'spinner_overlay' => '.conductor-widget-spinner-overlay',
+						'title_after_wrap' => '.conductor-widget-title-after-wrap',
+						'title_before_wrap' => '.conductor-widget-title-before-wrap',
+						'widget_wrap' => '.conductor-widget-wrap'
+					),
+					// Flags
+					'flags' => array(
+						'is_user_logged_in' => is_user_logged_in()
+					),
+					// l10n
+					'l10n' => array(
+						// AJAX
+						'ajax' => array(
+							'error' => __( 'Something went wrong. Please try again.', 'conductor' ),
+						)
+					),
+					// REST API
+					'rest' => array(
+						// Enabled
+						'enabled' => $conductor_options['rest']['enabled']
+					),
+					// URLs
+					'urls' => array(
+						// REST API
+						'rest' => array(
+							'base' => rest_url( Conductor_REST_API::$namespace ),
+							'conductor_widget_rest_query' => '/widget/query/'
+						)
+					)
+				) ) );
+			}
 		}
 
 		/**
@@ -1028,6 +1926,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		 */
 		public function display_content( $post, $instance ) {
 			// TODO: Eventually change order of arguments (if possible) in a future release (conductor widget query should come before $this; have to think about backwards/forwards compatibility)
+			// TODO: Could possibly remove the 4th argument since it is a property on this class
 			do_action( 'conductor_widget_display_content', $post, $instance, $this, $this->conductor_widget_query );
 			do_action( 'conductor_widget_display_content_' . $this->number, $post, $instance, $this, $this->conductor_widget_query );
 		}
@@ -1298,13 +2197,66 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		 * the widget number is set to -1 [i.e. in the_widget()], the true ID base isn't returned.
 		 */
 		public function get_id_base( $widget_id ) {
-			// Grab the WordPresswidget ID base
+			// Grab the WordPress widget ID base
 			$widget_id_base = _get_widget_id_base( $widget_id );
 
 			// Remove any hyphens from the end of the string (i.e. widget number is -1)
 			$widget_id_base = preg_replace( '/-+?$/', '', $widget_id_base );
 
 			return $widget_id_base;
+		}
+
+		/**
+		 * This function returns the public post types.
+		 */
+		public function get_public_post_types() {
+			// Grab the public post types
+			if ( ! $public_post_types = wp_cache_get( 'public_post_types', 'conductor-widget' ) ) {
+				// Public Post Types
+				$public_post_types = get_post_types( array( 'public' => true ) );
+
+				// Unset attachments
+				unset( $public_post_types['attachment'] );
+
+				// Store the public post types in cache
+				wp_cache_add( 'public_post_types', $public_post_types, 'conductor-widget' );
+			}
+
+			return apply_filters( 'conductor_widget_public_post_types', $public_post_types, $this );
+		}
+
+		/**
+		 * This function determines if the widget has AJAX enabled.
+		 */
+		public function has_ajax( $instance, $args ) {
+			// Grab the Conductor options
+			$conductor_options = Conductor_Options::get_options();
+
+			return apply_filters( 'conductor_widget_has_ajax', ( $conductor_options['rest']['enabled'] && isset( $instance['ajax'] ) && isset( $instance['ajax']['enabled'] ) && $instance['ajax']['enabled'] ), $instance, $args, $conductor_options, $this );
+		}
+
+		/**
+		 * This function determines if the widget is enabled in the REST API.
+		 */
+		public function is_rest_api_enabled( $instance, $args = array() ) {
+			// Grab the Conductor options
+			$conductor_options = Conductor_Options::get_options();
+
+			return apply_filters( 'conductor_widget_is_rest_api_enabled', ( $conductor_options['rest']['enabled'] && isset( $instance['rest'] ) && isset( $instance['rest']['enabled'] ) && $instance['rest']['enabled'] ), $instance, $args, $conductor_options, $this );
+		}
+
+		/**
+		 * This function outputs the Conductor REST API disabled notice.
+		 */
+		public function get_conductor_rest_api_disabled_notice() {
+			printf( __( 'Please Note: The Conductor REST API is currently disabled. This setting require the Conductor REST API to be enabled. <a href="%1$s">Enable</a> the Conductor REST API and return to this widget to re-enable this setting.', 'conductor' ), admin_url( add_query_arg( 'page', Conductor_Admin_Options::get_menu_page(), 'admin.php' ) ) );
+		}
+
+		/**
+		 * This function outputs the Conductor Widget REST API disabled notice.
+		 */
+		public function get_conductor_widget_rest_api_disabled_notice() {
+			_e( 'Please Note: This Conductor Widget is currently not enabled in the Conductor REST API. Enable this Conductor Widget in the Conductor REST API on the "Advanced Settings" section and save this widget to re-enable this setting.', 'conductor' );
 		}
 
 
@@ -1317,18 +2269,18 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		 */
 		public function widget_settings_title_section( $instance ) {
 		?>
-			<div class="conductor-widget-setting conductor-widget-title">
+			<div class="conductor-widget-setting conductor-widget-setting-with-hide conductor-widget-title">
 				<?php do_action( 'conductor_widget_settings_title_before', $instance, $this ); ?>
 
 				<?php // Widget Title ?>
 				<label for="<?php echo $this->get_field_id( 'title' ) ; ?>"><strong><?php _e( 'Title', 'conductor' ); ?></strong></label>
 				<br />
 
-				<div class="conductor-widget-title-container">
-					<input type="text" class="conductor-input" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_attr( $instance['title'] ); ?>" />
-					<span class="conductor-hide-widget-title">
+				<div class="conductor-widget-setting-with-hide-container conductor-widget-title-container">
+					<input type="text" class="conductor-input" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" value="<?php echo esc_attr( $instance['title'] ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['title'] ); ?>" />
+					<span class="conductor-widget-setting-hide conductor-hide-widget-title">
 						<?php // Hide Widget Title ?>
-						<input id="<?php echo $this->get_field_id( 'hide_title' ); ?>" name="<?php echo $this->get_field_name( 'hide_title' ); ?>" type="checkbox" <?php checked( $instance['hide_title'], true ); ?> />
+						<input id="<?php echo $this->get_field_id( 'hide_title' ); ?>" name="<?php echo $this->get_field_name( 'hide_title' ); ?>" type="checkbox" <?php checked( $instance['hide_title'] ); ?> data-default="false" />
 						<label for="<?php echo $this->get_field_id( 'hide_title' ) ; ?>"><span class="dashicons dashicons-visibility"></span></label>
 					</span>
 				</div>
@@ -1344,12 +2296,8 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		public function widget_settings_content_section( $instance ) {
 			global $wpdb;
 
-			// Get all public post types and format the list for display in drop down
-			if ( ! $public_post_types = wp_cache_get( 'public_post_types', 'conductor-widget' ) ) {
-				$public_post_types = get_post_types( array( 'public' => true ) ); // Public Post Types
-				unset( $public_post_types['attachment'] ); // Remove attachments
-				wp_cache_add( 'public_post_types', $public_post_types, 'conductor-widget' ); // Store cache
-			}
+			// Grab the public post types
+			$public_post_types = $this->get_public_post_types();
 		?>
 			<div class="conductor-section conductor-section-top conductor-section-general conductor-accordion-section open" data-conductor-section="conductor-section-general">
 				<div class="conductor-section-title conductor-accordion-section-title">
@@ -1360,15 +2308,16 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 					<div class="conductor-accordion-section-content">
 						<?php do_action( 'conductor_widget_settings_content_section_before', $instance, $this ); ?>
 
-						<p class="conductor-feature-content-pieces">
+						<p class="conductor-widget-setting conductor-feature-content-pieces">
 							<?php do_action( 'conductor_widget_settings_feature_content_pieces_before', $instance, $this ); ?>
 
 							<?php
 								// Flag to determine if we have content
 								$has_content = false;
 
-								// Loop through public post types
+								// If we have public post types
 								if ( ! empty( $public_post_types ) )
+									// Loop through public post types
 									foreach ( $public_post_types as $public_post_type ) :
 										// Post Type Object
 										if ( ! $public_post_type_object = wp_cache_get( 'public_post_type_' . $public_post_type . '_object', 'conductor-widget' ) ) {
@@ -1397,7 +2346,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 								<label for="<?php echo $this->get_field_id( 'feature_many' ); ?>">
 									<strong>
 										<?php _ex( 'Select', 'beginning of feature many label; before <select> elements', 'conductor' ); ?>
-										<select class="conductor-select-feature-type conductor-select conductor-inline-select" id="<?php echo $this->get_field_id( 'feature_many' ); ?>" name="<?php echo $this->get_field_name( 'feature_many' ); ?>">
+										<select class="conductor-select-feature-type conductor-select conductor-inline-select" id="<?php echo $this->get_field_id( 'feature_many' ); ?>" name="<?php echo $this->get_field_name( 'feature_many' ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['feature_many'] ); ?>">
 											<option value="" <?php selected( $instance['feature_many'], false ); ?>><?php _e( 'one', 'conductor' ); ?></option>
 											<option value="true" <?php selected( $instance['feature_many'], true ); ?>><?php _e( 'many', 'conductor' ); ?></option>
 											<?php do_action( 'conductor_widget_settings_feature_type', $instance, $this ); ?>
@@ -1407,10 +2356,11 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 
 								<label for="<?php echo $this->get_field_id( 'post_type' ); ?>">
 									<strong>
-										<select class="conductor-select-content-type conductor-select conductor-inline-select" id="<?php echo $this->get_field_id( 'post_type' ); ?>" name="<?php echo $this->get_field_name( 'post_type' ); ?>">
+										<select class="conductor-select-content-type conductor-select conductor-inline-select" id="<?php echo $this->get_field_id( 'post_type' ); ?>" name="<?php echo $this->get_field_name( 'post_type' ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['content_type'] ); ?>">
 											<?php
-												// Loop through public post types
+												// If we have public post types
 												if ( ! empty( $public_post_types ) )
+													// Loop through public post types
 													foreach ( $public_post_types as $public_post_type ) :
 														// Post Type Object
 														if ( ! $public_post_type_object = wp_cache_get( 'public_post_type_' . $public_post_type . '_object', 'conductor-widget' ) ) {
@@ -1423,12 +2373,15 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 															$post_count = ( int ) wp_count_posts( $public_post_type )->publish;
 															wp_cache_add( $public_post_type . '_post_type_count', $post_count, 'conductor-widget' ); // Store cache
 														}
-														?>
+													?>
 
-														<?php if ( $post_count ) : ?>
-															<option value="<?php echo esc_attr( $public_post_type_object->name ); ?>" <?php selected( $instance['content_type'], $public_post_type ); ?> data-type="<?php echo $public_post_type; ?>"><?php echo ( $public_post_type_object->labels->singular_name !== $public_post_type_object->labels->name ) ? sprintf( _x( '%1$s(s)', 'Possible plural value of post type singular name.', 'conductor' ), $public_post_type_object->labels->singular_name ) : $public_post_type_object->labels->name; ?></option>
-														<?php endif; ?>
 													<?php
+														// If we have a post count
+														if ( $post_count ) :
+													?>
+															<option value="<?php echo esc_attr( $public_post_type_object->name ); ?>" <?php selected( $instance['content_type'], $public_post_type ); ?> data-type="<?php echo $public_post_type; ?>"><?php echo ( $public_post_type_object->labels->singular_name !== $public_post_type_object->labels->name ) ? sprintf( _x( '%1$s(s)', 'Possible plural value of post type singular name.', 'conductor' ), $public_post_type_object->labels->singular_name ) : $public_post_type_object->labels->name; ?></option>
+													<?php
+															endif;
 													endforeach;
 											?>
 											<?php do_action( 'conductor_widget_settings_post_type', $instance, $this ); ?>
@@ -1445,7 +2398,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 								endif;
 							?>
 							<?php // Content Type ?>
-							<input type="hidden" class="conductor-input conductor-content-type" id="<?php echo $this->get_field_id( 'content_type' ); ?>" name="<?php echo $this->get_field_name( 'content_type' ); ?>" value="<?php echo esc_attr( $instance['content_type'] ); ?>" />
+							<input type="hidden" class="conductor-input conductor-content-type" id="<?php echo $this->get_field_id( 'content_type' ); ?>" name="<?php echo $this->get_field_name( 'content_type' ); ?>" value="<?php echo esc_attr( $instance['content_type'] ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['content_type'] ); ?>" />
 
 							<?php do_action( 'conductor_widget_settings_feature_content_pieces_after', $instance, $this ); ?>
 						</p>
@@ -1503,14 +2456,14 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 												wp_cache_add( 'public_post_type_' . $public_post_type . '_object', $public_post_type_object, 'conductor-widget' ); // Store cache
 											}
 										?>
-											<div class="conductor-feature-one conductor-content-type-field conductor-content-type-<?php echo esc_attr( $public_post_type ); ?> <?php echo ( $instance['feature_many'] || ! in_array( $instance['content_type'], $public_post_types ) || ( $instance['content_type'] !== $public_post_type && ( $current_content_type_post_count !== 0 || ! $is_first_public_post_type_with_content ) ) ) ? 'conductor-hidden' : false; ?>">
+											<div class="conductor-widget-setting conductor-feature-one conductor-content-type-field conductor-content-type-<?php echo esc_attr( $public_post_type ); ?> <?php echo ( $instance['feature_many'] || ! in_array( $instance['content_type'], $public_post_types ) || ( $instance['content_type'] !== $public_post_type && ( $current_content_type_post_count !== 0 || ! $is_first_public_post_type_with_content ) ) ) ? 'conductor-hidden' : false; ?>">
 												<label for="<?php echo $this->get_field_id( 'post_id_' . $public_post_type ); ?>">
 													<strong>
 														<?php printf( __( 'Select a %1$s', 'conductor' ), ( $public_post_type_object->labels->singular_name !== $public_post_type_object->labels->name ) ? $public_post_type_object->labels->singular_name : $public_post_type_object->labels->name ); ?>
 													</strong>
 												</label>
 												<br />
-												<select class="featured-one-select conductor-select" id="<?php echo $this->get_field_id( 'post_id_' . $public_post_type ); ?>">
+												<select class="featured-one-select conductor-select" id="<?php echo $this->get_field_id( 'post_id_' . $public_post_type ); ?>" data-default-value="">
 													<option value=""><?php _e( '&mdash; Select &mdash;', 'conductor' ); ?></option>
 													<?php foreach( $posts as $post ) : ?>
 														<option value="<?php echo $post->ID; ?>" <?php selected( ( $instance['content_type'] === $public_post_type ) ? $instance['post_id'] : false, $post->ID ); ?> data-type="<?php echo $public_post_type; ?>"><?php echo ( $post->post_title === '' ) ? sprintf( __( '#%d (no title)', 'conductor' ), $post->ID ) : $post->post_title; ?></option>
@@ -1529,12 +2482,12 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php do_action( 'conductor_widget_settings_feature_one', $instance, $this ); ?>
 
 							<?php // Post ID ?>
-							<input type="hidden" class="conductor-input conductor-post-id" id="<?php echo $this->get_field_id( 'post_id' ); ?>" name="<?php echo $this->get_field_name( 'post_id' ); ?>" value="<?php echo esc_attr( $instance['post_id'] ); ?>" />
+							<input type="hidden" class="conductor-input conductor-post-id" id="<?php echo $this->get_field_id( 'post_id' ); ?>" name="<?php echo $this->get_field_name( 'post_id' ); ?>" value="<?php echo esc_attr( $instance['post_id'] ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['post_id'] ); ?>" />
 
 							<?php do_action( 'conductor_widget_settings_feature_one_after', $instance, $this ); ?>
 						</div>
 
-						<p class="conductor-select-cat conductor-feature-many conductor-content-type-field conductor-content-type-post <?php echo ( ! $instance['feature_many'] || $instance['content_type'] !== 'post' ) ? 'conductor-hidden' : false; ?>">
+						<p class="conductor-widget-setting conductor-select-cat conductor-feature-many conductor-content-type-field conductor-content-type-post <?php echo ( ! $instance['feature_many'] || $instance['content_type'] !== 'post' ) ? 'conductor-hidden' : false; ?>" data-default-value="<?php echo esc_attr( $this->defaults['query_args']['cat'] ); ?>">
 							<?php do_action( 'conductor_widget_settings_category_before', $instance, $this ); ?>
 
 							<?php // Category ?>
@@ -1558,17 +2511,17 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php do_action( 'conductor_widget_settings_category_after', $instance, $this ); ?>
 						</p>
 
-						<p class="conductor-select-orderby conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
+						<p class="conductor-widget-setting conductor-select-orderby conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
 							<?php do_action( 'conductor_widget_settings_orderby_before', $instance, $this ); ?>
 
 							<?php // Orderby ?>
 							<label for="<?php echo $this->get_field_id( 'orderby' ); ?>"><strong><?php _e( 'Order By', 'conductor' ); ?></strong></label>
 							<br />
-							<select name="<?php echo $this->get_field_name( 'orderby' ); ?>" id="<?php echo $this->get_field_id( 'orderby' ); ?>" class="conductor-orderby conductor-select">
+							<select name="<?php echo $this->get_field_name( 'orderby' ); ?>" id="<?php echo $this->get_field_id( 'orderby' ); ?>" class="conductor-orderby conductor-select" data-default-value="<?php echo esc_attr( $this->defaults['query_args']['orderby'] ); ?>">
 								<option value=""><?php _e( '&mdash; Select &mdash;', 'conductor' ); ?></option>
 								<option value="author" <?php selected( $instance['query_args']['orderby'], 'author' ); ?> data-type="built-in"><?php _e( 'Author', 'conductor' ); ?></option>
 								<option value="comment_count" <?php selected( $instance['query_args']['orderby'], 'comment_count' ); ?> data-type="built-in"><?php _e( 'Comment Count', 'conductor' ); ?></option>
-								<option value="date" <?php selected( $instance['query_args']['orderby'], 'date' ); ?> data-type="built-in" data-default="true"><?php _e( 'Date', 'conductor' ); ?></option>
+								<option value="date" <?php selected( $instance['query_args']['orderby'], 'date' ); ?> data-type="built-in"><?php _e( 'Date', 'conductor' ); ?></option>
 								<option value="ID" <?php selected( $instance['query_args']['orderby'], 'ID' ); ?> data-type="built-in"><?php _e( 'ID', 'conductor' ); ?></option>
 								<option value="parent" <?php selected( $instance['query_args']['orderby'], 'parent' ); ?> data-type="built-in"><?php _e( 'Parent', 'conductor' ); ?></option>
 								<option value="name" <?php selected( $instance['query_args']['orderby'], 'name' ); ?> data-type="built-in"><?php _e( 'Post Slug', 'conductor' ); ?></option>
@@ -1580,13 +2533,13 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php do_action( 'conductor_widget_settings_orderby_after', $instance, $this ); ?>
 						</p>
 
-						<p class="conductor-select-order conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
+						<p class="conductor-widget-setting conductor-select-order conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
 							<?php do_action( 'conductor_widget_settings_order_before', $instance, $this ); ?>
 
 							<?php // Order ?>
 							<label for="<?php echo $this->get_field_id( 'order' ); ?>"><strong><?php _e( 'Order', 'conductor' ); ?></strong></label>
 							<br />
-							<select name="<?php echo $this->get_field_name( 'order' ); ?>" id="<?php echo $this->get_field_id( 'order' ); ?>" class="conductor-order conductor-select">
+							<select name="<?php echo $this->get_field_name( 'order' ); ?>" id="<?php echo $this->get_field_id( 'order' ); ?>" class="conductor-order conductor-select" data-default-value="<?php echo esc_attr( $this->defaults['query_args']['order'] ); ?>">
 								<option value=""><?php _e( '&mdash; Select &mdash;', 'conductor' ); ?></option>
 								<option value="ASC" <?php selected( $instance['query_args']['order'], 'ASC' ); ?>><?php _e( 'Ascending (1, 2, 3)', 'conductor' ); ?></option>
 								<option value="DESC" <?php selected( $instance['query_args']['order'], 'DESC' ); ?>><?php _e( 'Descending (3, 2, 1)', 'conductor' ); ?></option>
@@ -1595,20 +2548,20 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php do_action( 'conductor_widget_settings_order_after', $instance, $this ); ?>
 						</p>
 
-						<p class="conductor-max-num-posts conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
+						<p class="conductor-widget-setting conductor-max-num-posts conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
 							<?php do_action( 'conductor_widget_settings_max_num_posts_before', $instance, $this ); ?>
 
 							<?php // Number of Posts to Display ?>
 							<label for="<?php echo $this->get_field_id( 'max_num_posts' ); ?>">
 								<strong><?php _ex( 'Show', 'Beginning of maximum number of posts to display label; before <input> element', 'conductor' ); ?>
-									<input type="text" class="conductor-input conductor-inline-input conductor-number" id="<?php echo $this->get_field_id( 'max_num_posts' ); ?>" name="<?php echo $this->get_field_name( 'max_num_posts' ); ?>" value="<?php echo esc_attr( $instance['query_args']['max_num_posts'] ); ?>" placeholder="<?php _ex( '#', 'placeholder for number input elements', 'conductor' ); ?>" />
+									<input type="text" class="conductor-input conductor-inline-input conductor-number" id="<?php echo $this->get_field_id( 'max_num_posts' ); ?>" name="<?php echo $this->get_field_name( 'max_num_posts' ); ?>" value="<?php echo esc_attr( $instance['query_args']['max_num_posts'] ); ?>" placeholder="<?php _ex( '#', 'placeholder for number input elements', 'conductor' ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['query_args']['max_num_posts'] ); ?>" />
 									<?php _ex( 'posts', 'End of number of maximum posts to display label; after <input> element', 'conductor' ); ?>
 								</strong>
 							</label>
 							<?php // Number of Posts to Display ?>
 							<label for="<?php echo $this->get_field_id( 'posts_per_page' ); ?>">
 								<strong><?php _ex( 'with', 'Beginning of number of posts per page to display label; before <input> element', 'conductor' ); ?>
-									<input type="text" class="conductor-input conductor-inline-input conductor-number" id="<?php echo $this->get_field_id( 'posts_per_page' ); ?>" name="<?php echo $this->get_field_name( 'posts_per_page' ); ?>" value="<?php echo esc_attr( $instance['query_args']['posts_per_page'] ); ?>" placeholder="<?php _ex( '#', 'placeholder for number input elements', 'conductor' ); ?>" />
+									<input type="text" class="conductor-input conductor-inline-input conductor-number" id="<?php echo $this->get_field_id( 'posts_per_page' ); ?>" name="<?php echo $this->get_field_name( 'posts_per_page' ); ?>" value="<?php echo esc_attr( $instance['query_args']['posts_per_page'] ); ?>" placeholder="<?php _ex( '#', 'placeholder for number input elements', 'conductor' ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['query_args']['posts_per_page'] ); ?>" />
 									<?php _ex( 'per page.', 'End of number of posts per page to display label; after <input> element', 'conductor' ); ?>
 								</strong>
 							</label>
@@ -1618,14 +2571,14 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php do_action( 'conductor_widget_settings_max_num_posts_after', $instance, $this ); ?>
 						</p>
 
-						<p class="conductor-offset conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
+						<p class="conductor-widget-setting conductor-offset conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
 							<?php do_action( 'conductor_widget_settings_offset_before', $instance, $this ); ?>
 
 							<?php // Offset (Number of post to offset by) ?>
 							<label for="<?php echo $this->get_field_id( 'offset' ); ?>">
 								<strong>
 									<?php _ex( 'Start at post #', 'Beginning of post offset label; before <input> element', 'conductor' ); ?>
-									<input type="text" class="conductor-input conductor-inline-input conductor-number" id="<?php echo $this->get_field_id( 'offset' ); ?>" name="<?php echo $this->get_field_name( 'offset' ); ?>" value="<?php echo esc_attr( $instance['query_args']['offset'] ); ?>" />
+									<input type="text" class="conductor-input conductor-inline-input conductor-number" id="<?php echo $this->get_field_id( 'offset' ); ?>" name="<?php echo $this->get_field_name( 'offset' ); ?>" value="<?php echo esc_attr( $instance['query_args']['offset'] ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['query_args']['offset'] ); ?>" />
 									<?php _ex( '.', 'End of post offset label; after <input> element', 'conductor' ); ?>
 								</strong>
 							</label>
@@ -1644,6 +2597,8 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		 * This function outputs the display widget settings section.
 		 */
 		public function widget_settings_display_section( $instance ) {
+			// Grab the Conductor options
+			$conductor_options = Conductor_Options::get_options();
 		?>
 			<div class="conductor-section conductor-section-display conductor-accordion-section" data-conductor-section="conductor-section-display">
 				<div class="conductor-section-title conductor-accordion-section-title">
@@ -1654,7 +2609,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 					<div class="conductor-accordion-section-content">
 						<?php do_action( 'conductor_widget_settings_display_section_before', $instance, $this ); ?>
 
-						<div class="conductor-select-widget-size">
+						<div class="conductor-widget-setting conductor-select-widget-size">
 							<?php do_action( 'conductor_widget_settings_widget_size_before', $instance, $this ); ?>
 
 							<p>
@@ -1668,33 +2623,58 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 									// Reference to the widget display configuration
 									$widget_display_config = false;
 
+									// If we don't have legacy widget displays enabled and we have a legacy widget size
+									if ( ! $this->has_legacy_displays_enabled && array_key_exists( $instance['widget_size'], $this->legacy_displays ) ) {
+										// Switch based on widget_size
+										switch ( $instance['widget_size'] ) {
+											// Medium
+											case 'medium':
+												// Set the flexbox columns
+												$instance['flexbox']['columns'] = 2;
+											break;
+
+											// Small
+											case 'small':
+												// Set the flexbox columns
+												$instance['flexbox']['columns'] = 4;
+											break;
+										}
+
+										// Set the widget size
+										$instance['widget_size'] = 'flexbox';
+									}
+
 									// Output widget displays (as of 1.3.0 $config can now be an array with configuration data; $config used to be referenced as $label which just contained a translated label string)
 									foreach ( $this->displays as $size => $config ) :
 										// Store a reference to the widget display_config
 										$widget_display_config = ( $size === $instance['widget_size'] ) ? $config : $widget_display_config;
 
-										// Data attributes
-										$data_attrs = '';
+										// Data Attributes
+										$data_attrs = array(
+											'data-default' => ( $size === $this->defaults['widget_size'] )
+										);
 
 										// Only if we have a configuration array
 										if ( is_array( $config ) ) {
-											// Data Attributes
+											// Merge the configuration data attributes with the data attributes
 											// TODO: Document attribute naming convention
 											// TODO: Eventually loop through all 'customize' properties
-											$data_attrs = array(
+											$data_attrs = array_merge( $data_attrs, array(
 												'data-conductor-customize-columns' => $this->widget_display_supports_customize_property( $config, 'columns' ), // Reference $config and not $widget_display_config
 												'data-conductor-customize-single-columns' => ( $this->widget_display_supports_customize_property( $config, 'columns' ) && is_array( $config['customize']['columns'] ) && $this->widget_display_customize_property_exists( $config['customize']['columns'], 'single', true ) ) ? $this->widget_display_get_customize_property_value( $config['customize']['columns'], 'single', true ) : '', // Reference $config and not $widget_display_config
 												'data-conductor-customize-many-columns' => ( $this->widget_display_supports_customize_property( $config, 'columns' ) && is_array( $config['customize']['columns'] ) && $this->widget_display_customize_property_exists( $config['customize']['columns'], 'many', true ) ) ? $this->widget_display_get_customize_property_value( $config['customize']['columns'], 'many', true ) : '' // Reference $config and not $widget_display_config
-											);
-											$data_attrs = apply_filters( 'conductor_widget_display_data_attributes', $data_attrs, $config, $size, $instance, $this );
-
-											$data_attrs = $this->prepare_data_attributes( $data_attrs );
+											) );
 										}
+
+										$data_attrs = apply_filters( 'conductor_widget_display_data_attributes', $data_attrs, $config, $size, $instance, $this );
+
+										$data_attrs = $this->prepare_data_attributes( $data_attrs );
 								?>
 										<div class="conductor-widget-size conductor-widget-size-<?php echo esc_attr( $size ); ?>">
 											<label>
 												<input type="radio" class="conductor-widget-size-value" name="<?php echo $this->get_field_name( 'widget_size' ); ?>" id="<?php echo $this->get_field_id( 'widget_size_' . $size ); ?>" value="<?php echo esc_attr( $size ); ?>" <?php checked( $instance['widget_size'], $size ); ?> <?php echo $data_attrs; ?> />
 
+												<?php // TODO: Future: Remove label element or change div elements to span elements (would need to set display CSS property) ?>
 												<div class="conductor-widget-size-preview">
 													<?php
 														// Output correct markup for $size
@@ -1786,15 +2766,52 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 								?>
 							</div>
 
-							<div class="conductor-columns conductor-flexbox-columns conductor-customize-columns <?php echo ( ! $this->widget_display_customize_property_supported_for_query_type( $widget_display_config, 'columns', $instance['feature_many'] ) ) ? 'conductor-hidden' : false; ?>">
+							<div class="conductor-widget-setting conductor-columns conductor-flexbox-columns conductor-customize-columns <?php echo ( ! $this->widget_display_customize_property_supported_for_query_type( $widget_display_config, 'columns', $instance['feature_many'] ) ) ? 'conductor-hidden' : false; ?>">
 								<?php // Flexbox Columns ?>
 								<label for="<?php echo $this->get_field_id( 'flexbox_columns' ); ?>"><strong><?php _e( 'Number of Columns', 'conductor' ); ?></strong></label>
 								<br />
-								<input type="range" min="1" max="<?php echo esc_attr( $this->max_columns ); ?>" class="conductor-input conductor-flexbox-columns-range" id="<?php echo $this->get_field_id( 'flexbox_columns' ); ?>" name="<?php echo $this->get_field_name( 'flexbox_columns' ); ?>" value="<?php echo esc_attr( $instance['flexbox']['columns'] ); ?>" />
+								<input type="range" min="1" max="<?php echo esc_attr( $this->max_columns ); ?>" class="conductor-input conductor-flexbox-columns-range" id="<?php echo $this->get_field_id( 'flexbox_columns' ); ?>" name="<?php echo $this->get_field_name( 'flexbox_columns' ); ?>" value="<?php echo esc_attr( $instance['flexbox']['columns'] ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['flexbox']['columns'] ); ?>" />
 								<span class="conductor-flexbox-columns-value"><?php echo $instance['flexbox']['columns']; ?></span>
 								<br />
 								<small class="description conductor-description"><?php _e( 'Specify the number of columns used when outputting widget content.', 'conductor' ); ?></small>
 							</div>
+
+							<p class="conductor-widget-setting conductor-ajax-enabled conductor-ajax-enabled-field conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
+								<?php // Enable AJAX ?>
+								<input type="checkbox" class="conductor-input conductor-ajax-enabled-value" id="<?php echo $this->get_field_id( 'ajax_enabled' ); ?>" name="<?php echo $this->get_field_name( 'ajax_enabled' ); ?>" <?php checked( $instance['ajax']['enabled'] ); ?> <?php disabled( ! $this->is_rest_api_enabled( $instance ) ); ?> data-default="<?php echo esc_attr( ( $this->defaults['ajax']['enabled'] ) ? 'true' : false ); ?>" />
+								<label for="<?php echo $this->get_field_id( 'ajax_enabled' ); ?>"><strong><?php _e( 'Enable AJAX', 'conductor' ); ?></strong></label>
+								<br />
+								<small class="description conductor-description"><?php _e( 'Enabling AJAX on this widget will allow widgets with pagination to display content without navigating away from the current page.', 'conductor' ); ?></small>
+								<?php
+									// If the Conductor REST API is not enabled
+									if ( ! $conductor_options['rest']['enabled'] ) :
+										// If AJAX is enabled
+										if ( $instance['ajax']['enabled'] ):
+								?>
+											<input type="hidden" class="conductor-input conductor-ajax-enabled-value" id="<?php echo $this->get_field_id( 'ajax_enabled_hidden' ); ?>" name="<?php echo $this->get_field_name( 'ajax_enabled' ); ?>" value="true" />
+								<?php
+										endif;
+								?>
+										<br />
+										<br />
+										<span><strong><?php $this->get_conductor_rest_api_disabled_notice(); ?></strong></span>
+								<?php
+									// Otherwise if this widget is not enabled in the Conductor REST API
+									elseif ( ! $this->is_rest_api_enabled( $instance ) ) :
+										// If AJAX is enabled
+										if ( $instance['ajax']['enabled'] ):
+								?>
+											<input type="hidden" class="conductor-input conductor-ajax-enabled-value" id="<?php echo $this->get_field_id( 'ajax_enabled_hidden' ); ?>" name="<?php echo $this->get_field_name( 'ajax_enabled' ); ?>" value="true" />
+								<?php
+										endif;
+								?>
+										<br />
+										<br />
+										<span><strong><?php $this->get_conductor_widget_rest_api_disabled_notice(); ?></strong></span>
+								<?php
+									endif;
+								?>
+							</p>
 
 							<?php do_action( 'conductor_widget_settings_widget_size_after', $instance, $this ); ?>
 						</div>
@@ -1810,7 +2827,6 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php do_action( 'conductor_widget_output_list_before', $instance, $this ); // TODO: Depreciate in a future version ?>
 							<?php do_action( 'conductor_widget_settings_output_list_before', $instance, $this ); ?>
 
-							<br />
 							<ul class="conductor-widget-output-list conductor-output-list" data-widget-id-base="<?php echo esc_attr( $this->id_base ); ?>" data-widget-number="<?php echo esc_attr( $this->number ); ?>">
 								<?php
 								// Will be in order based on priority
@@ -1851,7 +2867,10 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 											$css_classes[] = 'link';
 
 										// Sanitize CSS classes
-										$css_classes = array_filter( $css_classes, 'sanitize_html_class' );
+										$css_classes = array_map( 'sanitize_html_class', $css_classes );
+
+										// Ensure we have unique CSS classes (no empty values)
+										$css_classes = array_unique( array_values( array_filter( $css_classes ) ) );
 
 										$output = '<li class="' . implode( ' ', $css_classes ) . '"'; // Start the element
 											$output .= ' data-priority="' . esc_attr( $priority ) . '"'; // Priority
@@ -1934,7 +2953,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 										unset( $element['callback'] );
 								}
 							?>
-							<input type="hidden" class="conductor-input conductor-output-data" id="<?php echo $this->get_field_id( 'output' ); ?>" name="<?php echo $this->get_field_name( 'output' ); ?>" value="<?php echo esc_attr( json_encode( $output_without_callbacks ) ); ?>" />
+							<input type="hidden" class="conductor-input conductor-output-data" id="<?php echo $this->get_field_id( 'output' ); ?>" name="<?php echo $this->get_field_name( 'output' ); ?>" value="<?php echo esc_attr( json_encode( $output_without_callbacks ) ); ?>" data-default-value="<?php echo esc_attr( json_encode( $output_without_callbacks ) ); ?>" />
 							<small class="description conductor-description"><?php _e( 'Adjust the order of elements output on the front-end display.', 'conductor' ); ?></small>
 
 							<?php do_action( 'conductor_widget_output_after', $instance, $this ); // TODO: Depreciate in a future version ?>
@@ -1953,6 +2972,9 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		 */
 		public function widget_settings_advanced_section( $instance, $raw_instance = array() ) {
 			global $_wp_additional_image_sizes, $wp_registered_sidebars;
+
+			// Grab the Conductor options
+			$conductor_options = Conductor_Options::get_options();
 		?>
 			<div class="conductor-section conductor-section-advanced conductor-accordion-section" data-conductor-section="conductor-section-advanced">
 				<div class="conductor-section-title conductor-accordion-section-title">
@@ -1963,13 +2985,13 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 					<div class="conductor-accordion-section-content">
 						<?php do_action( 'conductor_widget_settings_advanced_section_before', $instance, $this ); ?>
 
-						<p class="conductor-post-thumbnails-size">
+						<p class="conductor-widget-setting conductor-post-thumbnails-size">
 							<?php do_action( 'conductor_widget_settings_post_thumbnails_size_before', $instance, $this ); ?>
 
 							<?php // Featured Image Size ?>
 							<label for="<?php echo $this->get_field_id( 'post_thumbnails_size' ); ?>"><strong><?php _e( 'Featured Image Size', 'conductor' ); ?></strong></label>
 							<br />
-							<select name="<?php echo $this->get_field_name( 'post_thumbnails_size' ); ?>" id="<?php echo $this->get_field_id( 'post_thumbnails_size' ); ?>" class="conductor-select">
+							<select name="<?php echo $this->get_field_name( 'post_thumbnails_size' ); ?>" id="<?php echo $this->get_field_id( 'post_thumbnails_size' ); ?>" class="conductor-select" data-default-value="<?php echo esc_attr( $this->defaults['post_thumbnails_size'] ); ?>">
 								<option value=""><?php _e( '&mdash; Select &mdash;', 'conductor' ); ?></option>
 								<?php
 									// Get all of the available image sizes
@@ -2021,14 +3043,14 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php do_action( 'conductor_widget_settings_post_thumbnails_size_after', $instance, $this ); ?>
 						</p>
 
-						<p class="conductor-excerpt-length conductor-display-content-type-field conductor-display-content-type-excerpt <?php echo ( $instance['content_display_type'] !== 'excerpt' ) ? 'conductor-hidden' : false; ?>">
+						<p class="conductor-widget-setting conductor-excerpt-length conductor-display-content-type-field conductor-display-content-type-excerpt <?php echo ( $instance['content_display_type'] !== 'excerpt' ) ? 'conductor-hidden' : false; ?>">
 							<?php do_action( 'conductor_widget_settings_excerpt_length_before', $instance, $this ); ?>
 
 							<?php // Excerpt Length ?>
 							<label for="<?php echo $this->get_field_id( 'excerpt_length' ); ?>">
 								<strong>
 									<?php _ex( 'Limit excerpt to', 'Beginning of content limit label; before <input> element', 'conductor' ); ?>
-									<input type="text" class="conductor-input conductor-inline-input conductor-number" id="<?php echo $this->get_field_id( 'excerpt_length' ); ?>" name="<?php echo $this->get_field_name( 'excerpt_length' ); ?>" value="<?php echo esc_attr( $instance['excerpt_length'] ); ?>" placeholder="<?php _ex( '#', 'placeholder for number input elements', 'conductor' ); ?>" />
+									<input type="text" class="conductor-input conductor-inline-input conductor-number" id="<?php echo $this->get_field_id( 'excerpt_length' ); ?>" name="<?php echo $this->get_field_name( 'excerpt_length' ); ?>" value="<?php echo esc_attr( $instance['excerpt_length'] ); ?>" placeholder="<?php _ex( '#', 'placeholder for number input elements', 'conductor' ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['excerpt_length'] ); ?>" />
 									<?php _ex( 'words.', 'End of content limit label; after <input> element', 'conductor' ); ?>
 								</strong>
 							</label>
@@ -2036,20 +3058,20 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php do_action( 'conductor_widget_settings_excerpt_length_after', $instance, $this ); ?>
 						</p>
 
-						<p class="conductor-css-class">
+						<p class="conductor-widget-setting conductor-css-class">
 							<?php do_action( 'conductor_widget_settings_css_class_before', $instance, $this ); ?>
 
 							<?php // CSS Class ?>
 							<label for="<?php echo $this->get_field_id( 'css_class' ); ?>"><strong><?php _e( 'CSS Class(es)', 'conductor' ); ?></strong></label>
 							<br />
-							<input type="text" class="conductor-input" id="<?php echo $this->get_field_id( 'css_class' ); ?>" name="<?php echo $this->get_field_name( 'css_class' ); ?>" value="<?php echo esc_attr( $instance['css_class'] ); ?>" />
+							<input type="text" class="conductor-input" id="<?php echo $this->get_field_id( 'css_class' ); ?>" name="<?php echo $this->get_field_name( 'css_class' ); ?>" value="<?php echo esc_attr( $instance['css_class'] ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['css_class'] ); ?>" />
 							<br />
 							<small class="description conductor-description"><?php printf( __( 'Enter a value here to target this widget on the front-end when adding CSS rules to your stylesheet (e.g. my-custom-conductor-widget content-bold). Custom CSS classes are useful for targeting more than one Conductor Widget. <a href="%1$s" target="_blank">Learn more about CSS</a>.', 'conductor' ),esc_url( 'http://codex.wordpress.org/CSS' ) ); ?></small>
 
 							<?php do_action( 'conductor_widget_settings_css_class_after', $instance, $this ); ?>
 						</p>
 
-						<p class="conductor-css-id">
+						<p class="conductor-widget-setting conductor-css-id">
 							<?php do_action( 'conductor_widget_settings_css_id_before', $instance, $this ); ?>
 
 							<?php
@@ -2074,7 +3096,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php // CSS ID ?>
 							<label for="<?php echo $this->get_field_id( 'css_id' ); ?>"><strong><?php _e( 'CSS ID', 'conductor' ); ?></strong></label>
 							<br />
-							<input type="text" class="conductor-input" id="<?php echo $this->get_field_id( 'css_id' ); ?>" name="<?php echo $this->get_field_name( 'css_id' ); ?>" value="<?php echo esc_attr( $instance['css_id'] ); ?>" readonly="readonly" />
+							<input type="text" class="conductor-input" id="<?php echo $this->get_field_id( 'css_id' ); ?>" name="<?php echo $this->get_field_name( 'css_id' ); ?>" value="<?php echo esc_attr( $instance['css_id'] ); ?>" readonly="readonly" data-default-value="<?php echo esc_attr( $this->defaults['css_id'] ); ?>" />
 							<br />
 							<small class="description conductor-description">
 								<?php _e( 'Use this value when adding CSS rules to your stylesheet to target this widget specifically on the front-end.', 'conductor' ); ?>
@@ -2101,30 +3123,54 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<?php do_action( 'conductor_widget_settings_css_id_after', $instance, $this ); ?>
 						</p>
 
-						<p class="conductor-post-in conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
+						<p class="conductor-widget-setting conductor-post-in conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
 							<?php do_action( 'conductor_widget_settings_post__in_before', $instance, $this ); ?>
 
-							<?php // Post In (posts to specifically include) ?>
+							<?php // Post In (posts to specifically include) TODO: Future: Select2 to allow selecting of post IDs by post title ?>
 							<label for="<?php echo $this->get_field_id( 'post__in' ); ?>"><strong><?php _e( 'Include Only These Posts', 'conductor' ); ?></strong></label>
 							<br />
-							<input type="text" class="conductor-input" id="<?php echo $this->get_field_id( 'post__in' ); ?>" name="<?php echo $this->get_field_name( 'post__in' ); ?>" value="<?php echo esc_attr( $instance['query_args']['post__in'] ); ?>" />
+							<input type="text" class="conductor-input" id="<?php echo $this->get_field_id( 'post__in' ); ?>" name="<?php echo $this->get_field_name( 'post__in' ); ?>" value="<?php echo esc_attr( $instance['query_args']['post__in'] ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['query_args']['post__in'] ); ?>" />
 							<br />
 							<small class="description conductor-description"><?php printf( __( 'Comma separated list of post IDs. Only these posts will be displayed. Some settings above will be ignored. <a href="%1$s" target="_blank">How do I find an ID?</a>', 'conductor' ), esc_url( 'http://codex.wordpress.org/FAQ_Working_with_WordPress#How_do_I_determine_a_Post.2C_Page.2C_Category.2C_Tag.2C_Link.2C_Link_Category.2C_or_User_ID.3F' ) ); ?></small>
 
 							<?php do_action( 'conductor_widget_settings_post__in_after', $instance, $this ); ?>
 						</p>
 
-						<p class="conductor-post-not-in conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
+						<p class="conductor-widget-setting conductor-post-not-in conductor-feature-many <?php echo ( ! $instance['feature_many'] ) ? 'conductor-hidden' : false; ?>">
 							<?php do_action( 'conductor_widget_settings_post__not_in_before', $instance, $this ); ?>
 
-							<?php // Post Not In (posts to specifically exclude) ?>
+							<?php // Post Not In (posts to specifically exclude) TODO: Future: Select2 to allow selecting of post IDs by post title ?>
 							<label for="<?php echo $this->get_field_id( 'post__not_in' ); ?>"><strong><?php _e( 'Exclude These Posts', 'conductor' ); ?></strong></label>
 							<br />
-							<input type="text" class="conductor-input" id="<?php echo $this->get_field_id( 'post__not_in' ); ?>" name="<?php echo $this->get_field_name( 'post__not_in' ); ?>" value="<?php echo esc_attr( $instance['query_args']['post__not_in'] ); ?>" />
+							<input type="text" class="conductor-input" id="<?php echo $this->get_field_id( 'post__not_in' ); ?>" name="<?php echo $this->get_field_name( 'post__not_in' ); ?>" value="<?php echo esc_attr( $instance['query_args']['post__not_in'] ); ?>" data-default-value="<?php echo esc_attr( $this->defaults['query_args']['post__not_in'] ); ?>" />
 							<br />
 							<small class="description conductor-description"><?php printf( __( 'Comma separated list of post IDs. Will display all posts based on settings above, except those in this list. <a href="%1$s" target="_blank">How do I find an ID?</a>', 'conductor' ), esc_url( 'http://codex.wordpress.org/FAQ_Working_with_WordPress#How_do_I_determine_a_Post.2C_Page.2C_Category.2C_Tag.2C_Link.2C_Link_Category.2C_or_User_ID.3F' ) ); ?></small>
 
 							<?php do_action( 'conductor_widget_settings_post__not_in_after', $instance, $this ); ?>
+						</p>
+
+						<p class="conductor-widget-setting conductor-rest-enabled conductor-rest-enabled-field">
+							<?php // Enable in REST API ?>
+							<input type="checkbox" class="conductor-input conductor-rest-enabled-value" id="<?php echo $this->get_field_id( 'rest_enabled' ); ?>" name="<?php echo $this->get_field_name( 'rest_enabled' ); ?>" <?php checked( $instance['rest']['enabled'] ); ?> <?php disabled( ! $conductor_options['rest']['enabled'] ); ?> data-default="<?php echo esc_attr( ( $this->defaults['rest']['enabled'] ) ? 'true' : false ); ?>" />
+							<label for="<?php echo $this->get_field_id( 'rest_enabled' ); ?>"><strong><?php _e( 'Enable in REST API', 'conductor' ); ?></strong></label>
+							<br />
+							<small class="description conductor-description"><?php _e( 'Enable this Conductor Widget in the Conductor REST API. If unchecked, this Conductor Widget will not be accessible via the Conductor WordPres REST API.', 'conductor' ); ?></small>
+							<?php
+								// If the Conductor REST API is not enabled
+								if ( ! $conductor_options['rest']['enabled'] ) :
+									// If this widget is enabled in the Conductor REST API
+									if ( $this->is_rest_api_enabled( $instance ) ) :
+							?>
+										<input type="hidden" class="conductor-input conductor-rest-enabled-value" id="<?php echo $this->get_field_id( 'rest_enabled_hidden' ); ?>" name="<?php echo $this->get_field_name( 'rest_enabled' ); ?>" value="true" />
+							<?php
+									endif;
+							?>
+									<br />
+									<br />
+									<span class="description conductor-description"><strong><?php printf( __( 'Please Note: The Conductor REST API is currently disabled. <a href="%1$s">Enable</a> the Conductor REST API and return to this widget to adjust the REST API setting.', 'conductor' ), admin_url( add_query_arg( 'page', Conductor_Admin_Options::get_menu_page(), 'admin.php' ) ) ); ?></strong></span>
+							<?php
+								endif;
+							?>
 						</p>
 
 						<?php do_action( 'conductor_widget_settings_advanced_section_after', $instance, $this ); ?>

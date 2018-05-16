@@ -4,7 +4,7 @@
  *
  * @class Conductor_Admin_License_Options
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.4.4
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Admin_License_Options' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.4.4';
 
 		/**
 		 * @var string
@@ -73,8 +73,10 @@ if ( ! class_exists( 'Conductor_Admin_License_Options' ) ) {
 			// Grab the Conductor Admin menu page slug
 			$conductor_admin_menu_page = Conductor_Admin_Options::get_menu_page();
 
-			// Conductor Admin License Options Page
-			self::$sub_menu_page = add_submenu_page( $conductor_admin_menu_page, __( 'License', 'conductor' ), __( 'License', 'conductor' ), 'manage_options', self::get_sub_menu_page(), array( $this, 'render' ) );
+			// If the current user has the Conductor capability
+			if ( current_user_can( Conductor::$capability ) )
+				// Conductor Admin License Options Page
+				self::$sub_menu_page = add_submenu_page( $conductor_admin_menu_page, __( 'License', 'conductor' ), __( 'License', 'conductor' ), Conductor::$capability, self::get_sub_menu_page(), array( $this, 'render' ) );
 
 			return self::$sub_menu_page;
 		}

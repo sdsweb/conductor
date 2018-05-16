@@ -2,9 +2,43 @@
 Plugin: Conductor
 Author: Slocum Themes/Slocum Design Studio
 Author URI: https://conductorplugin.com/
-Current Version: 1.4.3
+Current Version: 1.5.1
 ==========================================
 
+
+1.5.1 // May 04 2018
+--------------------
+- Fixed a bug where Conductor Widget columns were not honored when viewing a widget on the front-end; Thanks Ruy Braga
+
+1.5.0 // May 02 2018
+--------------------
+- Introduced the Conductor REST API
+- Added option to enable/disable the Conductor REST API
+- Introduced AJAX logic to Conductor Widgets (allow widgets to load results via AJAX instead of a page refresh)
+- Added various HTML wrapper elements to "wrap" (contain) various pieces of content within a Conductor Widget
+- Deprecated legacy Conductor Widget displays
+- Introduce "conductor_widget_enable_legacy_displays" filter to allow legacy Conductor Widget displays to be enabled
+- Adjusted logic to render widget options to ensure the correct options were displayed based on the feature type
+  and content type fields
+- Adjusted logic to set the Conductor Widget content type to ensure it always occurred after other rendering logic
+- Added logic to store the current query arguments and query on the Conductor_Widget_Default_Query PHP class
+- Introduced Conductor_Widget_Query::get_query_args() to get the current query arguments
+- Added logic to Conductor_Widget_Query to allow instances to skip adding the display content hooks
+- Adjusted default category Conductor Widget setting to zero (was previously false)
+- Fixed a bug where the global $post data was not reset in some cases after Conductor Widget content was displayed
+- Added "data-default-value" and "data-default" attributes to all Conductor Widget settings
+- Added $widget, $query, $this (Conductor_Widget_Default_Query instance) parameters to "conductor_widget_featured_image_size" filter
+- Added "inline-block" CSS styles to allow for inline-block elements in Conductor Widget settings
+- Adjusted add-ons logic to allow for a "check requirements" function name to be passed along with add-on data (default
+  to plugins_loaded for the requirements check if this function name is not specified)
+- Adjusted logic to sanitize CSS classes
+- Removed various Note backwards compatibility that was no longer necessary
+
+1.4.4 // February 07 2018
+-------------------------
+- Introduced Conductor::$capability for use in various capability checks throughout the plugin
+- Fixed a PHP warning that occurred on non-administrator roles when the various admin sub-menu
+  pages were added; Thanks Marc Burggraaf
 
 1.4.3 // June 21 2017
 ---------------------
@@ -134,7 +168,7 @@ Current Version: 1.4.3
 -- Fixed bug where Conductor Widget from an inactive sidebar was added to an active sidebar in the Widgets admin and
    JavaScript was not initialized for that widget
 - Conductor Note Widget
--- Depreciated
+-- Deprecated
 - Customizer
 -- Major refactoring of the Conductor content layouts scripts including registering new content layouts
    without the need for a Customizer reload

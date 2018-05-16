@@ -4,7 +4,7 @@
  *
  * @class Conductor_Admin_Options
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Admin_Options' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.5.0';
 
 		/**
 		 * @var string
@@ -73,7 +73,7 @@ if ( ! class_exists( 'Conductor_Admin_Options' ) ) {
 		 */
 		public function admin_menu() {
 			// Conductor Admin Page (directly after "Settings" which is located at position 80)
-			self::$menu_page = add_menu_page( __( 'Conductor', 'conductor' ), __( 'Conductor', 'conductor' ), 'manage_options', 'conductor', array( $this, 'render' ), '', '80.01000011' );
+			self::$menu_page = add_menu_page( __( 'Conductor', 'conductor' ), __( 'Conductor', 'conductor' ), Conductor::$capability, 'conductor', array( $this, 'render' ), '', '80.01000011' );
 		}
 
 		/**
@@ -141,6 +141,10 @@ if ( ! class_exists( 'Conductor_Admin_Options' ) ) {
 			add_settings_section( 'conductor_enable_section', __( 'Enable Conductor', 'conductor' ), array( $this, 'conductor_enable_section' ), Conductor_Options::$option_name . '_general' );
 			add_settings_field( 'conductor_enable_field', __( 'Enable Conductor', 'conductor' ), array( $this, 'conductor_enable_field' ), Conductor_Options::$option_name . '_general', 'conductor_enable_section' );
 
+			// Enable Conductor REST API
+			add_settings_section( 'conductor_rest_enable_section', __( 'Enable Conductor REST API', 'conductor' ), array( $this, 'conductor_rest_enable_section' ), Conductor_Options::$option_name . '_general' );
+			add_settings_field( 'conductor_rest_enable_field', __( 'Enable Conductor REST API', 'conductor' ), array( $this, 'conductor_rest_enable_field' ), Conductor_Options::$option_name . '_general', 'conductor_rest_enable_section' );
+
 			// Content Layouts
 			add_settings_section( 'conductor_content_layouts_section', __( 'Conductor Layouts', 'conductor' ), array( $this, 'conductor_content_layouts_section' ), Conductor_Options::$option_name . '_general' );
 			add_settings_field( 'conductor_content_layouts_field', __( 'Select a Layout For:', 'conductor' ), array( $this, 'conductor_content_layouts_field' ), Conductor_Options::$option_name . '_general', 'conductor_content_layouts_section' );
@@ -163,6 +167,21 @@ if ( ! class_exists( 'Conductor_Admin_Options' ) ) {
 		public function conductor_enable_field() {
 			Conductor_Admin_Options_Views::conductor_enable_field();
 		}
+
+		/**
+		 * This function renders the Conductor REST API Enable Settings Section.
+		 */
+		public function conductor_rest_enable_section() {
+			Conductor_Admin_Options_Views::conductor_rest_enable_section();
+		}
+
+		/**
+		 * This function renders the Conductor REST API Enable Settings Field.
+		 */
+		public function conductor_rest_enable_field() {
+			Conductor_Admin_Options_Views::conductor_rest_enable_field();
+		}
+
 
 		/**
 		 * This function renders the Conductor Content Layouts Settings Section.
@@ -219,6 +238,9 @@ if ( ! class_exists( 'Conductor_Admin_Options' ) ) {
 
 			// Enable Conductor
 			$input['enabled'] = ( isset( $raw_input['enabled'] ) && $input['enabled'] ) ? true : $conductor_option_defaults['enabled'];
+
+			// Enable Conductor REST API
+			$input['rest']['enabled'] = ( isset( $raw_input['rest']['enabled'] ) && $input['rest']['enabled'] ) ? true : false;
 
 			// Content Layouts
 			if ( ! empty( $input['content_layouts'] ) && is_array( $input['content_layouts'] ) ) {

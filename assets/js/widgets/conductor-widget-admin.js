@@ -1,8 +1,9 @@
 /**
  * Conductor Widget
  */
-// TODO: Comment functions properly
-// TODO: Trigger Conductor specific events for all actions within a widget
+// TODO: Future: Comment all functions properly
+// TODO: Future: Trigger Conductor specific events for all actions within a widget
+// TODO: Future: Minify
 
 var conductor = conductor || {}, wp = wp || {};
 
@@ -20,8 +21,8 @@ var conductor = conductor || {}, wp = wp || {};
 	}
 	else {
 		conductor.widgets = conductor.widgets || {
-				conductor: {}
-			};
+			conductor: {}
+		};
 	}
 
 	/**
@@ -30,18 +31,29 @@ var conductor = conductor || {}, wp = wp || {};
 	conductor.widgets.conductor.conductorRenderWidgetOptions = function ( selected, widget_parent ) {
 		// Feature one
 		if ( selected.val() === '' ) {
-			widget_parent.find( '.conductor-feature-many:not(.conductor-content-type-field)' ).fadeOut( 100, function() {
-				widget_parent.find( '.conductor-feature-one:not(.conductor-content-type-field)' ).fadeIn( 100 );
-			} );
+			// Hide the feature many elements
+			widget_parent.find( '.conductor-feature-many:not(.conductor-content-type-field)' ).hide();
+
+			// Start a new thread (delay 1ms)
+			setTimeout( function( ) {
+				// Show the feature one elements
+				widget_parent.find( '.conductor-feature-one:not(.conductor-content-type-field)' ).show();
+			}, 1);
 		}
 		// Feature many
 		else if ( selected.val() === 'true' ) {
-			widget_parent.find( '.conductor-feature-one:not(.conductor-content-type-field)' ).fadeOut( 100, function() {
-				widget_parent.find( '.conductor-feature-many:not(.conductor-content-type-field)' ).fadeIn( 100 );
-			} );
+			// Hide the feature one elements
+			widget_parent.find( '.conductor-feature-one:not(.conductor-content-type-field)' ).hide();
+
+			// Start a new thread (delay 1ms)
+			setTimeout( function( ) {
+				// Show the feature many elements
+				widget_parent.find( '.conductor-feature-many:not(.conductor-content-type-field)' ).show();
+			}, 1);
 		}
 
-		widget_parent.find( '.conductor-feature-many, .conductor-feature-one' ).removeClass( 'conductor-hidden' ); // Remove hidden class
+		// Remove "hidden" class from the feature many and feature one elements
+		widget_parent.find( '.conductor-feature-many, .conductor-feature-one' ).removeClass( 'conductor-hidden' );
 	};
 
 	/**
@@ -214,8 +226,9 @@ var conductor = conductor || {}, wp = wp || {};
 		// On content piece change
 		$document.on( 'change', '.conductor-feature-content-pieces .conductor-select-feature-type', function() {
 			var $selected = $( ':selected', this ), // Get selected choice
-			$widget_parent = $selected.parents( '.widget' ); // Get widget instance
+				$widget_parent = $selected.parents( '.widget' ); // Get widget instance
 
+			// Render the Conductor Widget options
 			conductor.widgets.conductor.conductorRenderWidgetOptions( $selected, $widget_parent );
 
 			// Trigger change event on content type
@@ -223,7 +236,7 @@ var conductor = conductor || {}, wp = wp || {};
 		} );
 
 		// On content type change
-		$document.on( 'change', '.conductor-content-type', function( e ) {
+		$document.on( 'change', '.conductor-content-type', function( event ) {
 			var $this = $( this ),
 				value = $this.val(),
 				$widget_parent = $this.parents( '.widget' ), // Get widget instance
@@ -251,10 +264,12 @@ var conductor = conductor || {}, wp = wp || {};
 
 					// Show correct elements
 					if ( $this.hasClass( feature_type_class ) && $this.hasClass( content_type_class ) ) {
-						$this.fadeIn( 100 );
+						// Show this element and remove the "hidden" CSS class
+						$this.show().removeClass( 'conductor-hidden' );
 					}
 					else {
-						$this.fadeOut( 100 );
+						// Hide this element and remove the "hidden" CSS class
+						$this.hide().removeClass( 'conductor-hidden' );
 					}
 				} );
 
@@ -266,7 +281,7 @@ var conductor = conductor || {}, wp = wp || {};
 		} );
 
 		// Feature one select
-		$document.on( 'change', '.featured-one-select', function( e ) {
+		$document.on( 'change', '.featured-one-select', function( event ) {
 			var $this = $( this ),
 			$widget_parent = $this.parents( '.widget' ); // Get widget instance
 
@@ -279,8 +294,9 @@ var conductor = conductor || {}, wp = wp || {};
 		} );
 
 		// Accordion (Expand/Collapse on click)
-		$document.on( 'click', '.conductor-section .conductor-accordion-section-title', function( e ) {
-			e.preventDefault();
+		$document.on( 'click', '.conductor-section .conductor-accordion-section-title', function( event ) {
+			// Prevent default
+			event.preventDefault();
 
 			conductor.widgets.conductor.accordionSwitch( $( this ) );
 		} );
@@ -289,10 +305,10 @@ var conductor = conductor || {}, wp = wp || {};
 		conductor.widgets.conductor.accordionInit( $widgets );
 
 		// Conductor numbers, only allow numerical characters into input boxes
-		$document.on( 'keyup', '.conductor-number', function( e ) {
+		$document.on( 'keyup', '.conductor-number', function( event ) {
 			var $this = $( this ), numeric_value = $this.val().replace( /[^0-9]/g, '' );
 
-			if (  $this.val() != numeric_value ) {
+			if ( $this.val() != numeric_value ) {
 				$this.val( numeric_value );
 			}
 		} );
@@ -329,7 +345,11 @@ var conductor = conductor || {}, wp = wp || {};
 				} );
 			}
 
-			conductor.widgets.conductor.setContentType( $this, $selected.attr( 'data-type' ) );
+			// Start a new thread; delay 1ms
+			setTimeout( function() {
+				// Set the content type
+				conductor.widgets.conductor.setContentType( $this, $selected.attr( 'data-type' ) );
+			}, 1 );
 		} );
 
 
@@ -346,7 +366,7 @@ var conductor = conductor || {}, wp = wp || {};
 		} );
 
 		// On widget size change
-		$document.on( 'change', '.conductor-widget-size-value', function( e ) {
+		$document.on( 'change', '.conductor-widget-size-value', function( event ) {
 			var $this = $( this ),
 				value = $this.val(),
 				display_config = ( value && conductor_widget_displays && conductor_widget_displays[value] && _.isObject( conductor_widget_displays[value] ) ) ? conductor_widget_displays[value]: false,
@@ -420,6 +440,21 @@ var conductor = conductor || {}, wp = wp || {};
 					}
 				}
 			}
+
+			// Hide the widget size fields and remove the "hidden" CSS class
+			$widget_parent.find( '.conductor-widget-size-field' ).hide().removeClass( 'conductor-hidden' );
+
+			// Start a new thread; delay 1ms
+			setTimeout( function() {
+				// Show the widget size fields for this widget size
+				$widget_parent.find( '.conductor-widget-size-field.conductor-widget-size-' + value ).show();
+
+				// Start a new thread; delay 1ms
+				setTimeout( function() {
+					// Trigger change event on content type select element (this will in turn call conductor.widgets.conductor.setContentType())
+					$widget_parent.find( '.conductor-select-content-type' ).trigger( 'change' );
+				}, 1 );
+			}, 1 );
 		} );
 
 
@@ -774,13 +809,18 @@ var conductor = conductor || {}, wp = wp || {};
 					event.stopPropagation();
 			},
 			toggleContentTypeElements: function( event ) {
-				var $el = $( event.currentTarget), self = this, value = $el.val();
+				var $el = $( event.currentTarget ),
+					self = this,
+					value = $el.val();
 
-				this.$widget.find( '.conductor-display-content-type-field' ).fadeOut( 100, function() {
-					self.$widget.find( '.conductor-display-content-type-' + value ).fadeIn( 100 );
-				} );
+				// Hide the content type fields and remove the "hidden" CSS class
+				this.$widget.find( '.conductor-display-content-type-field' ).hide().removeClass( 'conductor-hidden' );
 
-				this.$widget.find( '.conductor-display-content-type-field' ).removeClass( 'conductor-hidden' ); // Remove hidden class
+				// Start a new thread (delay 1ms)
+				setTimeout( function() {
+					// Show the content type fields for this content type
+					self.$widget.find( '.conductor-display-content-type-' + value ).show();
+				}, 1 );
 			},
 			toggleLink: function( event ) {
 				var $el = $( event.currentTarget ), $parent = $el.parents( '.conductor-widget-output-element' ),
@@ -931,7 +971,7 @@ var conductor = conductor || {}, wp = wp || {};
 		// Extend the form sync handlers to include one for Conductor
 		$.extend( api.Widgets.formSyncHandlers, {
 			// Conductor Widget
-			'conductor-widget': function( e, $widget, newForm ) {
+			'conductor-widget': function( event, $widget, newForm ) {
 				var $widget_content_type_select = $widget.find( '.conductor-select-content-type' ),
 					$selected_content_type = $( ':selected', $widget_content_type_select ),
 					$widget_content_type_options = $widget_content_type_select.find( 'option' ),

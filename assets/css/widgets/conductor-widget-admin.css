@@ -8,6 +8,10 @@
 	line-height: 1.5;
 }
 
+.conductor-widget-setting-inline-block {
+	display: inline-block;
+}
+
 .conductor-select {
 	width: 100%;
 	max-width: 100%;
@@ -18,7 +22,7 @@
 }
 
 .conductor-hidden {
-	display: none;
+	display: none !important;
 }
 
 .conductor-input {
@@ -69,33 +73,34 @@
 	float: none;
 }
 
-
 /**
- * Widget Title
+ * Widget Hide Settings (settings that also have a "hide" setting field)
  */
-.conductor-widget-title, .conductor-widget-title-container {
+.conductor-widget-setting-with-hide,
+.conductor-widget-setting-with-hide-container {
 	position: relative;
 }
 
-.conductor-widget-title .conductor-input {
+.conductor-widget-setting-with-hide .conductor-input {
 	padding-right: 30px;
 }
 
-.conductor-widget-title .conductor-hide-widget-title {
+.conductor-widget-setting-with-hide .conductor-widget-setting-hide {
 	position: absolute;
 	top: 6px;
 	right: 5px;
 }
 
-.conductor-widget-title .conductor-hide-widget-title input {
+.conductor-widget-setting-with-hide .conductor-widget-setting-hide input {
 	display: none;
 }
 
-.conductor-widget-title .conductor-hide-widget-title label {
+.conductor-widget-setting-with-hide .conductor-widget-setting-hide label {
 	color: #222;
 }
 
-.conductor-widget-title .conductor-hide-widget-title input:checked + label {
+.conductor-widget-setting-with-hide .conductor-widget-setting-hide input:checked + label,
+.conductor-widget-setting-with-hide .conductor-widget-setting-hide input:disabled + label  {
 	color: #ccc;
 }
 
@@ -655,6 +660,7 @@
 }
 
 .conductor-widget-output-list li.ui-state-default .editing .conductor-widget-output-element-label-select select {
+	width: auto; /* Customizer */
 	height: 22px;
 	padding: 0;
 	font-size: 13px;

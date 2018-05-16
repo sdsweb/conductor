@@ -4,7 +4,7 @@
  *
  * @class Conductor_Template_Loader
  * @author Slocum Studio
- * @version 1.4.0
+ * @version 1.5.0
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Template_Loader' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.0';
+		public $version = '1.5.0';
 
 		/**
 		 * @var Conductor, Instance of the class
@@ -160,7 +160,11 @@ if ( ! class_exists( 'Conductor_Template_Loader' ) ) {
 					$css_classes = array_merge( $css_classes, $conductor_content_layout_body_class );
 
 				// Sanitize CSS classes
-				$css_classes = array_filter( $css_classes, 'sanitize_html_class' );
+				$css_classes = array_map( 'sanitize_html_class', $css_classes );
+
+				// Ensure we have unique CSS classes (no empty values)
+				$css_classes = array_unique( array_values( array_filter( $css_classes ) ) );
+
 
 				$classes['conductor'] = esc_attr( implode( ' ', $css_classes ) );
 			}

@@ -5,7 +5,7 @@
  *
  * @class Conductor_Widget_Default_Query
  * @author Slocum Studio
- * @version 1.4.1
+ * @version 1.5.0
  * @since 1.0.0
  */
 
@@ -18,7 +18,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.4.1';
+		public $version = '1.5.0';
 
 		/**
 		 * @var WP_Widget, Conductor Widget
@@ -154,6 +154,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 
 					// Get the "true" paged query variable from the main query (defaulting to 1)
 					$paged = $query_args['paged'] = ( int ) get_query_var( 'paged' );
+
 					// Use the paged query var if set
 					if ( empty( $query_args['paged'] ) && isset( $wp_query->query['paged'] ) )
 						$paged = $query_args['paged'] = ( int ) $wp_query->query['paged'];
@@ -212,6 +213,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 
 					// Determine if the user has gone beyond the max number of pages
 					$max_num_pages = ( $this->widget_instance['query_args']['max_num_posts'] === '' ) ? ceil( ( $post_counts->publish - $offset ) / ( int ) $this->widget_instance['query_args']['posts_per_page'] ) : ceil( $this->widget_instance['query_args']['max_num_posts'] / ( int ) $this->widget_instance['query_args']['posts_per_page'] ) ;
+
 					if ( $max_num_pages < $paged ) {
 						$post_counts = ( $this->widget_instance['query_args']['max_num_posts'] !== '' ) ? wp_count_posts( $this->widget_instance['query_args']['post_type'] ) : $post_counts;
 
@@ -291,9 +293,10 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 				);
 
 				// Allow filtering of query arguments
-				$query_args = apply_filters( 'conductor_query_args', $query_args, $type, $this->widget_instance, $this );
+				$this->query_args = apply_filters( 'conductor_query_args', $query_args, $type, $this->widget_instance, $this );
 
-				$this->query = new WP_Query( $query_args ); // Initiate the query
+				// Create the query
+				$this->query = new WP_Query( $this->query_args );
 			}
 			// Other Types
 			else
@@ -382,19 +385,23 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 
 		/**
 		 * This function returns or will echo pagination for a query depending on parameters.
-		 * TODO: optimize this function
+		 * TODO: Optimize this function
 		 */
 		public function get_pagination_links( $query = false, $echo = true ) {
 			// Use class query if no $query was passed
 			if ( empty( $query ) )
 				$query = $this->query;
 
-			// Permalink structure
+			// Grab the permalink structure
 			$permalink_structure = get_option( 'permalink_structure' );
 
+			// Flag to determine if there is a permalink structure
+			$has_permalink_structure = apply_filters( 'conductor_query_paginate_links_has_permalink_structure', ( ! is_preview() && $permalink_structure ), $permalink_structure, $query, $echo, $this );
+
+			// Paginate links arguments
 			$paginate_links_args = array(
-				'base' => esc_url( get_pagenum_link() ) . '%_%', // %_% will be replaced with format below
-				'format' => ( $permalink_structure ) ? 'page/%#%/' : '&paged=%#%', // %#% will be replaced with page number
+				'base' => get_pagenum_link() . '%_%', // %_% will be replaced with format below
+				'format' => ( $has_permalink_structure ) ? 'page/%#%/' : '&paged=%#%', // %#% will be replaced with page number
 				'current' => max( 1, ( ( $_conductor = $query->get( '_conductor' ) ) && isset( $_conductor['last_page'] ) && $_conductor['last_page'] ) ? $query->max_num_pages : $query->get( 'paged' ) ), // Get whichever is the max out of 1 and the current page count
 				'total' => $query->max_num_pages, // Get total number of pages in current query
 				'next_text' => __(' Next &#8594;', 'conductor' ),
@@ -403,15 +410,16 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 			);
 
 			// Front page
-			if ( is_front_page() )
-				$paginate_links_args['format'] = ( $permalink_structure ) ? 'page/%#%/' : '/?paged=%#%';
+			if ( apply_filters( 'conductor_query_paginate_links_is_front_page', is_front_page(), $has_permalink_structure, $paginate_links_args, $query, $echo, $this ) )
+				$paginate_links_args['format'] = ( $has_permalink_structure ) ? 'page/%#%/' : '/?paged=%#%';
 
 			// Single post uses "page" instead of "paged"
-			if ( is_single() ) {
+			if ( apply_filters( 'conductor_query_paginate_links_is_single', is_single(), $has_permalink_structure, $paginate_links_args, $query, $echo, $this ) ) {
 				$paginate_links_args['base'] = esc_url( get_permalink() ) . '%_%';
-				$paginate_links_args['format'] = ( get_option( 'permalink_structure' ) ) ? '%#%/' : '&page=%#%'; // %#% will be replaced with page number
+				$paginate_links_args['format'] = ( $has_permalink_structure ) ? '%#%/' : '&page=%#%'; // %#% will be replaced with page number
 			}
 
+			// TODO: Future: Add the has permalink structure flag as a parameter
 			$paginate_links_args = apply_filters( 'conductor_query_paginate_links_args', $paginate_links_args, $query, $echo, $this );
 
 			$paginate_links = paginate_links( $paginate_links_args );
@@ -502,7 +510,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 			$tags = apply_filters( 'conductor_widget_excerpt_allowable_tags', ( array ) $tags, $post );
 			$tags = implode( '', $tags );
 
-			// TODO: make this an option on the widget
+			// TODO: Make this an option on the widget
 			$the_excerpt = ( has_excerpt( $post->ID ) ) ? $post->post_excerpt : $post->post_content;
 			$the_excerpt = strip_shortcodes( strip_tags( $the_excerpt, $tags ) );
 			$words_array = preg_split( "/[\n\r\t ]+/", $the_excerpt, $length + 1, PREG_SPLIT_NO_EMPTY );
@@ -597,7 +605,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 						else
 							$conductor_thumbnail_size = ( $instance['widget_size'] !== 'small' ) ? $instance['widget_size'] : 'thumbnail';
 
-						$conductor_thumbnail_size = apply_filters( 'conductor_widget_featured_image_size', $conductor_thumbnail_size, $instance, $post );
+						$conductor_thumbnail_size = apply_filters( 'conductor_widget_featured_image_size', $conductor_thumbnail_size, $instance, $post, $widget, $query, $this ); // TODO: Future: Add $widget, $query, $this parameters to other add-ons
 
 						// Link featured image to post
 						if ( $output['link'] ) :
