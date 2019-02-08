@@ -2,9 +2,9 @@
 /**
  * Conductor Updates
  *
- * @class Conductor_Options
+ * @class Conductor_Updates
  * @author Slocum Studio
- * @version 1.5.1
+ * @version 1.5.2
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Updates' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.5.1';
+		public $version = '1.5.2';
 
 		/**
 		 * @var string, URL

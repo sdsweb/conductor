@@ -2,9 +2,14 @@
 Plugin: Conductor
 Author: Slocum Themes/Slocum Design Studio
 Author URI: https://conductorplugin.com/
-Current Version: 1.5.1
+Current Version: 1.5.2
 ==========================================
 
+
+1.5.2 // February 01 2019
+-------------------------
+- Improved Conductor Widget pagination logic to help ensure it works across a variety of permalink structures
+- Fixed a bug where Conductor Widget AJAX pagination did not work correctly in some cases
 
 1.5.1 // May 04 2018
 --------------------

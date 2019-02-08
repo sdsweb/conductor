@@ -233,7 +233,7 @@ var conductor = conductor || {};
 						data.data = item.parameters;
 					}
 
-					// Make the AJAX request (GET)
+					// Make the AJAX request (POST)
 					this.ajax.queue.current_request = wp.ajax.send( data ).done( item.success ).fail( item.fail );
 				},
 				/**
@@ -265,7 +265,7 @@ var conductor = conductor || {};
 			displayResponseStatusMessage: function( response ) {
 				var message = '';
 
-				// If we have a message or we have an error and the error is a function
+				// If we have a message or we have an error and the error isn't a function
 				if ( response.message || ( response.error && ! _.isFunction( response.error ) ) ) {
 					// Set the message from the response
 					message = ( response.message ) ? response.message : response.error;
@@ -511,7 +511,7 @@ var conductor = conductor || {};
 			}
 
 			var $this = $( event.currentTarget ),
-				paged_regex = new RegExp( /([\/&?](page[d]?)[\/=])(\d+)/ ),
+				paged_regex = new RegExp( '^' + conductor_widget.urls.current.permalink + '(?:.+)?([\\/?&](page[d]?)[\\/=])(\\d+)[\\/]?|^' + conductor_widget.urls.current.permalink + '[\\/](\\d+)[\\/]?$' ),
 				$page_number,
 				$page_numbers = $this.parents( conductor_widget.css_selectors.pagination.page_numbers ),
 				$previous_page_number = $page_numbers.find( conductor_widget.css_selectors.pagination.previous ),
@@ -521,7 +521,7 @@ var conductor = conductor || {};
 				last_parsed_url = $last_page_number.length && $last_page_number.attr( 'href' ).match( paged_regex ),
 				last_paged = last_parsed_url && parseInt( last_parsed_url[3], 10 ),
 				parsed_url = $this.attr( 'href' ).match( paged_regex ),
-				paged = parsed_url && parseInt( parsed_url[3], 10 ) || 1; // Default to 1
+				paged = parsed_url && parseInt( ( parsed_url[4] ) ? parsed_url[4] : parsed_url[3], 10 ) || 1; // Default to 1
 
 			// Prevent default
 			event.preventDefault();
@@ -650,6 +650,7 @@ var conductor = conductor || {};
 			// Process the AJAX queue
 			this.ajax.queue.process.call( this );
 
+			// TODO: Future: Turn this spinner logic into a function so that other add-ons can use it (e.g. Calendar Add-On mimics this logic when fetching events via the JSON API)
 			// Show the spinner and spinner overlay
 			$spinner.add( $spinner_overlay ).addClass( conductor_widget.css_classes.spinner.active );
 

@@ -4,7 +4,7 @@
  *
  * @class Conductor_Widget
  * @author Slocum Studio
- * @version 1.5.0
+ * @version 1.5.2
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.5.0';
+		public $version = '1.5.2';
 
 		/**
 		 * @var array, Conductor Widget defaults
@@ -1845,6 +1845,10 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 					),
 					// URLs
 					'urls' => array(
+						// Current
+						'current' => array(
+							'permalink' => str_replace( '?', '\\?', untrailingslashit( get_permalink() ) ),
+						),
 						// REST API
 						'rest' => array(
 							'base' => rest_url( Conductor_REST_API::$namespace ),
