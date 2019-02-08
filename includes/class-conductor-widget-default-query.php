@@ -5,7 +5,7 @@
  *
  * @class Conductor_Widget_Default_Query
  * @author Slocum Studio
- * @version 1.5.0
+ * @version 1.5.2
  * @since 1.0.0
  */
 
@@ -18,7 +18,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.5.0';
+		public $version = '1.5.2';
 
 		/**
 		 * @var WP_Widget, Conductor Widget
@@ -388,6 +388,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 		 * TODO: Optimize this function
 		 */
 		public function get_pagination_links( $query = false, $echo = true ) {
+			global $page;
 			// Use class query if no $query was passed
 			if ( empty( $query ) )
 				$query = $this->query;
@@ -400,8 +401,8 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 
 			// Paginate links arguments
 			$paginate_links_args = array(
-				'base' => get_pagenum_link() . '%_%', // %_% will be replaced with format below
-				'format' => ( $has_permalink_structure ) ? 'page/%#%/' : '&paged=%#%', // %#% will be replaced with page number
+				//'base' => get_pagenum_link() . '%_%', // %_% will be replaced with format below
+				'format' => ( $has_permalink_structure ) ? 'page/%#%/' : '?paged=%#%', // %#% will be replaced with page number
 				'current' => max( 1, ( ( $_conductor = $query->get( '_conductor' ) ) && isset( $_conductor['last_page'] ) && $_conductor['last_page'] ) ? $query->max_num_pages : $query->get( 'paged' ) ), // Get whichever is the max out of 1 and the current page count
 				'total' => $query->max_num_pages, // Get total number of pages in current query
 				'next_text' => __(' Next &#8594;', 'conductor' ),
@@ -414,13 +415,24 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 				$paginate_links_args['format'] = ( $has_permalink_structure ) ? 'page/%#%/' : '/?paged=%#%';
 
 			// Single post uses "page" instead of "paged"
-			if ( apply_filters( 'conductor_query_paginate_links_is_single', is_single(), $has_permalink_structure, $paginate_links_args, $query, $echo, $this ) ) {
-				$paginate_links_args['base'] = esc_url( get_permalink() ) . '%_%';
-				$paginate_links_args['format'] = ( $has_permalink_structure ) ? '%#%/' : '&page=%#%'; // %#% will be replaced with page number
+			if ( apply_filters( 'conductor_query_paginate_links_is_single', is_single(), $has_permalink_structure, $paginate_links_args, $query, $echo, $this ) )
+				$paginate_links_args['format'] = ( $has_permalink_structure ) ? '%#%/' : '?page=%#%'; // %#% will be replaced with page number
+
+			// If we don't have a permalink structure and this widget has AJAX enabled
+			if ( ! $has_permalink_structure && $this->widget->has_ajax( $this->widget_instance, array() ) ) {
+				// Add the base argument to the paginate links arguments (remove the "page" and "paged" query arguments)
+				$paginate_links_args['base'] = html_entity_decode( remove_query_arg( array( 'page', 'paged' ), html_entity_decode( ( is_preview() ) ? esc_url( get_permalink() ) : get_pagenum_link() ) ) ) . '%_%';
+
+				// Replace question marks in the format argument with ampersands
+				$paginate_links_args['format'] = ( ! $permalink_structure ) ? str_replace( '?', '&', $paginate_links_args['format'] ) : $paginate_links_args['format'];
 			}
 
-			// TODO: Future: Add the has permalink structure flag as a parameter
-			$paginate_links_args = apply_filters( 'conductor_query_paginate_links_args', $paginate_links_args, $query, $echo, $this );
+			// If we have a permalink structure and we're paged
+			if ( $has_permalink_structure && ( is_paged() || $page > 1 ) )
+				// Add the base argument to the paginate links arguments
+				$paginate_links_args['base'] = get_permalink() . '%_%';
+
+			$paginate_links_args = apply_filters( 'conductor_query_paginate_links_args', $paginate_links_args, $query, $echo, $this, $has_permalink_structure );
 
 			$paginate_links = paginate_links( $paginate_links_args );
 

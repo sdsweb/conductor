@@ -4,7 +4,7 @@
  *
  * @class Conductor_REST_API
  * @author Slocum Studio
- * @version 1.0.0
+ * @version 1.5.2
  * @since 1.5.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_REST_API' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.0.0';
+		public $version = '1.5.2';
 
 		/**
 		 * @var string
@@ -192,7 +192,7 @@ if ( ! class_exists( 'Conductor_REST_API' ) ) {
 			add_filter( 'conductor_query_paginate_links_is_single', array( $this, 'conductor_query_paginate_links_is_single' ), 10, 6 );
 
 			// Hook into "conductor_query_paginate_links_args"
-			add_filter( 'conductor_query_paginate_links_args', array( $this, 'conductor_query_paginate_links_args' ), 10, 4 );
+			add_filter( 'conductor_query_paginate_links_args', array( $this, 'conductor_query_paginate_links_args' ), 10, 5 );
 
 			// Grab the Conductor Widget REST data
 			$conductor_widget_rest = $conductor_widget->widget_rest( array(), $instance );
@@ -263,7 +263,7 @@ if ( ! class_exists( 'Conductor_REST_API' ) ) {
 			if ( $is_front_page )
 				return $is_front_page;
 
-			// Set the is front page flag base on the is front page flag from the request
+			// Set the is front page flag based on the is front page flag from the request
 			$is_front_page = ( isset( $_REQUEST['is_front_page'] ) && $_REQUEST['is_front_page'] );
 
 			// TODO: Future: Pass the post ID in the request and verify if page_on_front matches
@@ -279,7 +279,7 @@ if ( ! class_exists( 'Conductor_REST_API' ) ) {
 			if ( $is_single )
 				return $is_single;
 
-			// Set the is single flag base on the is front page flag from the request
+			// Set the is single flag based on the is front page flag from the request
 			$is_single = ( isset( $_REQUEST['is_single'] ) && $_REQUEST['is_single'] === 'true' );
 
 			// TODO: Future: Pass the post ID in the request and verify
@@ -290,7 +290,7 @@ if ( ! class_exists( 'Conductor_REST_API' ) ) {
 		/**
 		 * This function adjusts Conductor Widget query paginate_links() arguments.
 		 */
-		public function conductor_query_paginate_links_args( $args, $query, $echo, $conductor_widget_query ) {
+		public function conductor_query_paginate_links_args( $args, $query, $echo, $conductor_widget_query, $has_permalink_structure ) {
 			// If we don't have a pagenum link on this class
 			if ( ! $this->pagenum_link ) {
 				// Grab the pagenum link from the request (ensure it can be used in a re-direct)
@@ -307,8 +307,17 @@ if ( ! class_exists( 'Conductor_REST_API' ) ) {
 			// Hook into "get_pagenum_link"
 			add_filter( 'get_pagenum_link', array( $this, 'get_pagenum_link' ) );
 
-			// Set the base to the pagenum link
-			$args['base'] = $this->pagenum_link . '%_%';
+			// Set the base to the pagenum link (remove the "page" and "paged" query arguments)
+			$args['base'] = remove_query_arg( array( 'page', 'paged' ), $this->pagenum_link ) . '%_%';
+
+			// If we don't have a permalink structure and the base argument contains a question mark
+			if ( ! $has_permalink_structure && strpos( $args['base'], '?' ) !== false ) {
+				// Replace question marks in the format argument with ampersands
+				$args['format'] = str_replace( '?', '&', $args['format'] );
+
+				// Remove slashes in the format argument
+				$args['format'] = str_replace( '/', '', $args['format'] );
+			}
 
 			return $args;
 		}
