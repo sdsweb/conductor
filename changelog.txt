@@ -2,9 +2,17 @@
 Plugin: Conductor
 Author: Slocum Themes/Slocum Design Studio
 Author URI: https://conductorplugin.com/
-Current Version: 1.5.2
+Current Version: 1.5.3
 ==========================================
 
+
+1.5.3 // May 20 2019
+--------------------
+- Added the "wp_rest" nonce to all Conductor REST API requests (allows for basic authentication checks
+  to be performed)
+- Fixed a possible issue where featured image sizes in Conductor widgets could be overridden via the
+  "post_thumbnail_size" filter
+- Fixed a possible PHP notice in the Conductor_Admin_Options PHP class when Conductor was used in an environment with PHP 7
 
 1.5.2 // February 01 2019
 -------------------------

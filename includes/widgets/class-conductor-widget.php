@@ -4,7 +4,7 @@
  *
  * @class Conductor_Widget
  * @author Slocum Studio
- * @version 1.5.2
+ * @version 1.5.3
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.5.2';
+		public $version = '1.5.3';
 
 		/**
 		 * @var array, Conductor Widget defaults
@@ -69,6 +69,11 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		 * @var int
 		 */
 		public $sidebar_conductor_widgets_index = -1;
+
+		/**
+		 * @var string
+		 */
+		public static $current_featured_image_size = false;
 
 		/**
 		 * @var Conductor_Widget, Instance of the class
@@ -263,16 +268,20 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 			// Call the parent constructor
 			parent::__construct( 'conductor-widget', __( 'Conductor Widget', 'conductor' ), $widget_options, $control_options );
 
-
 			// Hooks
-			add_action( 'admin_enqueue_scripts', array( get_class(), 'admin_enqueue_scripts' ) ); // Enqueue admin scripts
-			add_action( 'dynamic_sidebar_before', array( get_class(), 'dynamic_sidebar_before' ), 10, 2 ); // Dynamic sidebar before
-			add_filter( 'dynamic_sidebar_params', array( get_class(), 'dynamic_sidebar_params' ) ); // Dynamic sidebar parameters
-			add_action( 'dynamic_sidebar_after', array( get_class(), 'dynamic_sidebar_after' ), 10, 2 ); // Dynamic sidebar after
-			add_filter( 'conductor_widget_wrapper_css_classes', array( get_class(), 'conductor_widget_wrapper_css_classes' ), 10, 5 ); // Conductor Widget Wrapper CSS Classes
-			add_filter( 'conductor_widget_featured_image_size', array( get_class(), 'conductor_widget_featured_image_size' ), 10, 6 ); // Conductor Widget Featured Image Size
-			add_action( 'wp_enqueue_scripts', array( get_class(), 'wp_enqueue_scripts' ) ); // Enqueue Scripts & Styles (front-end)
+			add_action( 'admin_enqueue_scripts', array( get_class( $this ), 'admin_enqueue_scripts' ) ); // Enqueue admin scripts
+			add_action( 'dynamic_sidebar_before', array( get_class( $this ), 'dynamic_sidebar_before' ), 10, 2 ); // Dynamic sidebar before
+			add_filter( 'dynamic_sidebar_params', array( get_class( $this ), 'dynamic_sidebar_params' ) ); // Dynamic sidebar parameters
+			add_action( 'dynamic_sidebar_after', array( get_class( $this ), 'dynamic_sidebar_after' ), 10, 2 ); // Dynamic sidebar after
+			add_action( 'wp_enqueue_scripts', array( get_class( $this ), 'wp_enqueue_scripts' ) ); // Enqueue Scripts & Styles (front-end)
+			add_filter( 'post_thumbnail_size', array( $this, 'post_thumbnail_size' ), 2147483647, 2 ); // Post Thumbnail Size (late)
 			//add_filter( 'template_include', array( $this, 'template_include' ), 20 ); // Template Include
+
+			// Conductor Hooks
+			add_filter( 'conductor_widget_wrapper_css_classes', array( get_class( $this ), 'conductor_widget_wrapper_css_classes' ), 10, 5 ); // Conductor Widget Wrapper CSS Classes
+			add_filter( 'conductor_widget_featured_image_size', array( get_class( $this ), 'conductor_widget_featured_image_size' ), 10, 6 ); // Conductor Widget Featured Image Size
+			add_action( 'conductor_widget_featured_image_before', array( get_class( $this ), 'conductor_widget_featured_image_before' ), 10, 2 ); // Conductor Widget Featured Image Before
+			add_action( 'conductor_widget_featured_image_after', array( get_class( $this ), 'conductor_widget_featured_image_after' ), 10, 2 ); // Conductor Widget Featured Image After
 		}
 
 		/**
@@ -1642,6 +1651,201 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		}
 
 		/**
+		 * This function enqueues scripts and styles on the front-end.
+		 */
+		public static function wp_enqueue_scripts() {
+			// Grab the Conductor Widget instance
+			$conductor_widget = Conduct_Widget();
+
+			// If at least one Conductor Widget is active
+			if ( is_active_widget( false, false, $conductor_widget->id_base ) ) {
+				// Grab the Conductor options
+				$conductor_options = Conductor_Options::get_options();
+
+				// Conductor Widget
+				wp_enqueue_script( 'conductor-widget', Conductor::plugin_url() . '/assets/js/widgets/conductor-widget.js', array( 'wp-backbone' ), Conductor::$version, true );
+				wp_localize_script( 'conductor-widget', 'conductor_widget', apply_filters( 'conductor_widget_localize', array(
+					// Actions
+					'actions' => array(
+						// REST API
+						'rest' => array(
+							// Query
+							'query' => 'conductor_widget_rest_query'
+						)
+					),
+					// CSS Classes
+					'css_classes' => array(
+						// AJAX
+						'ajax' => array(
+							'processing' => 'processing ajax-processing',
+							// Message
+							'message' => array(
+								'active' => 'is-active',
+								'message' => 'conductor-widget-ajax-message-message',
+								'wrap' => 'conductor-widget-ajax-message-wrap'
+							)
+						),
+						// Current
+						'current' => 'conductor-widget-current',
+						// Hide
+						'hide' => 'conductor-widget-hide conductor-widget-hidden',
+						// Pagination
+						'pagination' => array(
+							'conductor_mock' => 'conductor-mock conductor-widget-mock',
+							'current' => 'current',
+							'dots' => 'dots',
+							'next' => 'next',
+							'page_numbers' => 'page-numbers',
+							'previous' => 'prev'
+						),
+						// Spinner
+						'spinner' => array(
+							'active' => 'is-active'
+						)
+					),
+					// CSS Selectors
+					'css_selectors' => array(
+						// AJAX
+						'ajax' => array(
+							// Message
+							'message' => array(
+								'message' => '.conductor-widget-ajax-message-message',
+								'wrap' => '.conductor-widget-ajax-message-wrap'
+							)
+						),
+						'after_wrap' => '.conductor-widget-after-wrap',
+						'before_wrap' => '.conductor-widget-before-wrap',
+						'content_after_wrap' => '.conductor-widget-content-after-wrap',
+						'content_before_wrap' => '.conductor-widget-content-before-wrap',
+						'content_wrap' => '.conductor-widget-content-wrap',
+						'current' => '.conductor-widget-current',
+						'hide' => '.conductor-widget-hide',
+						'pagination_wrap' => '.conductor-widget-pagination-wrap',
+						// Pagination
+						'pagination' => array(
+							'conductor_mock' => '.conductor-widget-mock',
+							'current' => '.current',
+							'dots' => '.dots',
+							'next' => '.next',
+							'page_numbers' => '.page-numbers',
+							'previous' => '.prev'
+						),
+						'spinner' => '.conductor-widget-spinner-wrap, .conductor-widget-spinner',
+						'spinner_overlay' => '.conductor-widget-spinner-overlay',
+						'title_after_wrap' => '.conductor-widget-title-after-wrap',
+						'title_before_wrap' => '.conductor-widget-title-before-wrap',
+						'widget_wrap' => '.conductor-widget-wrap'
+					),
+					// Flags
+					'flags' => array(
+						'is_user_logged_in' => is_user_logged_in()
+					),
+					// l10n
+					'l10n' => array(
+						// AJAX
+						'ajax' => array(
+							'error' => __( 'Something went wrong. Please try again.', 'conductor' ),
+						)
+					),
+					// REST API
+					'rest' => array(
+						// Enabled
+						'enabled' => $conductor_options['rest']['enabled'],
+						// Nonce
+						'nonce' => wp_create_nonce( 'wp_rest' )
+					),
+					// URLs
+					'urls' => array(
+						// Current
+						'current' => array(
+							'permalink' => str_replace( '?', '\\?', untrailingslashit( get_permalink() ) ),
+						),
+						// REST API
+						'rest' => array(
+							'base' => rest_url( Conductor_REST_API::$namespace ),
+							'conductor_widget_rest_query' => '/widget/query/'
+						)
+					)
+				) ) );
+			}
+		}
+
+		/**
+		 * This function adjusts the post thumbnails size.
+		 */
+		public static function post_thumbnail_size( $size, $post_id ) {
+			// Bail if we don't have a current featured image size
+			if ( ! self::$current_featured_image_size )
+				return $size;
+
+			// Set the post thumbnails size to the current Conductor Widget featured image size
+			$size = self::$current_featured_image_size;
+
+			return $size;
+		}
+
+		/**
+		 * This function determines whether or not the 404 template should be loaded based on query arguments
+		 * on this widget instance. It determines whether or not a Conductor page is being loaded first and then
+		 * determines if the current query arguments (paged) should result in a 404.
+		 */
+		public function template_include( $template ) {
+			global $wp_query, $wp_registered_sidebars, $wp_registered_widgets;
+
+			// Verify that a Conductor page is being requested
+			if ( Conductor::is_conductor() && $template !== get_404_template() ) {
+				$instance = $this->get_settings();
+				$sidebar_widgets = wp_get_sidebars_widgets();
+				$conductor_widgets = array(); // Conductor widget instances on this page
+				$conductor_sidebars = array( 'content' => sanitize_title( Conductor::get_conductor_content_layout_sidebar_id( 'content' ) ) );
+
+				// Primary Sidebar
+				if ( conductor_content_layout_has_sidebar( 'primary' ) )
+					$conductor_sidebars['primary'] = sanitize_title( Conductor::get_conductor_content_layout_sidebar_id( 'primary' ) );
+
+				// Secondary Sidebar
+				if ( conductor_content_layout_has_sidebar( 'secondary' ) )
+					$conductor_sidebars['secondary'] = sanitize_title( Conductor::get_conductor_content_layout_sidebar_id( 'secondary' ) );
+
+				// First find the sidebars/widgets for this layout
+				foreach ( $conductor_sidebars as $sidebar )
+					if ( isset( $wp_registered_sidebars[$sidebar] ) && ! empty( $sidebar_widgets[$sidebar] ) )
+						foreach( ( array ) $sidebar_widgets[$sidebar] as $id )
+							if ( isset( $wp_registered_widgets[$id] ) && $wp_registered_widgets[$id]['name'] === 'Conductor' )
+								if ( ( $number = $wp_registered_widgets[$id]['params'][0]['number'] ) && isset( $instance[$number] ) )
+									// Found a Conductor widget on this page
+									$conductor_widgets[] = $instance[$number];
+
+				// Next check to see if any Conductor widgets exist on this page and if we need to return a 404 error due to pagination
+				// TODO: Check the has_pagination() function of the query class here
+				// TODO: Add a pagination function to query that can determine if is_paged, or is_pagination()
+				if ( ! empty( $conductor_widgets ) )
+					foreach( $conductor_widgets as $instance )
+						// Feature Many only
+						if ( isset( $instance['feature_many'] ) && $instance['query_args']['posts_per_page'] && $instance['query_args']['max_num_posts'] ) {
+							if ( $instance['query_args']['posts_per_page'] !== $instance['query_args']['max_num_posts'] ) {
+								$max_num_pages = ceil( $instance['query_args']['max_num_posts'] / $instance['query_args']['posts_per_page'] );
+
+								// Get the "true" paged query variable from the main query (defaulting to 1)
+								$paged = ( int ) get_query_var( 'paged' );
+								if ( empty( $paged ) && isset( $wp_query->query['paged'] ) )
+									$paged = ( int )$wp_query->query['paged'];
+								else if ( empty( $paged ) )
+									$paged = 1;
+
+								// 404 (set global query is_404 as well)
+								if ( $paged > $max_num_pages ) {
+									$wp_query->set_404();
+									$template = get_404_template();
+								}
+							}
+						}
+			}
+
+			return $template;
+		}
+
+		/**
 		 * This function adjusts Conductor Widget CSS classes on Flexbox layouts.
 		 */
 		// TODO: The column count doesn't work correctly with queries that aren't WP_Query() because we're expecting the query to be a WP_Query() instance
@@ -1742,182 +1946,31 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		}
 
 		/**
-		 * This function enqueues scripts and styles on the front-end.
+		 * This function runs before the featured image is displayed on Conductor Widgets.
 		 */
-		public static function wp_enqueue_scripts() {
+		public static function conductor_widget_featured_image_before( $post, $instance ) {
 			// Grab the Conductor Widget instance
 			$conductor_widget = Conduct_Widget();
 
-			// If at least one Conductor Widget is active
-			if ( is_active_widget( false, false, $conductor_widget->id_base ) ) {
-				// Grab the Conductor options
-				$conductor_options = Conductor_Options::get_options();
-
-				// Conductor Widget
-				wp_enqueue_script( 'conductor-widget', Conductor::plugin_url() . '/assets/js/widgets/conductor-widget.js', array( 'wp-backbone' ), Conductor::$version, true );
-				wp_localize_script( 'conductor-widget', 'conductor_widget', apply_filters( 'conductor_widget_localize', array(
-					// Actions
-					'actions' => array(
-						// REST API
-						'rest' => array(
-							// Query
-							'query' => 'conductor_widget_rest_query'
-						)
-					),
-					// CSS Classes
-					'css_classes' => array(
-						// AJAX
-						'ajax' => array(
-							'processing' => 'processing ajax-processing',
-							// Message
-							'message' => array(
-								'active' => 'is-active',
-								'message' => 'conductor-widget-ajax-message-message',
-								'wrap' => 'conductor-widget-ajax-message-wrap'
-							)
-						),
-						// Current
-						'current' => 'conductor-widget-current',
-						// Hide
-						'hide' => 'conductor-widget-hide conductor-widget-hidden',
-						// Pagination
-						'pagination' => array(
-							'conductor_mock' => 'conductor-mock conductor-widget-mock',
-							'current' => 'current',
-							'dots' => 'dots',
-							'next' => 'next',
-							'page_numbers' => 'page-numbers',
-							'previous' => 'prev'
-						),
-						// Spinner
-						'spinner' => array(
-							'active' => 'is-active'
-						)
-					),
-					// CSS Selectors
-					'css_selectors' => array(
-						// AJAX
-						'ajax' => array(
-							// Message
-							'message' => array(
-								'message' => '.conductor-widget-ajax-message-message',
-								'wrap' => '.conductor-widget-ajax-message-wrap'
-							)
-						),
-						'after_wrap' => '.conductor-widget-after-wrap',
-						'before_wrap' => '.conductor-widget-before-wrap',
-						'content_after_wrap' => '.conductor-widget-content-after-wrap',
-						'content_before_wrap' => '.conductor-widget-content-before-wrap',
-						'content_wrap' => '.conductor-widget-content-wrap',
-						'current' => '.conductor-widget-current',
-						'hide' => '.conductor-widget-hide',
-						'pagination_wrap' => '.conductor-widget-pagination-wrap',
-						// Pagination
-						'pagination' => array(
-							'conductor_mock' => '.conductor-widget-mock',
-							'current' => '.current',
-							'dots' => '.dots',
-							'next' => '.next',
-							'page_numbers' => '.page-numbers',
-							'previous' => '.prev'
-						),
-						'spinner' => '.conductor-widget-spinner-wrap, .conductor-widget-spinner',
-						'spinner_overlay' => '.conductor-widget-spinner-overlay',
-						'title_after_wrap' => '.conductor-widget-title-after-wrap',
-						'title_before_wrap' => '.conductor-widget-title-before-wrap',
-						'widget_wrap' => '.conductor-widget-wrap'
-					),
-					// Flags
-					'flags' => array(
-						'is_user_logged_in' => is_user_logged_in()
-					),
-					// l10n
-					'l10n' => array(
-						// AJAX
-						'ajax' => array(
-							'error' => __( 'Something went wrong. Please try again.', 'conductor' ),
-						)
-					),
-					// REST API
-					'rest' => array(
-						// Enabled
-						'enabled' => $conductor_options['rest']['enabled']
-					),
-					// URLs
-					'urls' => array(
-						// Current
-						'current' => array(
-							'permalink' => str_replace( '?', '\\?', untrailingslashit( get_permalink() ) ),
-						),
-						// REST API
-						'rest' => array(
-							'base' => rest_url( Conductor_REST_API::$namespace ),
-							'conductor_widget_rest_query' => '/widget/query/'
-						)
-					)
-				) ) );
-			}
+			add_filter( 'conductor_widget_featured_image_size', array( get_class( $conductor_widget ), 'conductor_widget_featured_image_size_late' ), 9999, 6 ); // Conductor Widget Featured Image Size
 		}
 
 		/**
-		 * This function determines whether or not the 404 template should be loaded based on query arguments
-		 * on this widget instance. It determines whether or not a Conductor page is being loaded first and then
-		 * determines if the current query arguments (paged) should result in a 404.
+		 * This function adjusts Conductor Widget featured image size (late).
 		 */
-		public function template_include( $template ) {
-			global $wp_query, $wp_registered_sidebars, $wp_registered_widgets;
+		public static function conductor_widget_featured_image_size_late( $conductor_thumbnail_size, $instance, $post, $widget = false, $query = false, $conductor_widget_query = false ) {
+			// Set the current featured image size
+			self::$current_featured_image_size = $conductor_thumbnail_size;
 
-			// Verify that a Conductor page is being requested
-			if ( Conductor::is_conductor() && $template !== get_404_template() ) {
-				$instance = $this->get_settings();
-				$sidebar_widgets = wp_get_sidebars_widgets();
-				$conductor_widgets = array(); // Conductor widget instances on this page
-				$conductor_sidebars = array( 'content' => sanitize_title( Conductor::get_conductor_content_layout_sidebar_id( 'content' ) ) );
+			return $conductor_thumbnail_size;
+		}
 
-				// Primary Sidebar
-				if ( conductor_content_layout_has_sidebar( 'primary' ) )
-					$conductor_sidebars['primary'] = sanitize_title( Conductor::get_conductor_content_layout_sidebar_id( 'primary' ) );
-
-				// Secondary Sidebar
-				if ( conductor_content_layout_has_sidebar( 'secondary' ) )
-					$conductor_sidebars['secondary'] = sanitize_title( Conductor::get_conductor_content_layout_sidebar_id( 'secondary' ) );
-
-				// First find the sidebars/widgets for this layout
-				foreach ( $conductor_sidebars as $sidebar )
-					if ( isset( $wp_registered_sidebars[$sidebar] ) && ! empty( $sidebar_widgets[$sidebar] ) )
-						foreach( ( array ) $sidebar_widgets[$sidebar] as $id )
-							if ( isset( $wp_registered_widgets[$id] ) && $wp_registered_widgets[$id]['name'] === 'Conductor' )
-								if ( ( $number = $wp_registered_widgets[$id]['params'][0]['number'] ) && isset( $instance[$number] ) )
-									// Found a Conductor widget on this page
-									$conductor_widgets[] = $instance[$number];
-
-				// Next check to see if any Conductor widgets exist on this page and if we need to return a 404 error due to pagination
-				// TODO: Check the has_pagination() function of the query class here
-				// TODO: Add a pagination function to query that can determine if is_paged, or is_pagination()
-				if ( ! empty( $conductor_widgets ) )
-					foreach( $conductor_widgets as $instance )
-						// Feature Many only
-						if ( isset( $instance['feature_many'] ) && $instance['query_args']['posts_per_page'] && $instance['query_args']['max_num_posts'] ) {
-							if ( $instance['query_args']['posts_per_page'] !== $instance['query_args']['max_num_posts'] ) {
-								$max_num_pages = ceil( $instance['query_args']['max_num_posts'] / $instance['query_args']['posts_per_page'] );
-
-								// Get the "true" paged query variable from the main query (defaulting to 1)
-								$paged = ( int ) get_query_var( 'paged' );
-								if ( empty( $paged ) && isset( $wp_query->query['paged'] ) )
-									$paged = ( int )$wp_query->query['paged'];
-								else if ( empty( $paged ) )
-									$paged = 1;
-
-								// 404 (set global query is_404 as well)
-								if ( $paged > $max_num_pages ) {
-									$wp_query->set_404();
-									$template = get_404_template();
-								}
-							}
-						}
-			}
-
-			return $template;
+		/**
+		 * This function runs after the featured image is displayed on Conductor Widgets.
+		 */
+		public static function conductor_widget_featured_image_after( $post, $instance ) {
+			// Reset the current featured image size
+			self::$current_featured_image_size = false;
 		}
 
 
