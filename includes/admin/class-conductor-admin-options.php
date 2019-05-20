@@ -4,7 +4,7 @@
  *
  * @class Conductor_Admin_Options
  * @author Slocum Studio
- * @version 1.5.0
+ * @version 1.5.3
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Admin_Options' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.5.0';
+		public $version = '1.5.3';
 
 		/**
 		 * @var string
@@ -328,7 +328,7 @@ if ( ! class_exists( 'Conductor_Admin_Options' ) ) {
 										unset( $input['content_layouts'][$id] );
 
 									// Break out of the loop so the filter below doesn't run
-									continue;
+									break 2;
 								}
 
 								/*

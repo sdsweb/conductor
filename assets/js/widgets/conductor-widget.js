@@ -91,7 +91,8 @@ var conductor = conductor || {};
 				 * Default AJAX data
 				 */
 				default: {
-					conductor_widget: true
+					conductor_widget: true,
+					_wpnonce: conductor_widget.rest.nonce
 				},
 				/**
 				 * This function gets the AJAX data
