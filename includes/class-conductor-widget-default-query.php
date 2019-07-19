@@ -5,7 +5,7 @@
  *
  * @class Conductor_Widget_Default_Query
  * @author Slocum Studio
- * @version 1.5.2
+ * @version 1.5.4
  * @since 1.0.0
  */
 
@@ -18,7 +18,7 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.5.2';
+		public $version = '1.5.4';
 
 		/**
 		 * @var WP_Widget, Conductor Widget
@@ -418,9 +418,8 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 			if ( apply_filters( 'conductor_query_paginate_links_is_single', is_single(), $has_permalink_structure, $paginate_links_args, $query, $echo, $this ) )
 				$paginate_links_args['format'] = ( $has_permalink_structure ) ? '%#%/' : '?page=%#%'; // %#% will be replaced with page number
 
-			// If we don't have a permalink structure and this widget has AJAX enabled
-			if ( ! $has_permalink_structure && $this->widget->has_ajax( $this->widget_instance, array() ) ) {
-				// TODO: Future: On archive pages, this likely doesn't work correctly (need to use get_pagenum_link() here?)
+			// If we don't have a permalink structure or this is a preview and this widget has AJAX enabled
+			if ( ( ! $has_permalink_structure || is_preview() ) && $this->widget->has_ajax( $this->widget_instance, array() ) ) {
 				// Add the base argument to the paginate links arguments (remove the "page" and "paged" query arguments)
 				$paginate_links_args['base'] = html_entity_decode( remove_query_arg( array( 'page', 'paged' ), html_entity_decode( ( is_preview() ) ? esc_url( get_permalink() ) : get_pagenum_link() ) ) ) . '%_%';
 
@@ -428,11 +427,10 @@ if ( ! class_exists( 'Conductor_Widget_Default_Query' ) ) {
 				$paginate_links_args['format'] = ( ! $permalink_structure ) ? str_replace( '?', '&', $paginate_links_args['format'] ) : $paginate_links_args['format'];
 			}
 
-			// TODO: Future: On archive pages, this likely doesn't work correctly (need to use get_pagenum_link() here?)
 			// If we have a permalink structure and we're paged
 			if ( $has_permalink_structure && ( is_paged() || $page > 1 ) )
-				// Add the base argument to the paginate links arguments
-				$paginate_links_args['base'] = get_permalink() . '%_%';
+				// Add the base argument to the paginate links arguments (remove the "page" and "paged" query arguments)
+				$paginate_links_args['base'] = html_entity_decode( remove_query_arg( array( 'page', 'paged' ), html_entity_decode( ( is_preview() ) ? esc_url( get_permalink() ) : get_pagenum_link() ) ) ) . '%_%';
 
 			$paginate_links_args = apply_filters( 'conductor_query_paginate_links_args', $paginate_links_args, $query, $echo, $this, $has_permalink_structure );
 

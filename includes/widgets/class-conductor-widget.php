@@ -4,7 +4,7 @@
  *
  * @class Conductor_Widget
  * @author Slocum Studio
- * @version 1.5.3
+ * @version 1.5.4
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.5.3';
+		public $version = '1.5.4';
 
 		/**
 		 * @var array, Conductor Widget defaults
@@ -1758,7 +1758,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 					'urls' => array(
 						// Current
 						'current' => array(
-							'permalink' => str_replace( '?', '\\?', untrailingslashit( get_permalink() ) ),
+							'permalink' => str_replace( '?', '\\?', untrailingslashit( html_entity_decode( remove_query_arg( array( 'page', 'paged' ), html_entity_decode( ( is_preview() ) ? esc_url( get_permalink() ) : get_pagenum_link() ) ) ) ) ),
 						),
 						// REST API
 						'rest' => array(
@@ -3211,7 +3211,7 @@ if ( ! class_exists( 'Conductor_Widget' ) ) {
 							<input type="checkbox" class="conductor-input conductor-rest-enabled-value" id="<?php echo $this->get_field_id( 'rest_enabled' ); ?>" name="<?php echo $this->get_field_name( 'rest_enabled' ); ?>" <?php checked( $instance['rest']['enabled'] ); ?> <?php disabled( ! $conductor_options['rest']['enabled'] ); ?> data-default="<?php echo esc_attr( ( $this->defaults['rest']['enabled'] ) ? 'true' : false ); ?>" />
 							<label for="<?php echo $this->get_field_id( 'rest_enabled' ); ?>"><strong><?php _e( 'Enable in REST API', 'conductor' ); ?></strong></label>
 							<br />
-							<small class="description conductor-description"><?php _e( 'Enable this Conductor Widget in the Conductor REST API. If unchecked, this Conductor Widget will not be accessible via the Conductor WordPres REST API.', 'conductor' ); ?></small>
+							<small class="description conductor-description"><?php _e( 'Enable this Conductor Widget in the Conductor REST API. If unchecked, this Conductor Widget will not be accessible via the Conductor WordPress REST API.', 'conductor' ); ?></small>
 							<?php
 								// If the Conductor REST API is not enabled
 								if ( ! $conductor_options['rest']['enabled'] ) :
