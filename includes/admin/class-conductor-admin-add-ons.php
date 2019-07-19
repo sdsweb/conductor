@@ -4,7 +4,7 @@
  *
  * @class Conductor_Admin_Add_Ons
  * @author Slocum Studio
- * @version 1.5.0
+ * @version 1.5.4
  * @since 1.0.0
  */
 
@@ -17,7 +17,7 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 		/**
 		 * @var string
 		 */
-		public $version = '1.5.0';
+		public $version = '1.5.4';
 
 		/**
 		 * @var string
@@ -119,22 +119,25 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 			$add_ons_data = self::get_add_ons_data();
 
 			// If we have add-ons data and can create a Conductor Updates instance
-			if ( ! is_wp_error( $add_ons_data ) && class_exists( 'Conductor_Updates' ) )
+			if ( ! empty( $add_ons_data ) && ! is_wp_error( $add_ons_data ) && class_exists( 'Conductor_Updates' ) )
 				// Loop through add-ons data
 				foreach ( $add_ons_data as $add_on_data )
 					// If this we have valid add-on data (basename and name)
 					if ( is_array( $add_on_data ) && isset( $add_on_data['basename'] ) && isset( $add_on_data['name'] ) )
 						// If this add-on is a valid add-on
 						if ( $args->slug === $add_on_data['basename'] ) {
-							// Create the Conductor Updates instance
-							$add_on_updater = new Conductor_Updates( array(
-								'version' => ( isset( $add_on_data['version'] ) && ! empty( $add_on_data['version'] ) ) ? $add_on_data['version'] : '1.0.0', // Default to 1.0.0
-								'name' => $add_on_data['name'],
-								'plugin_file' => $add_on_data['basename']
-							) );
+							// If this isn't a free add-on
+							if ( ! isset( $add_on_data['free'] ) || ! $add_on_data['free'] ) {
+								// Create the Conductor Updates instance
+								$add_on_updater = new Conductor_Updates( array(
+									'version' => ( isset( $add_on_data['version'] ) && ! empty( $add_on_data['version'] ) ) ? $add_on_data['version'] : '1.0.0', // Default to 1.0.0
+									'name' => $add_on_data['name'],
+									'plugin_file' => $add_on_data['basename']
+								) );
 
-							// Initialize the updater (will hook into plugins_api and fetch the data from the API)
-							$add_on_updater->init_updater();
+								// Initialize the updater (will hook into plugins_api and fetch the data from the API)
+								$add_on_updater->init_updater();
+							}
 
 							// Break from the loop
 							break;
@@ -225,11 +228,14 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 			// Get add-ons data
 			$add_ons_data = self::get_add_ons_data();
 
-			// If we have add-ons data
-			if ( ! is_wp_error( $add_ons_data ) ) {
-				// Flag to determine if this is a valid add-on
-				$is_valid_add_on = false;
+			// The add-on data
+			$the_add_on_data = array();
 
+			// Flag to determine if this is a valid add-on
+			$is_valid_add_on = false;
+
+			// If we have add-ons data
+			if ( ! empty( $add_ons_data ) && ! is_wp_error( $add_ons_data ) ) {
 				// Loop through add-ons data
 				foreach ( $add_ons_data as $add_on_data )
 					// If this we have valid add-on data (basename and name)
@@ -237,15 +243,21 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 						// Set the flag
 						$is_valid_add_on = true;
 
+						// Set the add-on data
+						$the_add_on_data = $add_on_data;
+
 						break;
 					}
-
-				// Return an error if the add-on isn't valid
-				if ( ! $is_valid_add_on ) {
-					$status['error'] = $error;
-					wp_send_json_error( $status );
-				}
 			}
+
+			// Return an error if the add-on isn't valid
+			if ( ! $is_valid_add_on ) {
+				$status['error'] = $error;
+				wp_send_json_error( $status );
+			}
+
+			// Flag to determine if this is a free add-on
+			$is_free_add_on = ( ! empty( $the_add_on_data ) && isset( $the_add_on_data['free'] ) && $the_add_on_data['free'] );
 
 			// Include necessary plugin installer functionality
 			include_once ABSPATH . 'wp-admin/includes/plugin-install.php';
@@ -253,7 +265,7 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 
 			// Grab the plugin information
 			$api = plugins_api( 'plugin_information', array(
-				'slug' => $plugin_basename,
+				'slug' => ( $is_free_add_on ) ? $the_add_on_data['slug'] : $plugin_basename,
 			) );
 
 			// Return an error if there was an error grabbing plugin information
@@ -380,7 +392,7 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 				$status['message'] = sprintf( __( '%1$s activated.', 'conductor' ), sanitize_text_field( $_POST['plugin_name'] ) );
 
 				// If we have add-ons data
-				if ( ! is_wp_error( $add_ons_data ) ) {
+				if ( ! empty( $add_ons_data ) && ! is_wp_error( $add_ons_data ) ) {
 					// Loop through add-ons data
 					foreach ( $add_ons_data as $add_on_data )
 						// If this we have valid add-on data and this is a match
@@ -578,6 +590,13 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 			// Grab the add-on nonces
 			$add_on_nonces = self::get_add_on_nonces();
 
+			// Bail if we don't have the add-on nonces
+			if ( empty( $add_on_nonces ) ) {
+				$add_ons = '<div class="error"><p>' . __( 'There was an error retrieving the add-ons list. Please try again later.', 'conductor' ) . '</p></div>';
+
+				return $add_ons;
+			}
+
 			// Fetch the data
 			$args = wp_parse_args( array(
 				'feed' => 'add-ons',
@@ -589,7 +608,7 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 			$add_ons = wp_remote_post( self::$api_url, array( 'timeout' => 15, 'sslverify' => false, 'body' => $args ) );
 
 			// If we have add-ons HTML
-			if ( ! is_wp_error( $add_ons ) )
+			if ( ! empty( $add_ons ) && ! is_wp_error( $add_ons ) )
 				// Retrieve the request body
 				$add_ons = wp_remote_retrieve_body( $add_ons );
 			// Otherwise there was an error
@@ -673,7 +692,7 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 			$add_ons_data = wp_remote_post( self::$api_url, array( 'timeout' => 15, 'sslverify' => false, 'body' => $args ) );
 
 			// If we have add-ons HTML
-			if ( ! is_wp_error( $add_ons_data ) )
+			if ( ! empty( $add_ons_data ) && ! is_wp_error( $add_ons_data ) )
 				// Retrieve the request body
 				$add_ons_data = json_decode( wp_remote_retrieve_body( $add_ons_data ), true );
 
@@ -691,7 +710,7 @@ if ( ! class_exists( 'Conductor_Admin_Add_Ons' ) ) {
 			$add_ons_data = self::get_add_ons_data();
 
 			// If we have add-ons data
-			if ( ! is_wp_error( $add_ons_data ) ) {
+			if ( ! empty( $add_ons_data ) && ! is_wp_error( $add_ons_data ) ) {
 				// Loop through add-ons
 				foreach ( $add_ons_data as $add_on_data )
 					// If this we have valid add-on data

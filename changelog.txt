@@ -2,8 +2,18 @@
 Plugin: Conductor
 Author: Slocum Themes/Slocum Design Studio
 Author URI: https://conductorplugin.com/
-Current Version: 1.5.3
+Current Version: 1.5.4
 ==========================================
+
+
+1.5.4 // July 19 2019
+---------------------
+- Fixed an issue where pagination in AJAX was using an incorrect base permalink on archive pages; Thanks Lê Hoàng Giang
+- Added logic to detect the paged URL query argument surrounded by encoded characters (e.g. urlencode()) in preview
+  pagination links
+- Fixed a possible PHP warning when Conductor add-ons data could not be fetched; Thanks Henry Porter
+- Fixed an issue where free add-ons could not be installed via the Conductor Add-Ons page
+- Fixed a typo where "WordPress" was spelled incorrectly
 
 
 1.5.3 // May 20 2019

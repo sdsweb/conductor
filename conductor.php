@@ -3,11 +3,11 @@
  * Plugin Name: Conductor
  * Plugin URI: https://www.conductorplugin.com/
  * Description: Build content-rich layouts in minutes without code.
- * Version: 1.5.3
+ * Version: 1.5.4
  * Author: Slocum Studio
  * Author URI: http://www.slocumstudio.com/
  * Requires at least: 4.4
- * Tested up to: 5.1.1
+ * Tested up to: 5.2.2
  * License: GPL2+
  *
  * Text Domain: conductor
@@ -23,7 +23,7 @@ if ( ! class_exists( 'Conductor' ) ) {
 		/**
 		 * @var string
 		 */
-		public static $version = '1.5.3';
+		public static $version = '1.5.4';
 
 		/**
 		 * @var Boolean, null by default so that we can cache the Boolean value

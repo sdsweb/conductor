@@ -512,7 +512,7 @@ var conductor = conductor || {};
 			}
 
 			var $this = $( event.currentTarget ),
-				paged_regex = new RegExp( '^' + conductor_widget.urls.current.permalink + '(?:.+)?([\\/?&](page[d]?)[\\/=])(\\d+)[\\/]?|^' + conductor_widget.urls.current.permalink + '[\\/](\\d+)[\\/]?$' ),
+				paged_regex = new RegExp( '^' + conductor_widget.urls.current.permalink + '(?:.+)?((?:[\\/?&]|%3[Ff])(page[d]?)(?:[\\/=]|%3[Dd]))(\\d+)[\\/]?|^' + conductor_widget.urls.current.permalink + '[\\/](\\d+)[\\/]?$' ),
 				$page_number,
 				$page_numbers = $this.parents( conductor_widget.css_selectors.pagination.page_numbers ),
 				$previous_page_number = $page_numbers.find( conductor_widget.css_selectors.pagination.previous ),
